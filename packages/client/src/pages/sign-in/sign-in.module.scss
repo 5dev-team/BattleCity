@@ -1,0 +1,25 @@
+.sign-in {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &__card {
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+.page-title {
+  font-size: 1.5rem;
+  margin-bottom: 30px;
+}
