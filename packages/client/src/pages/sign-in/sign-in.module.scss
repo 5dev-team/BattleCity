@@ -5,7 +5,11 @@
   align-items: center;
 
   &__card {
-    width: 600px;
+    width: 500px;
+    @media (max-width: 550px) {
+      width: 100%;
+      padding: 20px;
+    }
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -15,6 +19,7 @@
   &__form {
     display: flex;
     flex-direction: column;
+    width: 100%;
     gap: 20px;
   }
 }
