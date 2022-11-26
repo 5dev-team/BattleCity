@@ -48,7 +48,7 @@ const LeaderBoard: React.FC = () => {
           </div>
         </div>
         <div className={styles['control-wrapper']}>
-          <NesButton onClick={loadMore}>
+          <NesButton onClick={loadMore} variant='primary'>
             exit
           </NesButton>
         </div>
