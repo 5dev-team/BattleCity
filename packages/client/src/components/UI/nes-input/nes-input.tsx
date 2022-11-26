@@ -2,13 +2,19 @@ import React, { InputHTMLAttributes, useId } from 'react'
 import styles from './nes-input.module.scss'
 
 interface INesInputProps extends InputHTMLAttributes<HTMLInputElement> {
-  inline?: boolean,
-  label: string,
-  variant?: 'basic' | 'primary' | 'success' | 'warning' | 'error' | 'dark',
+  inline?: boolean
+  label: string
+  variant?: 'basic' | 'primary' | 'success' | 'warning' | 'error' | 'dark'
   fullWidth?: boolean
 }
 
-const NesInput: React.FC<INesInputProps> = ({ inline, label, variant = 'basic', fullWidth, ...props }) => {
+const NesInput: React.FC<INesInputProps> = ({
+  inline,
+  label,
+  variant = 'basic',
+  fullWidth,
+  ...props
+}) => {
   const id = useId()
   return (
     <div className={`nes-field ${inline ? 'is-inline' : ''}`}>
