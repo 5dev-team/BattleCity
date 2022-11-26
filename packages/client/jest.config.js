@@ -8,4 +8,8 @@ export default {
   globals: {
     __SERVER_PORT__: process.env.SERVER_PORT,
   },
+  // css, scss imports mock
+  moduleNameMapper: {
+    '\\.(css|scss)$': 'identity-obj-proxy',
+  }
 }
