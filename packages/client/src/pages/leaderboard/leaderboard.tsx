@@ -41,14 +41,16 @@ const LeaderBoard: React.FC = () => {
           </div>
           <div className={`${styles['table__row']} nes-container is-dark`}>
             <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>1</div>
-            <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>avatar</div>
-            <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>Username</div>
-            <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>1124234</div>
-            <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>07/10/15</div>
+            <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>
+              <Avatar image={avatarMock} size={'large'} alt={'аватар пользователя Username2'} />
+            </div>
+            <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>Username2</div>
+            <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>43546435</div>
+            <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>07/10/16</div>
           </div>
         </div>
         <div className={styles['control-wrapper']}>
-          <NesButton onClick={loadMore} variant='primary'>
+          <NesButton onClick={loadMore} variant='primary' fullWidth>
             exit
           </NesButton>
         </div>
