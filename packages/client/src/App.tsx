@@ -9,7 +9,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path='/sign-in' element={<SignIn />} />
         // TODO: change path before commit
-        <Route path='/' element={<LeaderBoard />} />
+        <Route path='/leaderboard' element={<LeaderBoard />} />
       </Routes>
     </Router>
   )

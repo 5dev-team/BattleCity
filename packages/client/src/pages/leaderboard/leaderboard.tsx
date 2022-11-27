@@ -1,24 +1,29 @@
 import React from 'react'
 import styles from './leaderboard.module.scss'
 import NesButton from '../../components/UI/nes-button'
-import Avatar from '../../components/UI/avatar'
+import NesAvatar from '../../components/UI/nes-avatar'
+import avatarPlaceholder from '../../assets/avatarPlaceholder.png'
+import { useNavigate } from 'react-router-dom'
 
 const LeaderBoard: React.FC = () => {
 
-  const avatarMock = 'https://userstock.io/data/wp-content/uploads/2017/07/pexels-photo-218721-1024x1024.jpeg'
-
-  const loadMore = () => {
-    console.log('load more')
+  const loadNextPage = () => {
+    console.log('load next page')
   }
+  const loadPrevPage = () => {
+    console.log('load prev page')
+  }
+
+  const navigate = useNavigate();
 
   return (
     <div className={styles['leaderboard']}>
       <div className={styles['leaderboard__container']}>
         <div className={`${styles['control-wrapper']} ${styles['control-page-buttons']}`}>
-          <NesButton onClick={loadMore}>
+          <NesButton onClick={loadPrevPage}>
             &lt;
           </NesButton>
-          <NesButton onClick={loadMore}>
+          <NesButton onClick={loadNextPage}>
             &gt;
           </NesButton>
         </div>
@@ -32,8 +37,9 @@ const LeaderBoard: React.FC = () => {
 
           <div className={styles['table__row']}>
             <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>1</div>
-            <div className={`${styles['table__col']} ${styles['table__col--second-color']} ${styles['avatar-col']}`}>
-              <Avatar image={avatarMock} size={'large'} alt={'аватар пользователя Username'} />
+            <div
+              className={`${styles['table__col']} ${styles['table__col--second-color']} ${styles['nes-avatar-col']}`}>
+              <NesAvatar image={avatarPlaceholder} size={'large'} alt={'аватар пользователя Username'} />
             </div>
             <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>Username</div>
             <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>1124234</div>
@@ -42,7 +48,7 @@ const LeaderBoard: React.FC = () => {
           <div className={`${styles['table__row']} nes-container is-dark`}>
             <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>1</div>
             <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>
-              <Avatar image={avatarMock} size={'large'} alt={'аватар пользователя Username2'} />
+              <NesAvatar image={avatarPlaceholder} size={'large'} alt={'аватар пользователя Username2'} />
             </div>
             <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>Username2</div>
             <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>43546435</div>
@@ -50,14 +56,14 @@ const LeaderBoard: React.FC = () => {
           </div>
         </div>
         <div className={styles['control-wrapper']}>
-          <NesButton onClick={loadMore} variant='primary' fullWidth>
-            exit
-          </NesButton>
+            <NesButton variant='primary' fullWidth onClick={() => navigate('/')}>
+              exit
+            </NesButton>
         </div>
-      </div>
-
     </div>
-  )
+
+</div>
+)
 }
 
 export default LeaderBoard
