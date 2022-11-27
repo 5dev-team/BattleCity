@@ -1,9 +1,9 @@
 import React, { FormEvent, useState } from 'react'
 
 import styles from './sign-in.module.scss'
-import NesInput from '../../components/UI/nes-input'
-import NesLink from '../../components/UI/nes-link'
-import NesButton from '../../components/UI/nes-button'
+import NesInput from '@/components/UI/nes-input'
+import NesLink from '@/components/UI/nes-link'
+import NesButton from '@/components/UI/nes-button'
 
 const SignIn: React.FC = () => {
   const onSubmit = (e: FormEvent<HTMLFormElement>): void => {
