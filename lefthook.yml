@@ -4,9 +4,9 @@ pre-commit:
     eslint:
       glob: '*.{ts,js,tsx}'
       run: yarn eslint --fix {staged_files}
-      stylelint:
-        glob: '*.{scss}'
-        run: yarn stylelint --fix {staged_files}
+    stylelint:
+      glob: '*.{scss}'
+      run: yarn stylelint --fix {staged_files}
 commit-msg:
   commands:
     commitlint:
