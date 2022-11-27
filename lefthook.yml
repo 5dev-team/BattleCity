@@ -1,9 +1,12 @@
 pre-commit:
   parallel: true
   commands:
-    lint:
-      glob: '*.{ts,tsx,scss}'
-      run: yarn run lint {staged_files}
+    eslint:
+      glob: '*.{ts,js,tsx}'
+      run: yarn eslint --fix {staged_files}
+      stylelint:
+        glob: '*.{scss}'
+        run: yarn stylelint --fix {staged_files}
 commit-msg:
   commands:
     commitlint:
