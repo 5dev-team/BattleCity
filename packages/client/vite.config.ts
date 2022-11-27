@@ -5,6 +5,7 @@ dotenv.config()
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  assetsInclude: ['**/*.png'],
   server: {
     port: Number(process.env.CLIENT_PORT) || 3000,
   },

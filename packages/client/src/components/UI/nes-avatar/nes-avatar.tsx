@@ -1,5 +1,6 @@
 import React, { ButtonHTMLAttributes } from 'react'
 import styles from './nes-avatar.module.scss'
+ import avatarPlaceholder from '../../../assets/avatarPlaceholder.png'
 
 interface IAvatar extends ButtonHTMLAttributes<HTMLImageElement> {
   size?: 'small' | 'medium' | 'large'
@@ -9,11 +10,10 @@ interface IAvatar extends ButtonHTMLAttributes<HTMLImageElement> {
 }
 
 const NesAvatar: React.FC<IAvatar> = ({ image, alt, size, rounded }) => {
-  const avatarMock = 'https://userstock.io/data/wp-content/uploads/2017/07/pexels-photo-218721-1024x1024.jpeg'
 
   return (
     <img className={`nes-avatar is-${size} ${rounded ? 'is-rounded' : ''}${styles['avatar']}`}
-         src={image || avatarMock}
+         src={image || avatarPlaceholder}
          alt={alt || 'аватар пользователя'}
          style={{ imageRendering: 'pixelated' }}
     />

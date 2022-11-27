@@ -2,7 +2,6 @@ import React from 'react'
 import styles from './leaderboard.module.scss'
 import NesButton from '../../components/UI/nes-button'
 import NesAvatar from '../../components/UI/nes-avatar'
-import avatarPlaceholder from '../../assets/avatarPlaceholder.png'
 import { useNavigate } from 'react-router-dom'
 
 const LeaderBoard: React.FC = () => {
@@ -39,7 +38,7 @@ const LeaderBoard: React.FC = () => {
             <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>1</div>
             <div
               className={`${styles['table__col']} ${styles['table__col--second-color']} ${styles['nes-avatar-col']}`}>
-              <NesAvatar image={avatarPlaceholder} size={'large'} alt={'аватар пользователя Username'} />
+              <NesAvatar size={'large'} alt={'аватар пользователя Username'} />
             </div>
             <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>Username</div>
             <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>1124234</div>
@@ -48,7 +47,7 @@ const LeaderBoard: React.FC = () => {
           <div className={`${styles['table__row']} nes-container is-dark`}>
             <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>1</div>
             <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>
-              <NesAvatar image={avatarPlaceholder} size={'large'} alt={'аватар пользователя Username2'} />
+              <NesAvatar size={'large'} alt={'аватар пользователя Username2'} />
             </div>
             <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>Username2</div>
             <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>43546435</div>
