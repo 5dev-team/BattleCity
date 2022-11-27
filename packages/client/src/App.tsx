@@ -8,7 +8,6 @@ const App: React.FC = () => {
     <Router>
       <Routes>
         <Route path='/sign-in' element={<SignIn />} />
-        // TODO: change path before commit
         <Route path='/leaderboard' element={<LeaderBoard />} />
       </Routes>
     </Router>
