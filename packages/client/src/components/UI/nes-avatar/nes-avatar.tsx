@@ -9,13 +9,14 @@ interface IAvatar extends ImgHTMLAttributes<HTMLImageElement> {
   rounded?: boolean
 }
 
-const NesAvatar: React.FC<IAvatar> = ({ image, alt, size, rounded }) => {
+const NesAvatar: React.FC<IAvatar> = ({ image, alt, size, rounded , ...props}) => {
 
   return (
     <img className={`nes-avatar is-${size} ${rounded ? 'is-rounded' : ''} ${styles['avatar']}`}
          src={image || avatarPlaceholder}
          alt={alt || 'аватар пользователя'}
          style={{ imageRendering: 'pixelated' }}
+         {...props}
     />
   )
 
