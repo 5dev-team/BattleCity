@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import SignIn from './pages/sign-in'
-import LeaderBoard from './pages/leaderboard'
+import LeaderBoard from '@/pages/leaderboard'
+import SignIn from '@/pages/sign-in'
 
 const App: React.FC = () => {
   return (
