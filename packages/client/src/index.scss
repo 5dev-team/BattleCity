@@ -1,0 +1,20 @@
+html,
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+.app-wrapper {
+  background-color: #000;
+}
+
+html,
+body,
+#root,
+.app-wrapper {
+  height: 100%;
+}
+
+* {
+  color: #fff;
+}

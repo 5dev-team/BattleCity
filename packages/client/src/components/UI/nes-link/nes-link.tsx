@@ -9,7 +9,9 @@ const NesLink: React.FC<INesLinkProps> = ({ to, children, ...props }) => {
   return (
     <>
       {to ? (
-        <Link to={to} {...props}>{children}</Link>
+        <Link to={to} {...props}>
+          {children}
+        </Link>
       ) : (
         <a {...props}>{children}</a>
       )}
