@@ -6,6 +6,31 @@ import { useNavigate } from 'react-router-dom'
 
 const LeaderBoard: React.FC = () => {
 
+  const tableHeadersProps = [
+    {
+      name: 'id',
+      label: 'ID'
+    },
+    {
+      name: 'avatar',
+      label: 'AVATAR'
+    },
+    {
+      name: 'name',
+      label: 'NAME'
+    },
+    {
+      name: 'score',
+      label: 'SCORE'
+    },
+    {
+      name: 'date',
+      label: 'DATE'
+    }
+  ]
+
+  const navigate = useNavigate()
+
   const loadNextPage = () => {
     console.log('load next page')
   }
@@ -13,7 +38,60 @@ const LeaderBoard: React.FC = () => {
     console.log('load prev page')
   }
 
-  const navigate = useNavigate();
+
+  type UserScoreType = {
+    id: number,
+    name: string,
+    avatar: string,
+    score: number,
+    date: string
+  }
+
+  const userScore: Array<UserScoreType> = [{
+    id: 1,
+    avatar: '',
+    name: 'userName',
+    score: 43546435,
+    date: '07/10/16'
+  },
+    {
+      id: 2,
+      avatar: '',
+      name: 'userName2',
+      score: 32543656,
+      date: '07/10/16'
+    }]
+
+  const userRows = userScore.map((user, index) => {
+    const userRow = Object.entries(user).map(([key, value]) => {
+      if (key === 'avatar') {
+        return (
+          <div
+            key={`${key}-${value}`}
+            className={`${styles['table__col']} ${styles['table__col--second-color']} ${styles['nes-avatar-col']}`}
+          >
+            <NesAvatar size={'large'} alt={`аватар пользователя ${user.name}`} />
+          </div>
+        )
+      }
+      return <div key={`${key}-${value}`} className={styles['table__col']}>{value}</div>
+    })
+
+    const rowDarkClass = index % 2 === 1 ? 'nes-container is-dark' : ''
+    console.log(rowDarkClass)
+    return (
+      <div
+        key={user.id}
+        className={`${styles['table__row']} ${rowDarkClass}`}
+      >
+        {userRow}
+      </div>
+    )
+  })
+
+  const tableHeaders = tableHeadersProps.map((header) => {
+    return <div className={`${styles['table__col']} ${styles['table-header']}`}>{header.label}</div>
+  })
 
   return (
     <div className={styles['leaderboard']}>
@@ -27,42 +105,18 @@ const LeaderBoard: React.FC = () => {
           </NesButton>
         </div>
         <div className={`${styles['leaderboard__table']} ${styles['table']}`}>
-
-          <div className={`${styles['table__col']} ${styles['table-header']}`}>ID</div>
-          <div className={`${styles['table__col']} ${styles['table-header']}`}>AVATAR</div>
-          <div className={`${styles['table__col']} ${styles['table-header']}`}>NAME</div>
-          <div className={`${styles['table__col']} ${styles['table-header']}`}>SCORE</div>
-          <div className={`${styles['table__col']} ${styles['table-header']}`}>DATE</div>
-
-          <div className={styles['table__row']}>
-            <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>1</div>
-            <div
-              className={`${styles['table__col']} ${styles['table__col--second-color']} ${styles['nes-avatar-col']}`}>
-              <NesAvatar size={'large'} alt={'аватар пользователя Username'} />
-            </div>
-            <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>Username</div>
-            <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>1124234</div>
-            <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>07/10/15</div>
-          </div>
-          <div className={`${styles['table__row']} nes-container is-dark`}>
-            <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>1</div>
-            <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>
-              <NesAvatar size={'large'} alt={'аватар пользователя Username2'} />
-            </div>
-            <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>Username2</div>
-            <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>43546435</div>
-            <div className={`${styles['table__col']} ${styles['table__col--second-color']}`}>07/10/16</div>
-          </div>
+          {tableHeaders}
+          {userRows}
         </div>
         <div className={styles['control-wrapper']}>
-            <NesButton variant='primary' fullWidth onClick={() => navigate('/')}>
-              exit
-            </NesButton>
+          <NesButton variant='primary' fullWidth onClick={() => navigate('/')}>
+            exit
+          </NesButton>
         </div>
-    </div>
+      </div>
 
-</div>
-)
+    </div>
+  )
 }
 
 export default LeaderBoard

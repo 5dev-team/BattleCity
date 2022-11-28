@@ -1,7 +1,6 @@
 .leaderboard {
   height: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -14,11 +13,7 @@
 
 .table {
   display: grid;
-  grid-template-columns: 100px 100px repeat(3, minmax(150px, 1fr));
-
-  &__header {
-
-  }
+  grid-template-columns: 100px repeat(4, minmax(150px, 1fr));
 
   &__col {
     padding: 20px;
@@ -28,7 +23,7 @@
   &__row {
     grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: 100px 100px repeat(3, minmax(150px, 1fr));
+    grid-template-columns: 100px repeat(4, minmax(150px, 1fr));
     margin: 4px;
     padding: 0;
     border: none;
