@@ -1,0 +1,12 @@
+.canvas {
+  display: flex;
+  background-color: #3a4045;
+  min-height: 100vh;
+
+  &__game {
+    margin: auto;
+    display: flex;
+    background-color: black;
+  }
+
+}
