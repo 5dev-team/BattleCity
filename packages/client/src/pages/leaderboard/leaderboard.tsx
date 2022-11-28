@@ -62,23 +62,22 @@ const LeaderBoard: React.FC = () => {
       date: '07/10/16'
     }]
 
-  const userRows = userScore.map((user, index) => {
+  const userRows = React.useMemo(() => userScore.map((user, index) => {
     const userRow = Object.entries(user).map(([key, value]) => {
       if (key === 'avatar') {
         return (
           <div
-            key={`${key}-${value}`}
+            key={`${user.id}-${value}`}
             className={`${styles['table__col']} ${styles['table__col--second-color']} ${styles['nes-avatar-col']}`}
           >
             <NesAvatar size={'large'} alt={`аватар пользователя ${user.name}`} />
           </div>
         )
       }
-      return <div key={`${key}-${value}`} className={styles['table__col']}>{value}</div>
+      return <div key={`${user.id}-${value}`} className={styles['table__col']}>{value}</div>
     })
 
     const rowDarkClass = index % 2 === 1 ? 'nes-container is-dark' : ''
-    console.log(rowDarkClass)
     return (
       <div
         key={user.id}
@@ -87,7 +86,7 @@ const LeaderBoard: React.FC = () => {
         {userRow}
       </div>
     )
-  })
+  }),[userScore])
 
   const tableHeaders = tableHeadersProps.map((header) => {
     return <div className={`${styles['table__col']} ${styles['table-header']}`}>{header.label}</div>
