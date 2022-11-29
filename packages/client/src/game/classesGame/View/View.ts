@@ -1,11 +1,13 @@
-import { ITank } from '../Tanks/types'
-import { IBase } from '../Base/types'
 import { ISprite } from '../Sprite/types'
-import { IView, iObjectOfWorld } from './types'
+import {iObjectOfWorld } from './types'
 import { NUMBER_OF_UNITS, TILE_SIZE, UNIT_SIZE } from '../../helpersGame/constants'
-import Sprite from '../Sprite/Sprite'
+import Base from '../Base/Base'
+import Tank from '../Tanks/Tanks'
+import Wall from '../Wall/Wall'
+import World from '../World/World'
 
-export default class View implements IView {
+
+export default class View {
   public canvas: HTMLCanvasElement
   public context: CanvasRenderingContext2D
   public sprite: ISprite
@@ -27,30 +29,35 @@ export default class View implements IView {
     await this.sprite.load()
   }
 
-  public update(world: any): void {
+  public update(world: World): void {
     this.clearScreen()
     this.renderObjects(world.objects)
     this.renderGrid()
   };
 
 
-  public renderObjects(objects: (IBase | any | ITank)[]): void {
-    for (const object of objects) {
-      const { x, y, width, height, sprite }: iObjectOfWorld = object
-
-      this.context.drawImage(
-        this.sprite.image,
-        ...sprite,
-        x, y, width, height
-      )
-
-      if (object.debug) {
-        this.context.strokeStyle = '#ff0000'
-        this.context.lineWidth = 2
-        this.context.strokeRect(x + 1, y + 1, width - 2, height - 2)
-        object.debug = false
+  public renderObjects(objects: (Base | Tank | 0 | Wall | undefined)[] | undefined): void {
+    if(objects){
+      for (const object of objects) {
+        if(object){
+          const { x, y, width, height, sprite }: iObjectOfWorld = object
+          const [sp1, sp2, sp3, sp4]: number[] = sprite;
+          this.context.drawImage(
+            this.sprite.image,
+            sp1, sp2, sp3, sp4,
+            x, y, width, height
+          )
+        }
+        //Включение дебага НЕ УДАЛЯТЬ! world.getCollision
+        // if (object.debug) {
+        //   this.context.strokeStyle = '#fafafa'
+        //   this.context.lineWidth = 2
+        //   this.context.strokeRect(x + 1, y + 1, width - 2, height - 2)
+        //   object.debug = false
+        // }
       }
     }
+
   }
 
   private renderGrid() {
@@ -72,7 +79,7 @@ export default class View implements IView {
   }
 
 
-  public renderPlayer1Tank(player1Tank: ITank): void {
+  public renderPlayer1Tank(player1Tank: Tank): void {
     const [x, y, width, height]: number[] = player1Tank.sprite
 
     this.context.drawImage(

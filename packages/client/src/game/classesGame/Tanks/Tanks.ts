@@ -1,10 +1,10 @@
 import { Direction, Keys, TANK_TURN_THRESHOLD, TILE_SIZE } from '../../helpersGame/constants'
-import { ITank, ITankConstructor } from './types'
+import { ITankConstructor } from './types'
 import GameObject from '../GameObject/GameObject'
 import { getAxisForDirection, getDirectionForKeys, getValueForDirection } from '../../helpersGame/helpers'
 import World from '../World/World'
 
-export default class Tank extends GameObject implements ITank {
+export default class Tank extends GameObject {
   direction: number
   speed: number
 

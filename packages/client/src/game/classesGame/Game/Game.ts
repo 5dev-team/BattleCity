@@ -1,14 +1,16 @@
-import { IGame, IGameConstructor, ISet } from './types'
+import { IGameConstructor, ISet } from './types'
 import { Level } from '../../helpersGame/levels'
+import World from '../World/World'
+import View from '../View/View'
 
-export default class Game implements IGame {
-  public world: any
-  public view: any
+export default class Game {
+  public world: World
+  public view: View
   public levels: Level[]
   public isMoving: boolean
   public activeKeys: ISet<string>
   public level: number
-  public stages: any
+  public stages: Level[]
   public stage: number
 
   constructor({ world, view, levels }: IGameConstructor) {
@@ -24,7 +26,7 @@ export default class Game implements IGame {
   }
 
   public async init() {
-    this.view.init()
+    await this.view.init()
     this.world.setStage(this.stages[this.stage])
 
     document.addEventListener('keydown', (e) => {

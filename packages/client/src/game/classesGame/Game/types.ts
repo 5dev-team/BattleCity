@@ -1,22 +1,6 @@
-
-export interface IGame {
-  readonly world: any
-  readonly view: any
-  readonly levels: any
-  readonly isMoving: boolean
-  readonly activeKeys: ISet<string>
-  readonly level: number
-  readonly stages: any
-  readonly stage: number
-
-  init(): void;
-
-  start(): void;
-
-  loop(): void;
-}
-
-//
+import World from '../World/World'
+import { Level } from '../../helpersGame/levels'
+import View from '../View/View'
 
 export interface ISet<T> {
   add(value: T): this;
@@ -33,7 +17,7 @@ export interface ISet<T> {
 }
 
 export interface IGameConstructor {
-  world: any,
-  view: any,
-  levels: any
+  world: World,
+  view: View,
+  levels: Level[]
 }

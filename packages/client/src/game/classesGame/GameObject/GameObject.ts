@@ -1,6 +1,6 @@
-import { IGameObject, IGameObjectConstructor } from './types'
+import { IGameObjectConstructor } from './types'
 
-export default class GameObject implements IGameObject{
+export default class GameObject{
   x: number;
   y: number;
   width: number;

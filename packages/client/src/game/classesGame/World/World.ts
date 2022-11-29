@@ -1,5 +1,5 @@
 import Tank from '../Tanks/Tanks'
-import { IWorld } from './types'
+import { BASE_X, BASE_Y } from '../../helpersGame/constants'
 import {
   BASE_SPRITES,
   Direction,
@@ -14,41 +14,37 @@ import {
 import Base from '../Base/Base'
 import Stage from '../Stage/Stage'
 import { Level } from '../../helpersGame/levels'
-import { IBase } from '../Base/types'
-import { ITank } from '../Tanks/types'
+import Wall from '../Wall/Wall'
 
-
-export default class World implements IWorld {
-  public BASE_X: number
-  public BASE_Y: number
-  public stage: null | Stage;
-  public base: IBase;
-  public player1Tank: ITank;
-  public player2Tank: null;
-  public enemyTanks: null;
+export default class World {
+  public stage: Stage | null
+  public base: Base
+  public player1Tank: Tank
+  public player2Tank: null
+  public enemyTanks: []
 
   constructor() {
-    this.stage = null;
+
+    this.stage = null
     this.base = new Base({
       destroyed: false,
-      x: this.BASE_X,
-      y: this.BASE_Y,
+      x: BASE_X,
+      y: BASE_Y,
       width: UNIT_SIZE,
       height: UNIT_SIZE,
       sprites: BASE_SPRITES
-    });
+    })
     this.player1Tank = new Tank({
       x: PLAYER1_TANK_START_X,
       y: PLAYER1_TANK_START_Y,
       width: TANK_WIDTH,
       height: TANK_HEIGHT,
       sprites: PLAYER1_TANK_SPRITES,
-      rest: undefined,
       direction: Direction.UP,
       speed: TANK_SPEED
-    });
-    this.player2Tank = null;
-    this.enemyTanks = [];
+    })
+    this.player2Tank = null
+    this.enemyTanks = []
   }
 
 
@@ -76,17 +72,20 @@ export default class World implements IWorld {
     return 0
   }
 
+
   get objects() {
-    return [this.base, this.player1Tank, ...this.stage.objects];
+    if(this.stage){
+      return [this.base, this.player1Tank, ...this.stage.objects]
+    }
   }
 
 
   public update(activeKeys: { has(value: string): boolean; }) {
-    this.player1Tank.update(this, activeKeys);
+    this.player1Tank.update(this, activeKeys)
   }
 
 
-  public isOutOfBounds(object: Iobject): boolean {
+  public isOutOfBounds(object: Tank): boolean {
     return (
       object.top < this.top ||
       object.right > this.right ||
@@ -95,40 +94,41 @@ export default class World implements IWorld {
     )
   }
 
-  setStage(level: Level) {
-    this.stage = new Stage(level);
+  setStage(level: Level): void {
+    this.stage = new Stage(level)
   }
 
   public hasCollision(object: Tank): boolean {
-    const collision = this.getCollision(object);
-    return Boolean(collision);
+    const collision = this.getCollision(object)
+    return Boolean(collision)
   }
 
 
-
-  public getCollision(object: ITank): { object: boolean } | undefined {
-    const collisionObject : boolean  = this.getCollisionObject(object)
+  public getCollision(object: Tank): { object: Wall | undefined | 0 } | undefined {
+    const collisionObject: Wall | undefined | 0 = this.getCollisionObject(object)
     if (collisionObject) {
-      // collisionObject.debug = true;
-      return { object: collisionObject };
+        // включение дебага
+        // collisionObject.debug = false;
+        //\@ts-ignore
+      return { object: collisionObject }
     }
-
   }
 
-  public getCollisionObject(object: ITank): boolean {
-    return this.stage.objects
-      .find(block => block && this.haveCollision(object, block));
+  public getCollisionObject(object: Tank): Wall | undefined | 0 {
+    if (this.stage) {
+      return this.stage.objects
+        .find(block => block && this.haveCollision(object, block))
+    }
   }
 
 
-
-  private haveCollision(a: ITank, b: IWall): boolean {
+  private haveCollision(a: Tank, b: Wall): boolean {
     return (
       a.left < b.right &&
       a.right > b.left &&
       a.top < b.bottom &&
       a.bottom > b.top
-    );
+    )
   }
 }
 
