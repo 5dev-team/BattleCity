@@ -1,10 +1,9 @@
 import React, {useEffect, useRef} from 'react';
-import World from "../../game/classesGame/World";
-import View from "../../game/classesGame/View";
-import GameTank from "../../game/classesGame/Game";
+import World from "../../game/classesGame/World/World";
+import View from "../../game/classesGame/View/View";
+import GameTank from "../../game/classesGame/Game/Game";
 import {levels} from "../../game/helpersGame/levels";
-import spriteMap from "../../game/helpersGame/sprite.map";
-import Sprite from "../../game/classesGame/Sprite";
+import Sprite from "../../game/classesGame/Sprite/Sprite";
 import spritePNG from '../../game/spriteGame/sprite_1.png'
 import { ISprite } from '../../game/classesGame/types/types'
 
@@ -15,7 +14,7 @@ const Game: React.FC = () => {
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
-      const sprite: ISprite = new Sprite(spritePNG, spriteMap);
+      const sprite: ISprite = new Sprite(spritePNG);
       const game =  new GameTank({
         world: new World(),
         view: new View(canvas, sprite),
