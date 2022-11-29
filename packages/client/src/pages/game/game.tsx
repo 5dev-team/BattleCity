@@ -5,7 +5,6 @@ import GameTank from "../../game/classesGame/Game/Game";
 import {levels} from "../../game/helpersGame/levels";
 import Sprite from "../../game/classesGame/Sprite/Sprite";
 import spritePNG from '../../game/spriteGame/sprite_1.png'
-import { ISprite } from '../../game/classesGame/types/types'
 
 import styles from './game.module.scss'
 
@@ -14,7 +13,7 @@ const Game: React.FC = () => {
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
-      const sprite: ISprite = new Sprite(spritePNG);
+      const sprite: Sprite = new Sprite(spritePNG);
       const game =  new GameTank({
         world: new World(),
         view: new View(canvas, sprite),
