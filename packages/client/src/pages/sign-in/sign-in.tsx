@@ -32,8 +32,14 @@ const SignIn: React.FC = () => {
             fullWidth
             onChange={e => setForm({ ...form, password: e.target.value })}
           />
-          <NesButton type="submit">Sign In</NesButton>
-          <NesLink to="/sign-up">Not registered yet?</NesLink>
+          <NesButton type='submit' variant='primary'>
+            Sign In
+          </NesButton>
+          <NesLink
+            to='/sign-up'
+          >
+            Not registered yet?
+          </NesLink>
         </form>
       </div>
     </div>
