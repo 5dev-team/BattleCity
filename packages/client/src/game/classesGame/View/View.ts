@@ -1,5 +1,5 @@
 import { ISprite } from '../Sprite/types'
-import {iObjectOfWorld } from './types'
+import { iObjectOfWorld } from './types'
 import { NUMBER_OF_UNITS, TILE_SIZE, UNIT_SIZE } from '../../helpersGame/constants'
 import Base from '../Base/Base'
 import Tank from '../Tanks/Tanks'
@@ -37,11 +37,12 @@ export default class View {
 
 
   public renderObjects(objects: (Base | Tank | 0 | Wall | undefined)[] | undefined): void {
-    if(objects){
+    if (objects) {
       for (const object of objects) {
-        if(object){
+        if (object) {
           const { x, y, width, height, sprite }: iObjectOfWorld = object
-          const [sp1, sp2, sp3, sp4]: number[] = sprite;
+          if (!sprite) return
+          const [sp1, sp2, sp3, sp4]: number[] = sprite
           this.context.drawImage(
             this.sprite.image,
             sp1, sp2, sp3, sp4,

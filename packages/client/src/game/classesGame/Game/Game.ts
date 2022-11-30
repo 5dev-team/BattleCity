@@ -12,7 +12,7 @@ export default class Game {
   public level: number
   public stages: Level[]
   public stage: number
-
+  public lastFrame: number;
   constructor({ world, view, levels }: IGameConstructor) {
     this.world = world
     this.view = view
@@ -22,6 +22,7 @@ export default class Game {
     this.stages = levels
     this.stage = 0
     this.isMoving = false
+    this.lastFrame = 0;
     this.loop = this.loop.bind(this)
   }
 
@@ -60,12 +61,14 @@ export default class Game {
     requestAnimationFrame(this.loop)
   }
 
-  public loop() {
+  public loop(currentFrame: number) {
     // get input;
     // update world;
     // update view;
-    this.world.update(this.activeKeys)
+    const frameDelta: number = currentFrame - this.lastFrame
+    this.world.update(this.activeKeys, frameDelta)
     this.view.update(this.world)
+    this.lastFrame = currentFrame;
     requestAnimationFrame(this.loop)
   }
 

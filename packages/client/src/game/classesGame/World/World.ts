@@ -15,6 +15,7 @@ import Base from '../Base/Base'
 import Stage from '../Stage/Stage'
 import { Level } from '../../helpersGame/levels'
 import Wall from '../Wall/Wall'
+import Projectile from '../Projectile/Projectile'
 
 export default class World {
   public stage: Stage | null
@@ -22,7 +23,7 @@ export default class World {
   public player1Tank: Tank
   public player2Tank: null
   public enemyTanks: []
-
+  public projectile: []
   constructor() {
 
     this.stage = null
@@ -45,6 +46,7 @@ export default class World {
     })
     this.player2Tank = null
     this.enemyTanks = []
+    this.projectile = []
   }
 
 
@@ -73,15 +75,26 @@ export default class World {
   }
 
 
-  get objects() {
+  get objects(): (Base | Tank | (0 | Wall | undefined) | Projectile)[] | undefined {
     if(this.stage){
-      return [this.base, this.player1Tank, ...this.stage.objects]
+      return [this.base, this.player1Tank, ...this.stage.objects, ...this.projectile]
     }
   }
 
 
-  public update(activeKeys: { has(value: string): boolean; }) {
-    this.player1Tank.update(this, activeKeys)
+  public update(activeKeys: { has(value: string): boolean; }, frameDelta: number) {
+    //Polymorphism
+    if(this.objects){
+      this.objects.forEach((object: (Base | Tank | (0 | Wall | undefined) | Projectile)[] | undefined) => {
+        if(object){
+          return object.update(this, activeKeys, frameDelta)
+        }
+      })
+    }
+    // this.player1Tank.update(this, activeKeys, frameDelta)
+    // if(this.projectile[0]){
+    //   this.projectile[0].update(this, frameDelta)
+    // }
   }
 
 

@@ -1,17 +1,30 @@
-import { Direction, Keys, TANK_TURN_THRESHOLD, TILE_SIZE } from '../../helpersGame/constants'
+import {
+  Direction,
+  Keys,
+  TANK_TURN_THRESHOLD,
+  TILE_SIZE,
+  PROJECTILE_WIDTH,
+  PROJECTILE_HEIGHT,
+  PROJECTILE_SPRITES, PROJECTILE_SPEED
+} from '../../helpersGame/constants'
 import { ITankConstructor } from './types'
 import GameObject from '../GameObject/GameObject'
 import { getAxisForDirection, getDirectionForKeys, getValueForDirection } from '../../helpersGame/helpers'
 import World from '../World/World'
+import Projectile from '../Projectile/Projectile'
 
 export default class Tank extends GameObject {
   direction: number
   speed: number
+  isFire: boolean
+  projectile: null | Projectile
 
   constructor({ direction, speed, ...rest }: ITankConstructor) {
     super(rest)
     this.direction = direction
     this.speed = speed
+    this.projectile = null
+    this.isFire = false
   }
 
 
@@ -25,7 +38,7 @@ export default class Tank extends GameObject {
     const value = getValueForDirection(direction)
     const delta = value * this.speed
 
-    this.animationFrame ^= 1
+
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -42,7 +55,7 @@ export default class Tank extends GameObject {
   }
 
 
-  update(world: World, activeKeys: { has(value: string): boolean; }): void {
+  update(world: World, activeKeys: { has(value: string): boolean }, frameDelta: number): void {
 
     if (
       activeKeys.has(Keys.UP) ||
@@ -54,10 +67,14 @@ export default class Tank extends GameObject {
       if (direction != undefined) {
         this.turn(world, direction)
         this.move(world, direction)
+        this.animate(frameDelta);
       }
-
+    }
+    if (activeKeys.has(Keys.SPACE)) {
+        this.fire(world)
     }
   }
+
 
   private turn(world: World, direction: number) {
     const prevDirection = this.direction
@@ -94,5 +111,34 @@ export default class Tank extends GameObject {
     }
   }
 
+  private fire(world: World){
+    let projectile
+    console.log(this.projectile)
+    if (!this.projectile) {
+      projectile = new Projectile({
+        tank: this,
+        x: this.x,
+        y: this.y,
+        width: PROJECTILE_WIDTH,
+        height: PROJECTILE_HEIGHT,
+        sprites: PROJECTILE_SPRITES,
+        speed: PROJECTILE_SPEED,
+        direction: this.direction
+      })
+    }
+    this.projectile = projectile
+    world.projectile.push(projectile)
+  }
 
+  private animate(frameDelta: number){
+    this.frames += frameDelta
+    if(this.frames > 100){
+      this.animationFrame ^= 1
+      this.frames = 0
+    }
+
+  }
 }
+
+
+

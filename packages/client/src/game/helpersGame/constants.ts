@@ -9,7 +9,8 @@ export const Keys: IKeys = {
   UP: 'ArrowUp',
   RIGHT: 'ArrowRight',
   DOWN: 'ArrowDown',
-  LEFT: 'ArrowLeft'
+  LEFT: 'ArrowLeft',
+  SPACE: 'Space'
 }
 
 export const Direction: IDerection = {
@@ -28,8 +29,25 @@ export const ObjectType: IObjectType = {
   ICE: 5
 }
 
+export const PROJECTILE_WIDTH = UNIT_SIZE
+export const PROJECTILE_HEIGHT = UNIT_SIZE
+export const PROJECTILE_SPEED = 2
+
+export const PROJECTILE_SPRITES: TSprites = [
+  [20 * UNIT_SIZE, 6 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE],
+  [16 * UNIT_SIZE, 8 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE],
+  [17 * UNIT_SIZE, 8 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE],
+  [18 * UNIT_SIZE, 8 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE]
+]
+
+
+
 export const BASE_X = 6 * UNIT_SIZE
 export const BASE_Y = 12 * UNIT_SIZE
+export const BASE_SPRITES: TSprites = [
+  [19 * UNIT_SIZE, 2 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE],
+  [20 * UNIT_SIZE, 2 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE]
+]
 
 export const PLAYER1_TANK_START_X = 4 * UNIT_SIZE
 export const PLAYER1_TANK_START_Y = 12 * UNIT_SIZE
@@ -39,14 +57,11 @@ export const TANK_HEIGHT = UNIT_SIZE
 export const TANK_SPEED = 1
 export const TANK_TURN_THRESHOLD = 12
 
-export const BASE_SPRITES: TSprites = [
-  [19 * UNIT_SIZE, 2 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE],
-  [20 * UNIT_SIZE, 2 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE]
-]
+
 
 export const PLAYER1_TANK_SPRITES: TSprites = [
   [0, 0, UNIT_SIZE, UNIT_SIZE],
-  [1, 0, UNIT_SIZE, UNIT_SIZE],
+  [UNIT_SIZE, 0, UNIT_SIZE, UNIT_SIZE],
   [6 * UNIT_SIZE, 0, UNIT_SIZE, UNIT_SIZE],
   [7 * UNIT_SIZE, 0, UNIT_SIZE, UNIT_SIZE],
   [4 * UNIT_SIZE, 0, UNIT_SIZE, UNIT_SIZE],
@@ -70,3 +85,5 @@ export const STEEL_WALL_SPRITES: TSprites = [
   [19 * UNIT_SIZE, 4.5 * UNIT_SIZE, TILE_SIZE, TILE_SIZE], // left
   [20 * UNIT_SIZE, 4.5 * UNIT_SIZE, TILE_SIZE, TILE_SIZE] // top
 ]
+
+

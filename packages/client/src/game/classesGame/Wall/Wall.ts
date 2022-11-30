@@ -1,4 +1,4 @@
-import { IWallConstructor, IWall } from './types'
+import { IWallConstructor } from './types'
 import GameObject from '../GameObject/GameObject'
 
 

@@ -7,6 +7,7 @@ export default class GameObject{
   height: number;
   sprites: number[][];
   animationFrame: number;
+  public frames: number
   constructor({ x, y, width, height, sprites }: IGameObjectConstructor) {
     this.x = x
     this.y = y
@@ -14,6 +15,7 @@ export default class GameObject{
     this.height = height
     this.sprites = sprites
     this.animationFrame = 0
+    this.frames = 0
   }
 
   public get top() {
@@ -30,5 +32,9 @@ export default class GameObject{
 
   public get left() {
     return this.x
+  }
+
+  update(){
+      return
   }
 }

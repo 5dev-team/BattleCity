@@ -11,6 +11,7 @@ export interface IKeys {
   RIGHT: string,
   DOWN: string,
   LEFT: string,
+  SPACE: string,
 }
 
 export interface IObjectType {
