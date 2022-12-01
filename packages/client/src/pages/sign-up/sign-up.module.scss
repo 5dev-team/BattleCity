@@ -23,8 +23,8 @@
     width: 100%;
     gap: 20px;
     @media (max-height: 800px) {
-      flex-direction: row;
-      flex-wrap: wrap;
+      flex-flow: row wrap;
+
       & > * {
         width: 45%;
       }
