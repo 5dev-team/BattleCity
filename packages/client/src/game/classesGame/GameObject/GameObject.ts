@@ -1,13 +1,21 @@
 import { IGameObjectConstructor } from './types'
 
-export default class GameObject{
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  sprites: number[][];
-  animationFrame: number;
+export default class GameObject {
+  static Direction = {
+    UP: 0,
+    RIGHT: 1,
+    DOWN: 2,
+    LEFT: 3
+  }
+
+  public x: number
+  public y: number
+  public width: number
+  public height: number
+  public sprites: number[][]
+  public animationFrame: number
   public frames: number
+
   constructor({ x, y, width, height, sprites }: IGameObjectConstructor) {
     this.x = x
     this.y = y
@@ -18,23 +26,27 @@ export default class GameObject{
     this.frames = 0
   }
 
-  public get top() {
+  public get top(): number {
     return this.y
   }
 
-  public get right() {
+  public get right(): number {
     return this.x + this.width
   }
 
-  public get bottom() {
+  public get bottom(): number {
     return this.y + this.height
   }
 
-  public get left() {
+  public get left(): number {
     return this.x
   }
 
-  update(){
-      return
+  public update(): void {
+    return
+  }
+
+  public hit(): void {
+    console.log('hitObject')
   }
 }

@@ -1,5 +1,7 @@
 import { TSprites } from '../../helpersGame/types'
-import Tank from '../Tanks/Tanks'
+import Tank from '../Tank/Tank'
+
+
 
 export interface IProjectile {
   tank: Tank;
@@ -11,3 +13,4 @@ export interface IProjectile {
   direction: number;
   speed: number;
 }
+

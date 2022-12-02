@@ -1,6 +1,6 @@
-import World from '../World/World'
 import { Level } from '../../helpersGame/levels'
 import View from '../View/View'
+import Input from '../Input/Input'
 
 export interface ISet<T> {
   add(value: T): this;
@@ -17,7 +17,7 @@ export interface ISet<T> {
 }
 
 export interface IGameConstructor {
-  world: World,
+  input: Input,
   view: View,
   levels: Level[]
 }

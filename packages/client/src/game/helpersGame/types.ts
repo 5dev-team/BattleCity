@@ -25,3 +25,5 @@ export interface IObjectType {
 }
 
 export type TSprites = [number, number, number, number][]
+
+export type TDefaultPosition = [number, number]

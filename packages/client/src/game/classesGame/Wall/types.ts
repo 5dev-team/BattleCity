@@ -1,12 +1,9 @@
-import { IGameObject, IGameObjectConstructor } from '../GameObject/types'
+import { IGameObjectConstructor } from '../GameObject/types'
 import { TSprites } from '../../helpersGame/types'
 
 export interface IWallConstructor extends IGameObjectConstructor{
-  type: number
+  type: string | undefined
   sprites: TSprites;
 }
 
-export interface IWall extends IGameObject{
-  type: number;
-  readonly sprite: number[]
-}
+

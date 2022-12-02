@@ -1,74 +1,54 @@
-import { IGameConstructor, ISet } from './types'
+import { IGameConstructor } from './types'
 import { Level } from '../../helpersGame/levels'
-import World from '../World/World'
 import View from '../View/View'
+import Input from '../Input/Input'
+import Tank from '../Tank/Tank'
+import Stage from '../Stage/Stage'
 
 export default class Game {
-  public world: World
+  public input: Input
   public view: View
-  public levels: Level[]
-  public isMoving: boolean
-  public activeKeys: ISet<string>
-  public level: number
   public stages: Level[]
-  public stage: number
-  public lastFrame: number;
-  constructor({ world, view, levels }: IGameConstructor) {
-    this.world = world
+  public player1: null | Tank
+  public player2: null | Tank
+  public stage?: Stage | null
+  public lastFrame: number
+  public frames: number
+  public stageIndex: number
+
+  constructor({ input, view, levels }: IGameConstructor) {
+    this.input = input
     this.view = view
-    this.activeKeys = new Set()
-    this.levels = levels
-    this.level = 0
     this.stages = levels
-    this.stage = 0
-    this.isMoving = false
-    this.lastFrame = 0;
+    this.player1 = null
+    this.player2 = null
+    this.stage = null
+    this.stageIndex = 0
+    this.frames = 0
+    this.lastFrame = 0
     this.loop = this.loop.bind(this)
   }
 
-  public async init() {
+  public async init(): Promise<void> {
     await this.view.init()
-    this.world.setStage(this.stages[this.stage])
-
-    document.addEventListener('keydown', (e) => {
-      switch (e.code) {
-        case 'ArrowUp':
-        case 'ArrowRight':
-        case 'ArrowDown':
-        case 'ArrowLeft':
-        case 'Space':
-        case 'Enter':
-          e.preventDefault()  // for f5 reload page
-          this.activeKeys.add(e.code)
-      }
-    })
-
-    document.addEventListener('keyup', (e) => {
-      switch (e.code) {
-        case 'ArrowUp':
-        case 'ArrowRight':
-        case 'ArrowDown':
-        case 'ArrowLeft':
-        case 'Space':
-        case 'Enter':
-          e.preventDefault()   // for f5 reload page
-          this.activeKeys.delete(e.code)
-      }
-    })
   }
 
-  public start() {
+  public start(): void {
+    this.stage = new Stage(this.stages[this.stageIndex])
     requestAnimationFrame(this.loop)
   }
 
-  public loop(currentFrame: number) {
-    // get input;
-    // update world;
-    // update view;
+  private loop(currentFrame: number): void {
+    //main method
     const frameDelta: number = currentFrame - this.lastFrame
-    this.world.update(this.activeKeys, frameDelta)
-    this.view.update(this.world)
-    this.lastFrame = currentFrame;
+    if (this.stage instanceof Stage) {
+      this.stage.update(this.input, frameDelta)
+    }
+    if (this.stage) {
+      this.view.update(this.stage)
+    }
+    this.frames = 0
+    this.lastFrame = currentFrame
     requestAnimationFrame(this.loop)
   }
 

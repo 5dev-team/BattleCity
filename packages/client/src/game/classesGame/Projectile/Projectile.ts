@@ -1,76 +1,115 @@
 import GameObject from '../GameObject/GameObject'
-import { IProjectile } from './type'
-import { getAxisForDirection, getDirectionForKeys, getValueForDirection } from '../../helpersGame/helpers'
-import World from '../World/World'
-import Tank from '../Tanks/Tanks'
+import { getAxisForDirection, getValueForDirection } from '../../helpersGame/helpers'
+import Explosion from '../Explosion/Explosion'
+import { PROJECTILE_HEIGHT, PROJECTILE_SPEED, PROJECTILE_SPRITES, PROJECTILE_WIDTH } from '../../helpersGame/constants'
+import Stage from '../Stage/Stage'
+import Tank from '../Tank/Tank'
+import { TSprites } from '../../helpersGame/types'
+import { IGameObjectConstructor } from '../GameObject/types'
 
 
 export default class Projectile extends GameObject {
-  public speed: number
+  public type: string
+  public width: number
+  public height: number
+  public sprites: TSprites
   public direction: number
+  public speed: number
   public tank: Tank
-  public isExploded: boolean
-  isDestroyed: boolean
+  public explosion: null | Explosion
 
-  constructor({ tank, direction, speed, ...args }: IProjectile) {
-    super(args)
-    this.tank = tank
-    this.speed = speed
+  constructor({
+                tank,
+                direction,
+                ...args
+              }: { tank: Tank, direction: number } | { tank: Tank, direction: number, x: number, y: number, speed: number }) {
+    super(<IGameObjectConstructor>args)
+    this.type = 'bullet'
+    this.width = PROJECTILE_WIDTH
+    this.height = PROJECTILE_HEIGHT
+    this.sprites = PROJECTILE_SPRITES
     this.direction = direction
-    this.isExploded = false
-    this.isDestroyed = false
-    this.animationFrame = 1
+    this.speed = PROJECTILE_SPEED
+    this.tank = tank
+    this.explosion = null
   }
 
+  get sprite(): number[] {
+    return this.sprites[this.direction]
+  }
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  update(world: World, activeKeys: { has(value: string): boolean }, frameDelta: number) {
-    this.animate(frameDelta)
-    this.move(world, frameDelta)
+  public update({ world }: { world: Stage }): void {
 
-  }
-
-  private animate(frameDelta: number) {
-    this.frames += frameDelta
-    if (!this.isExploded && !this.isDestroyed) {
-      return
-    }
-    if (this.animationFrame === 4) {
-      this.isDestroyed = true
-    } else if(this.frames > 1000) {
-      this.animationFrame += 1
-      this.frames = 0
-    }
-  }
-
-  private move(world: World, frameDelta: number) {
     const axis = getAxisForDirection(this.direction)
     const value = getValueForDirection(this.direction)
-    const delta = value * this.speed
 
-    this.animate(frameDelta)
-    if (this.isDestroyed) {
-      [world.projectile] = world.projectile.filter(projectile => projectile !== this)
-    } else {
-      this[axis] += delta
-      const isOutOfBounds = world.isOutOfBounds(this)
-      const hasCollision = world.hasCollision(this)
+    this.move(axis, value)
 
-      if (isOutOfBounds || hasCollision) {
-        this.isExploded = true
-        this.speed = 0
+    const isOutOfBounds = world.isOutOfBounds(this)
+    const collision = world.getCollision(this)
+
+    if (isOutOfBounds) {
+      this.destroy(world)
+    } else if (collision) {
+      if (this.collide(collision.objects)) {
+        this.destroy(world)
       }
     }
-
   }
 
-  get sprite() {
-    if (!this.isExploded && !this.isDestroyed) {
-      return this.sprites[0]
-    }
-    this.animationFrame = this.animationFrame % this.sprites.length
-    return this.sprites[this.animationFrame]
+  private destroy(stage: Stage) {
 
+    this.speed = 0
+
+    if (!this.explosion) {
+      const [x, y]: number[] = this.getExplosionStartingPosition()
+
+      this.explosion = new Explosion({
+        x,
+        y
+      })
+
+      stage.objects.add(this.explosion)
+    } else if (this.explosion.exploded) {
+      stage.objects.delete(this.explosion) // удаляем взрыв из мира
+      stage.objects.delete(this) // удаляем projectile из мира
+      this.tank.bullet = null
+      this.explosion = null
+    }
+  }
+
+  private move(axis: string, value: number): void {
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this[axis] += value * this.speed
+  }
+
+  private collide(objects: any) {
+    for (const object of objects) {
+      if (object === this.tank || object === this.explosion) continue
+      object.hit(this)
+
+      return true
+    }
+
+    return false
+  }
+
+  private getExplosionStartingPosition(): number[] {
+    switch (this.direction) {
+      case GameObject.Direction.UP:
+        return [this.left - 10, this.top - 12]
+      case GameObject.Direction.RIGHT:
+        return [this.right - 16, this.top - 12]
+      case GameObject.Direction.DOWN:
+        return [this.left - 10, this.bottom - 16]
+      case GameObject.Direction.LEFT:
+        return [this.left - 16, this.top - 12]
+      default:
+        return [this.left - 10, this.top - 12]
+    }
   }
 }

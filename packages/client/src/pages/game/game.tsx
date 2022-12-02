@@ -1,12 +1,11 @@
 import React, {useEffect, useRef} from 'react';
-import World from "../../game/classesGame/World/World";
 import View from "../../game/classesGame/View/View";
 import GameTank from "../../game/classesGame/Game/Game";
 import {levels} from "../../game/helpersGame/levels";
 import Sprite from "../../game/classesGame/Sprite/Sprite";
 import spritePNG from '../../game/spriteGame/sprite_1.png'
-
 import styles from './game.module.scss'
+import Input from '../../game/classesGame/Input/Input'
 
 const Game: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -15,9 +14,9 @@ const Game: React.FC = () => {
       const canvas = canvasRef.current;
       const sprite: Sprite = new Sprite(spritePNG);
       const game =  new GameTank({
-        world: new World(),
+        input: new Input(),
         view: new View(canvas, sprite),
-        levels,
+        levels
       });
       game.init().then(() =>  game.start());
     }

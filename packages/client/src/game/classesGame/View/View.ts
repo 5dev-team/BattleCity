@@ -1,10 +1,13 @@
 import { ISprite } from '../Sprite/types'
 import { iObjectOfWorld } from './types'
 import { NUMBER_OF_UNITS, TILE_SIZE, UNIT_SIZE } from '../../helpersGame/constants'
+import Stage from '../Stage/Stage'
+import { ISet } from '../Game/types'
 import Base from '../Base/Base'
-import Tank from '../Tanks/Tanks'
-import Wall from '../Wall/Wall'
-import World from '../World/World'
+import PlayerTank from '../PlayerTank/PlayerTank'
+import SteelWall from '../SteelWall/SteelWall'
+import BrickWall from '../BrickWall/BrickWall'
+import { TObjects } from '../Stage/types'
 
 
 export default class View {
@@ -29,16 +32,18 @@ export default class View {
     await this.sprite.load()
   }
 
-  public update(world: World): void {
+  public update(stage: number | Stage): void {
     this.clearScreen()
-    this.renderObjects(world.objects)
-    this.renderGrid()
+    if(typeof stage === 'object'){
+      this.renderObjects(stage)
+    }
+    // this.renderGrid() // отрисовка сетки
   };
 
 
-  public renderObjects(objects: (Base | Tank | 0 | Wall | undefined)[] | undefined): void {
+  public renderObjects(objects: any): void {
     if (objects) {
-      for (const object of objects) {
+      for (const object of objects.objects) {
         if (object) {
           const { x, y, width, height, sprite }: iObjectOfWorld = object
           if (!sprite) return
@@ -49,7 +54,7 @@ export default class View {
             x, y, width, height
           )
         }
-        //Включение дебага НЕ УДАЛЯТЬ! world.getCollision
+        // Включение дебага НЕ УДАЛЯТЬ! stage.getCollision
         // if (object.debug) {
         //   this.context.strokeStyle = '#fafafa'
         //   this.context.lineWidth = 2
@@ -61,7 +66,7 @@ export default class View {
 
   }
 
-  private renderGrid() {
+  private renderGrid(): void {
     for (let y = 0; y < NUMBER_OF_UNITS; y++) {
       for (let x = 0; x < NUMBER_OF_UNITS; x++) {
         this.context.strokeStyle = '#ffffff'
@@ -78,16 +83,6 @@ export default class View {
       }
     }
   }
-
-
-  public renderPlayer1Tank(player1Tank: Tank): void {
-    const [x, y, width, height]: number[] = player1Tank.sprite
-
-    this.context.drawImage(
-      this.sprite.image,
-      x, y, width, height,
-      player1Tank.x, player1Tank.y, width, height)
-  };
 
   public clearScreen(): void {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
