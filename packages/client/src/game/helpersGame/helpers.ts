@@ -1,4 +1,4 @@
-import { Direction } from './constants.js'
+import { Direction } from './constants'
 
 export function getDirectionForKeys(keys: { has(value: string): boolean; }): number {
 

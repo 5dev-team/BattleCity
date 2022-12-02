@@ -2,12 +2,7 @@ import { ISprite } from '../Sprite/types'
 import { iObjectOfWorld } from './types'
 import { NUMBER_OF_UNITS, TILE_SIZE, UNIT_SIZE } from '../../helpersGame/constants'
 import Stage from '../Stage/Stage'
-import { ISet } from '../Game/types'
-import Base from '../Base/Base'
-import PlayerTank from '../PlayerTank/PlayerTank'
-import SteelWall from '../SteelWall/SteelWall'
-import BrickWall from '../BrickWall/BrickWall'
-import { TObjects } from '../Stage/types'
+
 
 
 export default class View {
