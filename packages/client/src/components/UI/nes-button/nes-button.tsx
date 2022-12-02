@@ -5,13 +5,12 @@ interface INesButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean
 }
 
-const NesButton: React.FC<INesButtonProps> = ({ variant = 'primary', children, fullWidth, ...props }) => {
+const NesButton: React.FC<INesButtonProps> = ({ variant, children, fullWidth, ...props }) => {
   return (
     <button
-      className={`nes-btn is-${variant}`}
+      className={`nes-btn ${variant ? `is-${variant}`: ''}`}
       style={fullWidth ? { width: '100%' } : {}}
-      {...props}
-    >
+      {...props}>
       {children}
     </button>
   )
