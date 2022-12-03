@@ -2,6 +2,8 @@ import React, { FormEvent, useState } from 'react'
 import styles from './profile.module.scss'
 import NesButton from '@/components/UI/nes-button'
 import NesInput from '@/components/UI/nes-input'
+import { useNavigate } from 'react-router-dom'
+import NesFileInput from '@/components/UI/nes-file-input'
 
 type UserTransferredType = {
   id: number
@@ -12,11 +14,15 @@ type UserTransferredType = {
   avatar: string
   phone: string
   email: string
+  password: string
+  newPassword: string
 }
 
 const Profile: React.FC = () => {
   const avatarStub =
     'https://avatars.mds.yandex.net/i?id=0e6644a6305695c3ca917c26fe2f87f8_l-5281542-images-thumbs&n=13'
+
+  const navigate = useNavigate()
 
   const user: UserTransferredType = {
     id: 1,
@@ -27,33 +33,49 @@ const Profile: React.FC = () => {
     avatar: avatarStub,
     phone: '686283721',
     email: 'sokol-rc@yandex.ru',
+    password: '',
+    newPassword: '',
   }
 
   const [mode, setMode] = useState('view')
-  const [form, setForm] = useState({
-    id: 1,
-    login: '',
-    firstName: '',
-    secondName: '',
-    displayName: '',
-    phone: '',
-    email: '',
-    password: '',
-    newPassword: '',
-  })
-const [firstName, setFirstName] = useState(user.firstName)
-  
+
+  const [firstName, setFirstName] = useState(user.firstName)
+  const [secondName, setSecondName] = useState(user.secondName)
+  const [displayName, setDisplayName] = useState(user.displayName)
+  const [phone, setPhone] = useState(user.phone)
+  const [login, setLogin] = useState(user.login)
+  const [email, setEmail] = useState(user.email)
+  const [password, setPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+
   const onSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
-    console.log(form)
+    console.log({
+      firstName,
+      secondName,
+      displayName,
+      phone,
+      login,
+      email,
+      password,
+      newPassword,
+    })
   }
 
   const renderFormButton = () => {
     if (mode === 'view') {
-      return <NesButton onClick={() => setMode('edit')}>edit profile</NesButton>
+      return (
+        //this button should`n call onSubmit, but it does
+        <NesButton onClick={() => setMode('edit')} type="button">
+          edit profile
+        </NesButton>
+      )
     } else if (mode === 'edit') {
       return (
-        <NesButton onClick={() => console.log('asd')} variant="success">
+        <NesButton
+          onClick={() => console.log('asd')}
+          type="submit"
+          variant="success">
           save
         </NesButton>
       )
@@ -74,11 +96,13 @@ const [firstName, setFirstName] = useState(user.firstName)
                 style={{ backgroundColor: '#000' }}>
                 <tbody>
                   <tr>
-                    <td rowSpan={4} colSpan={2}>
-                      <img
-                        src={user.avatar}
-                        alt={`аватар пользователя ${user.login}`}
-                        className={`nes-avatar ${styles['profile-avatar']}`}
+                    <td rowSpan={8} colSpan={2}>
+                      <NesFileInput
+                          avatar={user.avatar}
+                          label="Аватар"
+                          login={user.login}
+                          plain={mode==='view'}
+                          readOnly={mode==='view'}
                       />
                     </td>
                     <td>First name:</td>
@@ -87,12 +111,10 @@ const [firstName, setFirstName] = useState(user.firstName)
                         name={'first_name'}
                         label="First name"
                         labelHidden
-                        readOnly={mode==='view'}
-                        plainText={mode==='view'}
+                        readOnly={mode === 'view'}
+                        plain={mode === 'view'}
                         value={firstName}
-                        onChange={e =>
-                          setFirstName(e.target.value)
-                        }
+                        onChange={e => setFirstName(e.target.value)}
                       />
                     </td>
                   </tr>
@@ -104,10 +126,10 @@ const [firstName, setFirstName] = useState(user.firstName)
                         label="Second name"
                         fullWidth
                         labelHidden
-                        value={form.secondName}
-                        onChange={e =>
-                          setForm({ ...form, secondName: e.target.value })
-                        }
+                        readOnly={mode === 'view'}
+                        plain={mode === 'view'}
+                        value={secondName}
+                        onChange={e => setSecondName(e.target.value)}
                       />
                     </td>
                   </tr>
@@ -119,10 +141,10 @@ const [firstName, setFirstName] = useState(user.firstName)
                         label="Display name"
                         fullWidth
                         labelHidden
-                        value={form.displayName}
-                        onChange={e =>
-                          setForm({ ...form, displayName: e.target.value })
-                        }
+                        readOnly={mode === 'view'}
+                        plain={mode === 'view'}
+                        value={displayName}
+                        onChange={e => setDisplayName(e.target.value)}
                       />
                     </td>
                   </tr>
@@ -134,10 +156,40 @@ const [firstName, setFirstName] = useState(user.firstName)
                         label="Login"
                         fullWidth
                         labelHidden
-                        value={form.login}
-                        onChange={e =>
-                          setForm({ ...form, login: e.target.value })
-                        }
+                        readOnly={mode === 'view'}
+                        plain={mode === 'view'}
+                        value={login}
+                        onChange={e => setLogin(e.target.value)}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Email:</td>
+                    <td>
+                      <NesInput
+                        name={'email'}
+                        label="Email"
+                        fullWidth
+                        labelHidden
+                        readOnly={mode === 'view'}
+                        plain={mode === 'view'}
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Phone:</td>
+                    <td>
+                      <NesInput
+                        name={'phone'}
+                        label="Phone"
+                        fullWidth
+                        labelHidden
+                        readOnly={mode === 'view'}
+                        plain={mode === 'view'}
+                        value={phone}
+                        onChange={e => setPhone(e.target.value)}
                       />
                     </td>
                   </tr>
@@ -147,25 +199,13 @@ const [firstName, setFirstName] = useState(user.firstName)
                       <NesInput
                         name={'old_password'}
                         label="Password"
+                        type="password"
                         fullWidth
                         labelHidden
-                        value={form.password}
-                        onChange={e =>
-                          setForm({ ...form, password: e.target.value })
-                        }
-                      />
-                    </td>
-                    <td>Email:</td>
-                    <td>
-                      <NesInput
-                        name={'email'}
-                        label="Email"
-                        fullWidth
-                        labelHidden
-                        value={form.email}
-                        onChange={e =>
-                          setForm({ ...form, email: e.target.value })
-                        }
+                        readOnly={mode === 'view'}
+                        plain={mode === 'view'}
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
                       />
                     </td>
                   </tr>
@@ -175,37 +215,30 @@ const [firstName, setFirstName] = useState(user.firstName)
                       <NesInput
                         name={'new_password'}
                         label="Email"
+                        type="password"
                         fullWidth
                         labelHidden
-                        value={form.newPassword}
-                        onChange={e =>
-                          setForm({ ...form, newPassword: e.target.value })
-                        }
-                      />
-                    </td>
-                    <td>Phone:</td>
-                    <td>
-                      <NesInput
-                        name={'phone'}
-                        label="Phone"
-                        fullWidth
-                        labelHidden
-                        value={form.phone}
-                        onChange={e =>
-                          setForm({ ...form, phone: e.target.value })
-                        }
+                        readOnly={mode === 'view'}
+                        plain={mode === 'view'}
+                        value={newPassword}
+                        onChange={e => setNewPassword(e.target.value)}
                       />
                     </td>
                   </tr>
                 </tbody>
               </table>
-              <NesButton type="submit" variant="success">
-                save
-              </NesButton>
+              <div className={styles['control-page-buttons']}>
+                <NesButton
+                  variant="primary"
+                  onClick={() => navigate('/')}
+                  type="button">
+                  exit
+                </NesButton>
+                {renderFormButton()}
+              </div>
             </form>
           </div>
         </div>
-        {renderFormButton()}
       </div>
     </div>
   )

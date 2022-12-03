@@ -1,0 +1,52 @@
+.wrapper {
+  margin: 0 4px 0 8px;
+  padding: 16px;
+  border: 2px solid transparent;
+}
+
+.visually-hidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.profile-avatar {
+  width: 100%;
+  height: 100%;
+  max-width: 200px;
+  box-sizing: border-box;
+}
+
+.upload-file {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 240px;
+  border: 2px dashed #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.file-input {
+  opacity: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  overflow: hidden;
+  width: 100%;
+}
+
+.input-text {
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  padding-right: 8px;
+}
