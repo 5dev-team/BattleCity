@@ -1,4 +1,3 @@
-
 import { IHitable } from '@/game/classesGame/GameObject/types'
 import Bullet from '@/game/classesGame/Bullet/Bullet'
 import GameObject from '@/game/classesGame/GameObject/GameObject'

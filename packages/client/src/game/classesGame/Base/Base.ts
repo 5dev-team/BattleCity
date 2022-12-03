@@ -1,5 +1,3 @@
-
-
 import GameObject from '@/game/classesGame/GameObject/GameObject'
 import { GameObjectArgs } from '@/game/classesGame/GameObject/types'
 import { BASE_HEIGHT, BASE_POSITION, BASE_SPRITES, BASE_WIDTH } from '@/game/helpersGame/constants'

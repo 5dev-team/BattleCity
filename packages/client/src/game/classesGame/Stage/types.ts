@@ -1,13 +1,13 @@
-import Base from '../Base/Base'
-import PlayerTank from '../PlayerTank/PlayerTank'
-import BrickWall from '../BrickWall/BrickWall'
-import SteelWall from '../SteelWall/SteelWall'
-import Explosion from '../Explosion/Explosion'
-import Bullet from '../Bullet/Bullet'
+import Base from '@/game/classesGame/Base/Base'
+import PlayerTank from '@/game/classesGame/PlayerTank/PlayerTank'
+import BrickWall from '@/game/classesGame/BrickWall/BrickWall'
+import SteelWall from '@/game/classesGame/SteelWall/SteelWall'
+import Explosion from '@/game/classesGame/Explosion/Explosion'
+import Bullet from '@/game/classesGame/Bullet/Bullet'
 
 export type TObjects = (Base | PlayerTank | BrickWall | SteelWall | Explosion | Bullet | undefined)
 
-export interface IStageConsructor {
+export interface IStageConstructor {
   stage: number[][],
   tanks: number[];
 }

@@ -5,7 +5,7 @@ import PlayerTank from '@/game/classesGame/PlayerTank/PlayerTank'
 import Wall from '@/game/classesGame/Wall/Wall'
 import Bullet from '@/game/classesGame/Bullet/Bullet'
 import { IUpdatable, UpdateState } from '@/game/classesGame/GameObject/types'
-import { IStageConsructor, TObjects } from '@/game/classesGame/Stage/types'
+import { IStageConstructor, TObjects } from '@/game/classesGame/Stage/types'
 import { STAGE_SIZE, TILE_SIZE } from '@/game/helpersGame/constants'
 
 export default class Stage implements IUpdatable {
@@ -57,7 +57,7 @@ export default class Stage implements IUpdatable {
   public readonly objects: Set<TObjects>
 
 
-  constructor(data: IStageConsructor) {
+  constructor(data: IStageConstructor) {
 
     this.objects = new Set([
       new Base({}),
