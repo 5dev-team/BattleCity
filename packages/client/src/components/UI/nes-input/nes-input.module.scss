@@ -2,3 +2,28 @@
   margin: 0;
   box-sizing: border-box;
 }
+
+.visually-hidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.plaintext {
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-right-width: 0;
+  border-left-width: 0;
+  display: block;
+  line-height: 1.5;
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.plaintext:focus {
+  outline: 0;
+}
