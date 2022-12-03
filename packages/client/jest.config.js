@@ -10,7 +10,7 @@ export default {
   },
   // css, scss imports mock
   moduleNameMapper: {
-    '\\.(css|scss|png)$': 'identity-obj-proxy',
+    '\\.(css|scss)$': 'identity-obj-proxy',
     "^@/(.*)$": "<rootDir>/src/$1",
   }
 }

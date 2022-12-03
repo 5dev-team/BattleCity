@@ -1,0 +1,28 @@
+.profile {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  padding-bottom: 0;
+}
+
+.profile-avatar {
+  width: 100%;
+  height: 100%;
+  max-width: 200px;
+}
+
+.control-wrapper {
+  width: 100%;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.control-page-buttons {
+  justify-content: space-between;
+  padding: 0 calc(2rem + 8px);
+}
