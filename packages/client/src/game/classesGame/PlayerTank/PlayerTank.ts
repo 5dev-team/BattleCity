@@ -1,30 +1,20 @@
-import { Keys, PLAYER1_TANK_POSITION, PLAYER1_TANK_SPRITES, TANK_SPEED } from '../../helpersGame/constants'
-import { getDirectionForKeys, getAxisForDirection, getValueForDirection } from '../../helpersGame/helpers'
-import Tank from '../Tank/Tank'
-import Input from '../Input/Input'
-import Stage from '../Stage/Stage'
-import { IGameObjectConstructor } from '../GameObject/types'
+import { Keys, PLAYER1_TANK_POSITION, PLAYER1_TANK_SPRITES, TANK_SPEED } from '@/game/helpersGame/constants'
+import { getDirectionForKeys, getAxisForDirection, getValueForDirection } from '@/game/helpersGame/helpers'
+import Tank from '@/game/classesGame/Tank/Tank'
+import { GameObjectArgs, IUpdatable, UpdateState } from '@/game/classesGame/GameObject/types'
 
-export default class PlayerTank extends Tank {
-  public x: number
-  public y: number
-  public direction: number
-  public speed: number
-  public sprites: number[][]
-
+export default class PlayerTank extends Tank implements IUpdatable {
   //TODO create uniq Tanks
-  constructor(args: any) {
-    super(<IGameObjectConstructor>args)
-    this.x = PLAYER1_TANK_POSITION[0]
-    this.y = PLAYER1_TANK_POSITION[1]
+  constructor(args: Partial<GameObjectArgs>) {
+    super({ ...args, sprites: PLAYER1_TANK_SPRITES })
+    this.x = args.x ? args.x : PLAYER1_TANK_POSITION[0]
+    this.y = args.y ? args.y : PLAYER1_TANK_POSITION[1]
     this.direction = Tank.Direction.UP
     this.speed = TANK_SPEED
-    this.sprites = PLAYER1_TANK_SPRITES
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  public update({ input, frameDelta, world }: { input: Input, frameDelta: number, world: Stage }): void {
+  update(state: UpdateState): void {
+    const { input, frameDelta, world } = state
     if (input.has(Keys.UP, Keys.RIGHT, Keys.DOWN, Keys.LEFT)) {
       const direction = getDirectionForKeys(input.keys)
       const axis = getAxisForDirection(direction)
@@ -50,4 +40,5 @@ export default class PlayerTank extends Tank {
       }
     }
   }
+
 }

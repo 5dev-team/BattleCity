@@ -1,22 +1,23 @@
-import { IWallConstructor } from './types'
-import GameObject from '../GameObject/GameObject'
-import { TILE_SIZE } from '../../helpersGame/constants'
 
+import { IHitable } from '@/game/classesGame/GameObject/types'
+import Bullet from '@/game/classesGame/Bullet/Bullet'
+import GameObject from '@/game/classesGame/GameObject/GameObject'
+import { TILE_SIZE } from '@/game/helpersGame/constants'
+import { WallArgs } from '@/game/classesGame/Wall/types'
 
-export default class Wall extends GameObject {
-  public width: number;
-  public height: number;
-  public damage: number;
-  public type: string | undefined
-  constructor({ type, ...rest }: IWallConstructor) {
-    super(rest);
-    this.width = TILE_SIZE;
-    this.height = TILE_SIZE;
-    this.damage = 0;
-    this.type = type;
+export default abstract class Wall extends GameObject implements IHitable{
+  public damage: number
+  private type: string | undefined
+
+  protected constructor({ sprites, ...args }: WallArgs) {
+    super({...args, width: TILE_SIZE, height: TILE_SIZE, sprites})
+    this.damage = 0
+    this.type = args.type
   }
 
   get sprite() {
-    return this.sprites[this.damage];
+    return this.sprites[this.damage]
   }
+
+  abstract hit(bullet: Bullet): void
 }

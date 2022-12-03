@@ -1,17 +1,22 @@
-import GameObject from '../GameObject/GameObject'
-import { BASE_HEIGHT, BASE_POSITION, BASE_SPRITES, BASE_WIDTH } from '../../helpersGame/constants'
-import { IGameObjectConstructor } from '../GameObject/types'
+
+
+import GameObject from '@/game/classesGame/GameObject/GameObject'
+import { GameObjectArgs } from '@/game/classesGame/GameObject/types'
+import { BASE_HEIGHT, BASE_POSITION, BASE_SPRITES, BASE_WIDTH } from '@/game/helpersGame/constants'
 
 export default class Base extends GameObject {
-  public destroyed: boolean
+  private readonly destroyed: boolean
 
-  constructor({ ...args }) {
-    super(<IGameObjectConstructor>args)
-    this.x = BASE_POSITION[0]  // стандартная позиция базы
-    this.y = BASE_POSITION[1] // стандартная позиция базы
-    this.width = BASE_WIDTH  // Ширина позиция базы
-    this.height = BASE_HEIGHT // Высота позиции базы
-    this.sprites = BASE_SPRITES // спрайты базы
+  constructor(args: Partial<GameObjectArgs>) {
+    super({
+        ...args,
+        x: BASE_POSITION[0],
+        y: BASE_POSITION[1],
+        width: BASE_WIDTH,
+        height: BASE_HEIGHT,
+        sprites: BASE_SPRITES
+      }
+    )
     this.destroyed = false // isDestroyed? целая ли база?
   }
 

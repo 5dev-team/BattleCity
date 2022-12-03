@@ -1,15 +1,15 @@
-import { ISprite } from '../Sprite/types'
-import { iObjectOfWorld } from './types'
-import { NUMBER_OF_UNITS, TILE_SIZE, UNIT_SIZE } from '../../helpersGame/constants'
-import Stage from '../Stage/Stage'
+import { ISprite } from '@/game/classesGame/Sprite/types'
+import { IObjectOfWorld } from '@/game/classesGame/View/types'
+import Stage from '@/game/classesGame/Stage/Stage'
+import { NUMBER_OF_UNITS, TILE_SIZE, UNIT_SIZE } from '@/game/helpersGame/constants'
 
 
 
 export default class View {
-  public canvas: HTMLCanvasElement
-  public context: CanvasRenderingContext2D
-  public sprite: ISprite
-  public ctx: CanvasRenderingContext2D | null
+  private canvas: HTMLCanvasElement
+  private context: CanvasRenderingContext2D
+  private sprite: ISprite
+  private readonly ctx: CanvasRenderingContext2D | null
 
   constructor(canvas: HTMLCanvasElement, sprite: ISprite) {
     this.canvas = canvas
@@ -36,17 +36,17 @@ export default class View {
   };
 
 
-  public renderObjects(objects: any): void {
+  public renderObjects(objects: Stage): void {
     if (objects) {
       for (const object of objects.objects) {
         if (object) {
-          const { x, y, width, height, sprite }: iObjectOfWorld = object
+          const { width, height, sprite }: IObjectOfWorld = object
           if (!sprite) return
           const [sp1, sp2, sp3, sp4]: number[] = sprite
           this.context.drawImage(
             this.sprite.image,
             sp1, sp2, sp3, sp4,
-            x, y, width, height
+            object.left, object.top, width, height
           )
         }
         // Включение дебага НЕ УДАЛЯТЬ! stage.getCollision

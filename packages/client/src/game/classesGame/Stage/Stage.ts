@@ -1,16 +1,14 @@
-import { TILE_SIZE, STAGE_SIZE } from '../../helpersGame/constants'
-import Input from '../Input/Input'
-import BrickWall from '../BrickWall/BrickWall'
-import SteelWall from '../SteelWall/SteelWall'
-import Base from '../Base/Base'
-import PlayerTank from '../PlayerTank/PlayerTank'
-import { ISet } from '../Game/types'
-import { IStageConsructor } from './types'
-import { TObjects } from './types'
-import Wall from '../Wall/Wall'
-import Projectile from '../Projectile/Projectile'
+import BrickWall from '@/game/classesGame/BrickWall/BrickWall'
+import SteelWall from '@/game/classesGame/SteelWall/SteelWall'
+import Base from '@/game/classesGame/Base/Base'
+import PlayerTank from '@/game/classesGame/PlayerTank/PlayerTank'
+import Wall from '@/game/classesGame/Wall/Wall'
+import Bullet from '@/game/classesGame/Bullet/Bullet'
+import { IUpdatable, UpdateState } from '@/game/classesGame/GameObject/types'
+import { IStageConsructor, TObjects } from '@/game/classesGame/Stage/types'
+import { STAGE_SIZE, TILE_SIZE } from '@/game/helpersGame/constants'
 
-export default class Stage {
+export default class Stage implements IUpdatable {
   static TerrainType = {
     BRICK_WALL: 1,
     STEEL_WALL: 2,
@@ -19,30 +17,32 @@ export default class Stage {
     ICE: 5
   }
 
-  static createObject(type: number, args: { x: number, y: number }): (BrickWall | SteelWall) {
+  static createObject(type: number, x: number, y: number): Wall | null {
+    let wall: Wall | null = null
     switch (type) {
       case Stage.TerrainType.BRICK_WALL:
-        return new BrickWall(args)
+        wall = new BrickWall(x, y) as Wall
+        break
       case Stage.TerrainType.STEEL_WALL:
-        return new SteelWall(args)
-      default:
-        return new BrickWall(args)
+        wall = new SteelWall(x, y) as Wall
+        break
     }
+    return wall
   }
 
-  static createTerrain(level: number[][]): (BrickWall | SteelWall | undefined)[] {
+  static createTerrain(level: number[][]): (Wall | undefined)[] {
     const objects = []
     for (let i = 0; i < level.length; i++) {
       for (let j = 0; j < level.length; j++) {
         const value = level[j][i]
 
         if (value) {
-          const object = Stage.createObject(value, {
-            x: i * TILE_SIZE,
-            y: j * TILE_SIZE
-          })
+          const object = Stage.createObject(value,
+            i * TILE_SIZE,
+            j * TILE_SIZE
+          )
 
-          objects.push(object)
+          objects.push(object ? object : undefined)
         }
       }
     }
@@ -54,13 +54,14 @@ export default class Stage {
   //   return types.map(type => new EnemyTank({ type }));
   // }
 
-  public objects: ISet<TObjects>
+  public readonly objects: Set<TObjects>
+
 
   constructor(data: IStageConsructor) {
 
     this.objects = new Set([
       new Base({}),
-      new PlayerTank(0),
+      new PlayerTank({}),
       ...Stage.createTerrain(data.stage)
     ])
   }
@@ -89,21 +90,22 @@ export default class Stage {
     return 0
   }
 
-  public update(input: Input, frameDelta: number): void {
+  public update(stage: Partial<UpdateState>): void {
+    const objectsArr: TObjects[] = [...this.objects]
+    const { input, frameDelta } = stage
+
     const state = {
       input,
       frameDelta,
       world: this
     }
+    objectsArr.filter(obj => obj != undefined && 'update' in obj).map(obj => obj as IUpdatable).forEach((object: IUpdatable) => {
+      object.update(state)
 
-    this.objects.forEach((object: TObjects) => {
-      if (object) {
-        object.update(state)
-      }
     })
   }
 
-  public isOutOfBounds(object: (PlayerTank | Projectile)): boolean {
+  public isOutOfBounds(object: (PlayerTank | Bullet)): boolean {
     return (
       object.top < this.top ||
       object.right > this.right ||
@@ -127,14 +129,13 @@ export default class Stage {
   }
 
   private getCollisionObjects(object: TObjects) {
-    const objects = new Set()
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    for (const other of this.objects) {
-      if (other !== object && this.haveCollision(object, other)) {
+    const objects = new Set<TObjects>()
+
+    this.objects.forEach(other => {
+      if (other instanceof Wall && other !== object && this.haveCollision(object, other as Wall)) {
         objects.add(other)
       }
-    }
+    })
 
     return objects
   }

@@ -1,8 +1,7 @@
-import { ENEMY_TANK_START_POSITIONS, ENEMY_TANK_SPRITES, TANK_SPEED } from '../../helpersGame/constants'
-
-import Tank from '../Tank/Tank'
-import Input from '../Input/Input'
-import Stage from '../Stage/Stage'
+import Input from '@/game/classesGame/Input/Input'
+import Stage from '@/game/classesGame/Stage/Stage'
+import Tank from '@/game/classesGame/Tank/Tank'
+import { ENEMY_TANK_SPRITES, ENEMY_TANK_START_POSITIONS, TANK_SPEED } from '@/game/helpersGame/constants'
 
 export default class EnemyTank extends Tank {
   static createRandom() {
@@ -22,8 +21,6 @@ export default class EnemyTank extends Tank {
     this.speed = TANK_SPEED
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   update({ world, input, frameDelta }: { world: Stage, input: Input, frameDelta: number }): void {
     return
   }

@@ -1,20 +1,16 @@
-import { TANK_HEIGHT, TANK_SPEED, TANK_TURN_THRESHOLD, TANK_WIDTH, TILE_SIZE } from '../../helpersGame/constants'
-import GameObject from '../GameObject/GameObject'
-import { IGameObjectConstructor } from '../GameObject/types'
-import Projectile from '../Projectile/Projectile'
+import GameObject from '@/game/classesGame/GameObject/GameObject'
+import { GameObjectArgs } from '@/game/classesGame/GameObject/types'
+import Bullet from '@/game/classesGame/Bullet/Bullet'
+import { TANK_HEIGHT, TANK_SPEED, TANK_TURN_THRESHOLD, TANK_WIDTH, TILE_SIZE } from '@/game/helpersGame/constants'
 
 export default class Tank extends GameObject {
-  public width: number
-  public height: number
-  public speed: number
-  public bulletSpeed: number
-  public bullet: null | Projectile
-  public direction: number
+  protected speed: number
+  private readonly bulletSpeed: number
+  protected bullet: null | Bullet
+  protected direction: number
 
-  constructor({ ...args }) {
-    super(<IGameObjectConstructor>args)
-    this.width = TANK_WIDTH
-    this.height = TANK_HEIGHT
+  constructor(args: Partial<GameObjectArgs>) {
+    super({ ...args, width: TANK_WIDTH, height: TANK_HEIGHT } as GameObjectArgs)
     this.speed = TANK_SPEED
     this.bulletSpeed = 2
     this.bullet = null
@@ -62,22 +58,27 @@ export default class Tank extends GameObject {
   }
 
   public move(axis: string, value: number): void {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this[axis] += value * this.speed
+    if (axis === 'y') {
+      this.y += value * this.speed
+    }
+    if (axis === 'x') {
+      this.x += value * this.speed
+    }
   }
 
   public fire() {
     if (!this.bullet) {
       const [x, y] = this.getBulletStartingPosition()
 
-      this.bullet = new Projectile({
+      this.bullet = new Bullet(
+        this.direction,
         x,
         y,
-        tank: this,
-        direction: this.direction,
-        speed: this.bulletSpeed
-      })
+        this.bulletSpeed,
+        () => {
+          this.bullet = null
+        }
+      )
     }
   }
 

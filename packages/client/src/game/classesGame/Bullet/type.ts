@@ -1,6 +1,5 @@
-import { TSprites } from '../../helpersGame/types'
-import Tank from '../Tank/Tank'
-
+import { TSprites } from '@/game/helpersGame/types'
+import Tank from '@/game/classesGame/Tank/Tank'
 
 
 export interface IProjectile {

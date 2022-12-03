@@ -1,6 +1,8 @@
-import { IGameObjectConstructor } from './types'
 
-export default class GameObject {
+import { TSprites } from '@/game/helpersGame/types'
+import { GameObjectArgs } from '@/game/classesGame/GameObject/types'
+
+export default class GameObject{
   static Direction = {
     UP: 0,
     RIGHT: 1,
@@ -8,15 +10,15 @@ export default class GameObject {
     LEFT: 3
   }
 
-  public x: number
-  public y: number
-  public width: number
-  public height: number
-  public sprites: number[][]
-  public animationFrame: number
-  public frames: number
+  protected x: number
+  protected y: number
+  public readonly width: number
+  public readonly height: number
+  public readonly sprites: TSprites
+  protected animationFrame: number
+  protected frames: number
 
-  constructor({ x, y, width, height, sprites }: IGameObjectConstructor) {
+  constructor({ x, y, width, height, sprites }: GameObjectArgs) {
     this.x = x
     this.y = y
     this.width = width
@@ -42,11 +44,4 @@ export default class GameObject {
     return this.x
   }
 
-  public update(): void {
-    return
-  }
-
-  public hit(): void {
-    console.log('hitObject')
-  }
 }

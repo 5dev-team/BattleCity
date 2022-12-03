@@ -1,9 +1,3 @@
-import { IGameObjectConstructor } from '../GameObject/types'
-import { TSprites } from '../../helpersGame/types'
+import { GameObjectArgs } from '@/game/classesGame/GameObject/types'
 
-export interface IWallConstructor extends IGameObjectConstructor{
-  type: string | undefined
-  sprites: TSprites;
-}
-
-
+export type WallArgs = {type: undefined | string} & GameObjectArgs

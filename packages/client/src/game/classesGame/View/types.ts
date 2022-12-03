@@ -1,8 +1,7 @@
 
-export interface iObjectOfWorld {
+export interface IObjectOfWorld {
   sprite: number[];
-  x: number;
-  y: number;
+
   width: number;
   height: number;
 }

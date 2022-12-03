@@ -1,7 +1,5 @@
-import { ISet } from '../Game/types'
-
 export default class Input {
-  keys: ISet<string>
+  keys: Set<string>
 
   constructor() {
     this.keys = new Set()

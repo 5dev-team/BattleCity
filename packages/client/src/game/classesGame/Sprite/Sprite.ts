@@ -1,6 +1,6 @@
 export default class Sprite {
-  public src: string
-  public image: HTMLImageElement
+  public readonly src: string
+  public readonly image: HTMLImageElement
 
   constructor(src: string) {
     this.src = src

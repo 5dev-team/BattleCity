@@ -1,20 +1,20 @@
-import { IGameConstructor } from './types'
-import { Level } from '../../helpersGame/levels'
-import View from '../View/View'
-import Input from '../Input/Input'
-import Tank from '../Tank/Tank'
-import Stage from '../Stage/Stage'
+import View from '@/game/classesGame/View/View'
+import Input from '@/game/classesGame/Input/Input'
+import Tank from '@/game/classesGame/Tank/Tank'
+import Stage from '@/game/classesGame/Stage/Stage'
+import { IGameConstructor } from '@/game/classesGame/Game/types'
+import { Level } from '@/game/helpersGame/levels'
 
 export default class Game {
-  public input: Input
-  public view: View
-  public stages: Level[]
-  public player1: null | Tank
-  public player2: null | Tank
-  public stage?: Stage | null
-  public lastFrame: number
-  public frames: number
-  public stageIndex: number
+  private readonly input: Input
+  private view: View
+  private readonly stages: Level[]
+  private player1: null | Tank
+  private player2: null | Tank
+  private stage?: Stage | null
+  private lastFrame: number
+  private frames: number
+  private readonly stageIndex: number
 
   constructor({ input, view, levels }: IGameConstructor) {
     this.input = input
@@ -39,10 +39,9 @@ export default class Game {
   }
 
   private loop(currentFrame: number): void {
-    //main method
     const frameDelta: number = currentFrame - this.lastFrame
     if (this.stage instanceof Stage) {
-      this.stage.update(this.input, frameDelta)
+      this.stage.update({ input: this.input, frameDelta })
     }
     if (this.stage) {
       this.view.update(this.stage)
