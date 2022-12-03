@@ -7,7 +7,7 @@ interface INesInputProps extends InputHTMLAttributes<HTMLInputElement> {
   variant?: 'basic' | 'primary' | 'success' | 'warning' | 'error' | 'dark'
   fullWidth?: boolean
   labelHidden?: boolean
-  plainText?: boolean
+  plain?: boolean
 }
 
 const NesInput: React.FC<INesInputProps> = ({
@@ -16,7 +16,7 @@ const NesInput: React.FC<INesInputProps> = ({
   variant = 'basic',
   fullWidth,
   labelHidden,
-  plainText,
+  plain,
   ...props
 }) => {
   const id = useId()
@@ -30,7 +30,7 @@ const NesInput: React.FC<INesInputProps> = ({
       <input
         id={id}
         className={`is-${variant} ${styles['nes-btn']} ${
-          plainText ? styles['plaintext'] : 'nes-btn'
+          plain ? styles['plaintext'] : 'nes-btn'
         }`}
         style={fullWidth ? { width: '100%' } : {}}
         {...props}
