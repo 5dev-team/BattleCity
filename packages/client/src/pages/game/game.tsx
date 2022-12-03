@@ -3,7 +3,7 @@ import View from '@/game/classesGame/View/View'
 import GameTank from '@/game/classesGame/Game/Game'
 import Sprite from '@/game/classesGame/Sprite/Sprite'
 import spritePNG from '@/game/spriteGame/sprite_1.png'
-import styles from './game.module.scss'
+import styles from '@/pages/game/game.module.scss'
 import Input from '@/game/classesGame/Input/Input'
 import { levels } from '@/game/helpersGame/levels'
 
