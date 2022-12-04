@@ -225,6 +225,7 @@ const Profile: React.FC = () => {
                       <NesInput
                         name={'email'}
                         label="Email"
+                        type="email"
                         fullWidth
                         labelHidden
                         readOnly={mode === 'view'}
