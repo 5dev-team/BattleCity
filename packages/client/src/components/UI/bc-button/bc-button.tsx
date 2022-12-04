@@ -1,70 +1,46 @@
 import React, { ButtonHTMLAttributes, useState } from 'react'
-import tankIcon from '../../../assets/avatarPlaceholder.png'
+import tankIcon from '@/assets/avatarPlaceholder.png'
 import styles from './bc-button.module.scss'
 
-interface IBCButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+type BCButtonProps = {
   focus?: boolean
   icon?: string
-}
+} & ButtonHTMLAttributes<HTMLButtonElement>
 
-const BCButton: React.FC<IBCButtonProps> = ({
+const BCButton: React.FC<BCButtonProps> = ({
   children,
   focus,
   icon,
   ...props
 }) => {
-  const [isFocused, setFocus] = useState(focus ? true : false)
+  const [isFocused, setFocus] = useState(!!focus)
   const btnClass = 'bc-btn__button'
-  const arrowController = new AbortController()
-
-  const tryChangeFocus = (element: ChildNode | null | undefined) => {
-    if (element instanceof HTMLButtonElement) {
-      element.focus()
-      arrowController.abort()
-    }
-  }
-
-  const btnRef = (node: HTMLButtonElement) => {
-    const listener = (e: KeyboardEvent) => onArrow(node, e)
-    node?.addEventListener('keydown', listener, {
-      signal: arrowController.signal,
-    })
-  }
-
-  const onArrow = (button: HTMLButtonElement, e: KeyboardEvent) => {
-    if (isFocused) {
-      const parent = button.parentNode
-      let nextBtn: ChildNode | null | undefined
-
-      if (e.key === 'ArrowUp') {
-        nextBtn = parent?.previousSibling?.lastChild
-      } 
-      else if (e.key === 'ArrowDown') {
-        nextBtn = parent?.nextSibling?.lastChild
-      }
-
-      tryChangeFocus(nextBtn)
-    }
-  }
 
   const onFocus = () => {
     setFocus(true)
   }
-  const onBlur = () => {
-    setFocus(false)
+
+  const onBlur = (e: React.FocusEvent) => {
+    if (e.relatedTarget !== null) {
+      setFocus(false)
+    } else {
+      const btn = e.currentTarget as HTMLButtonElement
+      btn.focus()
+    }
   }
 
   return (
     <div className={`${styles['bc-btn']}`}>
       {isFocused && (
-        <img className={`${styles['bc-btn__icon']}`} src={icon || tankIcon} />
+        <img className={`${styles['bc-btn__icon']}`}
+          src={icon || tankIcon}
+          alt={'Pointer Icon'}
+        />
       )}
-      <button
-        ref={btnRef}
-        className={`${styles[btnClass]}`}
+      <button className={`${styles[btnClass]}`}
         autoFocus={isFocused}
         onFocus={onFocus}
-        onBlur={onBlur}
+        onBlur={e => onBlur(e)}
         {...props}
       >
         {children}

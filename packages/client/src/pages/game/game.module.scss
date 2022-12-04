@@ -12,8 +12,7 @@
 }
 
 .logo {
-  width: 100%;
-  height: 20vh;
+  height: 200px;
 }
 
 .control-wrapper {
@@ -27,4 +26,5 @@
 
 .control-page-buttons {
   justify-content: space-between;
+  list-style-type: none;
 }
