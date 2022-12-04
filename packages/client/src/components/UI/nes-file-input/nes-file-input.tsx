@@ -46,6 +46,7 @@ const NesFileInput: React.FC<INesInputProps> = ({
           id={id}
           className={`${styles['upload-file__input']} nes-pointer`}
           type="file"
+          disabled={plain}
           {...props}
         />
       </div>
