@@ -1,20 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import GameButton from '@/components/UI/game-button'
 import tankIcon from '@/assets/avatarPlaceholder.png'
 
 type Props = {
-  activeBtnId: number
-} & React.DetailedHTMLProps<
-  React.FormHTMLAttributes<HTMLDivElement>,
-  HTMLDivElement
->
+  selectItemId: number
+} & React.HTMLAttributes<HTMLDivElement>
 
-const GameMenu: React.FC<React.PropsWithChildren<Props>> = ({
-  activeBtnId,
-  ...props
-}) => {
-  const [activeBtn, setState] = useState(activeBtnId)
-  const buttonsRefs = React.useRef<HTMLButtonElement[]>([])
+const GameMenu: React.FC<Props> = ({ selectItemId, ...props }) => {
+  const [selectedId, setState] = useState<number>(selectItemId)
+  const buttonsRefs = useRef<HTMLButtonElement[]>([])
 
   useEffect(() => {
     const listener = (e: KeyboardEvent) => changeActiveBtn(e)
@@ -22,19 +16,19 @@ const GameMenu: React.FC<React.PropsWithChildren<Props>> = ({
     document.addEventListener('keydown', listener)
 
     return () => document.removeEventListener('keydown', listener)
-  }, [activeBtn])
+  }, [selectedId])
 
   const changeActiveBtn = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault()
-      buttonsRefs.current[activeBtn].click()
+      buttonsRefs.current[selectedId].click()
       return
     }
 
-    let nextId: number = activeBtn
+    let nextId: number = selectedId
 
-    if (e.key === 'ArrowUp') nextId = activeBtn - 1
-    else if (e.key === 'ArrowDown') nextId = activeBtn + 1
+    if (e.key === 'ArrowUp') nextId = selectedId - 1
+    else if (e.key === 'ArrowDown') nextId = selectedId + 1
     else return
 
     if (nextId > -1 && nextId < buttonsRefs.current.length) setState(nextId)
@@ -42,18 +36,21 @@ const GameMenu: React.FC<React.PropsWithChildren<Props>> = ({
 
   return (
     <div {...props}>
-      {React.Children.map(props.children, (child, index) =>
-        React.isValidElement<typeof GameButton>(child) ? (
+      {React.Children.map(props.children, (child, index) => {
+        if (!React.isValidElement(child) || child.type !== GameButton)
+          throw new Error('Children should be of type `GameButton`.')
+
+        return (
           <GameButton
             ref={element => {
               if (element) buttonsRefs.current[index] = element
             }}
             key={index}
-            icon={index === activeBtn ? tankIcon : undefined}
+            icon={index === selectedId ? tankIcon : undefined}
             {...child.props}
           />
-        ) : null
-      )}
+        )
+      })}
     </div>
   )
 }

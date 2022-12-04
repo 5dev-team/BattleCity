@@ -21,7 +21,7 @@ const Game: React.FC = () => {
           alt={'Battle City'}
           style={{ imageRendering: 'pixelated' }}
         />
-        <GameMenu activeBtnId={0} className={`${styles['control-wrapper']} ${styles['control-page-buttons']}`}>
+        <GameMenu selectItemId={0} className={`${styles['control-wrapper']} ${styles['control-page-buttons']}`}>
           <GameButton onClick={() => initGame()}>
             1 PLAYER
           </GameButton>
