@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react'
+import React, { ChangeEvent, DragEvent, FormEvent, useState } from 'react'
 import styles from './profile.module.scss'
 import NesButton from '@/components/UI/nes-button'
 import NesInput from '@/components/UI/nes-input'
@@ -38,7 +38,9 @@ const Profile: React.FC = () => {
   }
 
   const [mode, setMode] = useState('view')
+  const [isDragOver, setIsDragOver] = useState(false)
 
+  const [avatar, setAvatar] = useState(user.avatar)
   const [firstName, setFirstName] = useState(user.firstName)
   const [secondName, setSecondName] = useState(user.secondName)
   const [displayName, setDisplayName] = useState(user.displayName)
@@ -50,6 +52,11 @@ const Profile: React.FC = () => {
 
   const onSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
+
+    if (mode === 'view') {
+      return
+    }
+
     console.log({
       firstName,
       secondName,
@@ -60,26 +67,66 @@ const Profile: React.FC = () => {
       password,
       newPassword,
     })
+    setMode('view')
   }
 
   const renderFormButton = () => {
     if (mode === 'view') {
       return (
-        //this button should`n call onSubmit, but it does
-        <NesButton onClick={() => setMode('edit')} type="button">
-          edit profile
-        </NesButton>
+        <>
+          <NesButton onClick={() => setMode('edit')} type="button">
+            edit profile
+          </NesButton>
+          <input className={'visually-hidden'} type="submit" />
+        </>
       )
     } else if (mode === 'edit') {
       return (
         <NesButton
-          onClick={() => console.log('asd')}
           type="submit"
           variant="success">
           save
         </NesButton>
       )
     }
+  }
+
+  const handleChangeAvatar = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length !== 0) {
+      changeAvatar(e.target.files[0])
+    }
+  }
+
+  const changeAvatar = (file: File) => {
+    if (file) {
+      setAvatar(URL.createObjectURL(file))
+    }
+  }
+
+  const removeAvatar = () => {
+    setAvatar('')
+  }
+
+  const handleDragStart = (e: DragEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    setIsDragOver(true)
+  }
+  const handleDragLeave = (e: DragEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    setIsDragOver(false)
+  }
+  const handleDrop = (e: DragEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    const file = e.dataTransfer.files[0]
+
+    changeAvatar(file)
+    setIsDragOver(false)
   }
 
   return (
@@ -98,11 +145,20 @@ const Profile: React.FC = () => {
                   <tr>
                     <td rowSpan={8} colSpan={2}>
                       <NesFileInput
-                          avatar={user.avatar}
-                          label="Аватар"
-                          login={user.login}
-                          plain={mode==='view'}
-                          readOnly={mode==='view'}
+                        src={avatar}
+                        label="Аватар"
+                        login={login}
+                        accept="image/*"
+                        plain={mode === 'view'}
+                        readOnly={mode === 'view'}
+                        isDragOver={isDragOver}
+                        onDrop={e => handleDrop(e)}
+                        onDragOver={e => handleDragStart(e)}
+                        onDragStart={e => handleDragStart(e)}
+                        onDragLeave={e => handleDragLeave(e)}
+                        onChange={e => handleChangeAvatar(e)}
+                        removeFile={() => removeAvatar()}
+                        alt={`аватар пользователя ${login}`}
                       />
                     </td>
                     <td>First name:</td>
@@ -228,13 +284,13 @@ const Profile: React.FC = () => {
                 </tbody>
               </table>
               <div className={styles['control-page-buttons']}>
+                {renderFormButton()}
                 <NesButton
                   variant="primary"
                   onClick={() => navigate('/')}
                   type="button">
                   exit
                 </NesButton>
-                {renderFormButton()}
               </div>
             </form>
           </div>

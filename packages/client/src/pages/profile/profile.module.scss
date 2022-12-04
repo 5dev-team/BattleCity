@@ -18,6 +18,10 @@
 
 .control-page-buttons {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   padding: 0 8px;
+}
+
+.control-page-buttons button {
+  margin-top: 16px;
 }
