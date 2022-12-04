@@ -23,7 +23,7 @@ const NesInput: React.FC<INesInputProps> = ({
   return (
     <div className={`nes-field ${inline ? 'is-inline' : ''}`}>
       <label
-        className={`${labelHidden ? styles['visually-hidden'] : ''}`}
+        className={`${labelHidden ? 'visually-hidden' : ''}`}
         htmlFor={id}>
         {label}
       </label>
