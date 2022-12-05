@@ -20,8 +20,6 @@ type UserTransferredType = {
 }
 
 const Profile: React.FC = () => {
-
-
   const navigate = useNavigate()
 
   const user: UserTransferredType = {
@@ -82,9 +80,7 @@ const Profile: React.FC = () => {
       )
     } else if (mode === 'edit') {
       return (
-        <NesButton
-          type="submit"
-          variant="success">
+        <NesButton type="submit" variant="success">
           save
         </NesButton>
       )
@@ -111,17 +107,29 @@ const Profile: React.FC = () => {
     e.preventDefault()
     e.stopPropagation()
 
+    if (mode === 'view') {
+      return
+    }
+
     setIsDragOver(true)
   }
   const handleDragLeave = (e: DragEvent<HTMLInputElement>) => {
     e.preventDefault()
     e.stopPropagation()
+  
+    if (mode === 'view') {
+      return
+    }
 
     setIsDragOver(false)
   }
   const handleDrop = (e: DragEvent<HTMLInputElement>) => {
     e.preventDefault()
     e.stopPropagation()
+  
+    if (mode === 'view') {
+      return
+    }
 
     const file = e.dataTransfer.files[0]
 
