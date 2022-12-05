@@ -11,20 +11,11 @@ export type ForumThemesType = {
 };
 
 const Forum: React.FC = () => {
-    const getDate = (): string => {
-        return new Date().toLocaleString('ru', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            weekday: 'long',
-        });
-    };
-    
     const [templateThem, setTemplateThem] = useState({
         title: '',
         author: 'Admin',
         answers: 0,
-        lastAnswer: getDate(),
+        lastAnswer: new Date().toISOString().split('T')[0],
     });
 
     const [themes, setThem] = useState([
