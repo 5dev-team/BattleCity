@@ -25,10 +25,22 @@ const NesFileInput: React.FC<INesInputProps> = ({
 
   return (
     <>
+      {!plain && (
+          <div className={styles['upload-file__caption']}>
+            {isDragOver ? 'Drop file to load' : (
+                <>
+                  <p className={styles['caption-title']} >Change avatar</p>
+                  <span className={`nes-text is-primary ${styles['caption-subtitle']}`}>Drag&Drop</span>
+                </>
+            )}
+          </div>
+      )}
+
       <div
         className={`${styles['wrapper']} ${
           !plain ? styles['upload-file'] : ''
         }`}>
+        
         {src === '' ? (
           <div>Load avatar</div>
         ) : (
@@ -36,6 +48,7 @@ const NesFileInput: React.FC<INesInputProps> = ({
             src={src}
             alt={alt}
             className={`nes-avatar ${styles['profile-avatar']}`}
+            style={{ imageRendering: 'pixelated' }}
           />
         )}
 
@@ -52,9 +65,6 @@ const NesFileInput: React.FC<INesInputProps> = ({
       </div>
       {!plain && (
         <div className={styles['upload-file__control']}>
-          <div className={styles['upload-file__caption']}>
-            {isDragOver ? 'Drop file to load' : 'Change avatar'}
-          </div>
           <NesButton
             onClick={removeFile}
             variant={src === '' ? 'disabled' : 'error'}

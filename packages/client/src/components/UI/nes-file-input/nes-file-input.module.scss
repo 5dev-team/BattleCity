@@ -33,10 +33,17 @@
     width: 100%;
   }
 
+  &__input:disabled {
+    pointer-events: none;
+  }
+
   &__caption {
     width: 100%;
     text-align: center;
     margin-bottom: 10px;
+    padding-right: 10px;
+    position: absolute;
+    transform: translateY(-55px);
   }
 
   &__control {
@@ -51,3 +58,10 @@
   }
 }
 
+.caption-title {
+  margin-bottom: 5px;
+}
+
+.caption-subtitle {
+  font-size: 12px;
+}
