@@ -4,6 +4,7 @@ import NesButton from '@/components/UI/nes-button'
 import NesInput from '@/components/UI/nes-input'
 import { useNavigate } from 'react-router-dom'
 import NesFileInput from '@/components/UI/nes-file-input'
+import avatarPlaceholder from '@/assets/avatarPlaceholder.png'
 
 type UserTransferredType = {
   id: number
@@ -19,8 +20,7 @@ type UserTransferredType = {
 }
 
 const Profile: React.FC = () => {
-  const avatarStub =
-    'https://avatars.mds.yandex.net/i?id=0e6644a6305695c3ca917c26fe2f87f8_l-5281542-images-thumbs&n=13'
+
 
   const navigate = useNavigate()
 
@@ -30,7 +30,7 @@ const Profile: React.FC = () => {
     firstName: 'Evgeniy',
     secondName: 'Sokolovskiy',
     displayName: 'TaNkIsT',
-    avatar: avatarStub,
+    avatar: avatarPlaceholder,
     phone: '686283721',
     email: 'sokol-rc@yandex.ru',
     password: '',
