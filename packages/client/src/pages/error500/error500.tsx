@@ -1,7 +1,7 @@
-import React from 'react';
-import styles from './error500.module.scss';
-import NesLink from '@/components/UI/nes-link';
-import {RoutePaths} from '@/App';
+import React from 'react'
+import styles from './error500.module.scss'
+import NesLink from '@/components/UI/nes-link'
+import {RoutePaths} from '@/App'
 
 const Error500: React.FC = () => {
     return (
@@ -17,4 +17,4 @@ const Error500: React.FC = () => {
     )
 }
 
-export default Error500;
+export default Error500
