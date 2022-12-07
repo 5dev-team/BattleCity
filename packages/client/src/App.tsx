@@ -1,11 +1,12 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LeaderBoard from '@/pages/leaderboard';
-import SignIn from '@/pages/sign-in';
-import Game from '@/pages/game';
-import Error404 from '@/pages/error404';
-import Error500 from '@/pages/error500';
-import Forum from '@/pages/forum';
+import React from 'react'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import LeaderBoard from '@/pages/leaderboard'
+import SignIn from '@/pages/sign-in'
+import Game from '@/pages/game'
+import Error404 from '@/pages/error404'
+import Error500 from '@/pages/error500'
+import Forum from '@/pages/forum'
+import Profile from '@/pages/profile'
 
 export enum RoutePaths {
   SIGNIN = '/sign-in',
@@ -14,6 +15,7 @@ export enum RoutePaths {
   ERROR404 = '/error404',
   ERROR500 = '/error500',
   FORUM = '/forum',
+  PROFILE = '/profile'
 }
 
 const App: React.FC = () => {
@@ -26,9 +28,10 @@ const App: React.FC = () => {
         <Route path={RoutePaths.ERROR404} element={<Error404 />} />
         <Route path={RoutePaths.ERROR500} element={<Error500 />} />
         <Route path={RoutePaths.FORUM} element={<Forum />} />
+        <Route path={RoutePaths.PROFILE} element={<Profile />} />
       </Routes>
     </Router>
   )
 }
 
-export default App;
+export default App
