@@ -18,7 +18,6 @@ const initialState: IInitialState = {
 export const fetchLogin = createAsyncThunk(
   'auth/fetchLogin',
   (data: ILoginRequest) => api.auth.login(data)
-    .then()
 )
 
 export const fetchRegister = createAsyncThunk(
@@ -48,6 +47,7 @@ export const authSlice = createSlice({
     // login
     builder.addCase(fetchLogin.fulfilled, (state) => {
       state.isAuthLoading = false
+      state.authError = ''
     })
     builder.addCase(fetchLogin.pending, (state) => {
       state.isAuthLoading = true
@@ -59,6 +59,7 @@ export const authSlice = createSlice({
     // registration
     builder.addCase(fetchRegister.fulfilled, (state) => {
       state.isAuthLoading = false
+      state.authError = ''
     })
     builder.addCase(fetchRegister.pending, (state) => {
       state.isAuthLoading = true

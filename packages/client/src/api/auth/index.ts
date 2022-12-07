@@ -3,8 +3,6 @@ import { ILoginRequest, IRegisterRequest } from '@/api/auth/auth.models'
 import { IUser } from '@/store/slices/auth/auth.models'
 import { AxiosResponse } from 'axios'
 
-console.log(__YANDEX_API__)
-
 export default {
   login(data: ILoginRequest) {
     return request({
@@ -22,7 +20,8 @@ export default {
   },
   user(): Promise<AxiosResponse<IUser>> {
     return request({
-      url: __YANDEX_API__ + '/auth/user'
+      url: __YANDEX_API__ + '/auth/user',
+      method: 'GET'
     })
   },
   logout() {

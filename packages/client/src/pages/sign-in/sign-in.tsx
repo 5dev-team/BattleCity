@@ -8,8 +8,11 @@ import NesInput from '@/components/UI/nes-input'
 import NesLink from '@/components/UI/nes-link'
 import NesButton from '@/components/UI/nes-button'
 
+import { useNavigate } from 'react-router-dom'
+
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { authSlice, fetchLogin } from '@/store/slices/auth'
+import { RoutePaths } from '@/App'
 
 type LoginInputs = {
   login: string,
@@ -21,8 +24,14 @@ const SignIn: React.FC = () => {
   const authError = useAppSelector((state) => state.auth.authError)
 
   const { register, handleSubmit, formState: { errors, submitCount } } = useForm<LoginInputs>()
+
+  const navigate = useNavigate()
   const onSubmit = (data: LoginInputs): void => {
-    dispatch(fetchLogin(data))
+    dispatch(fetchLogin(data)).then((val) => {
+      if (val.meta.requestStatus !== 'rejected') {
+        navigate(RoutePaths.GAME)
+      }
+    })
   }
   const formErrorsString = useMemo(() => Object.values(errors).map(el => el.ref?.name).join(', '),
     [submitCount])

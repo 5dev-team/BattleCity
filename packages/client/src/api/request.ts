@@ -1,5 +1,6 @@
-import axios from 'axios'
 import type { AxiosRequestConfig } from 'axios'
+import axios from 'axios'
+import { RoutePaths } from '@/App'
 
 axios.interceptors.response.use(
   response => {
@@ -8,7 +9,9 @@ axios.interceptors.response.use(
   },
   error => {
     if (error.response.status === 401) {
-      console.log(error.response.data.reason)
+      if (![RoutePaths.SIGNIN.valueOf(), RoutePaths.SIGNUP.valueOf()].includes(window.location.pathname)) {
+        window.location.pathname = RoutePaths.SIGNIN.valueOf()
+      }
     }
     return Promise.reject(error.response.data.reason || 'Server error')
   }
