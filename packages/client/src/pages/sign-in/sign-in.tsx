@@ -21,19 +21,19 @@ const SignIn: React.FC = () => {
 				<span className={styles['page-title']}>Sign In</span>
 				<form className={styles['sign-in__form']} onSubmit={onSubmit}>
 					<NesInput
-						label="Login"
+						label='Login'
 						fullWidth
 						value={form.login}
 						onChange={e => setForm({ ...form, login: e.target.value })}
 					/>
 					<NesInput
-						label="Password"
-						type="password"
+						label='Password'
+						type='password'
 						fullWidth
 						onChange={e => setForm({ ...form, password: e.target.value })}
 					/>
-					<NesButton type="submit">Sign In</NesButton>
-					<NesLink to="/sign-up">Not registered yet?</NesLink>
+					<NesButton type='submit'>Sign In</NesButton>
+					<NesLink to='/sign-up'>Not registered yet?</NesLink>
 				</form>
 			</div>
 		</div>

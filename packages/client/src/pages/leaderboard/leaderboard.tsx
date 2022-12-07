@@ -118,7 +118,7 @@ const LeaderBoard: React.FC = () => {
           {userRows}
         </div>
         <div className={styles['control-wrapper']}>
-          <NesButton variant="primary" fullWidth onClick={() => navigate('/')}>
+          <NesButton variant='primary' fullWidth onClick={() => navigate('/')}>
             exit
           </NesButton>
         </div>

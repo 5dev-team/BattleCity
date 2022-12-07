@@ -58,7 +58,7 @@ const NesFileInput: React.FC<INesInputProps> = ({
         <input
           id={id}
           className={`${styles['upload-file__input']} nes-pointer`}
-          type="file"
+          type='file'
           disabled={plain}
           {...props}
         />
@@ -69,7 +69,7 @@ const NesFileInput: React.FC<INesInputProps> = ({
             onClick={removeFile}
             variant={src === '' ? 'disabled' : 'error'}
             disabled={src === ''}
-            type="button">
+            type='button'>
             delete
           </NesButton>
         </div>

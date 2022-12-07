@@ -72,15 +72,15 @@ const Profile: React.FC = () => {
     if (mode === 'view') {
       return (
         <>
-          <NesButton onClick={() => setMode('edit')} type="button">
+          <NesButton onClick={() => setMode('edit')} type='button'>
             edit profile
           </NesButton>
-          <input className={'visually-hidden'} type="submit" />
+          <input className={'visually-hidden'} type='submit' />
         </>
       )
     } else if (mode === 'edit') {
       return (
-        <NesButton type="submit" variant="success">
+        <NesButton type='submit' variant='success'>
           save
         </NesButton>
       )
@@ -139,12 +139,12 @@ const Profile: React.FC = () => {
 
   return (
     <div className={styles['profile']}>
-      <div className="wrapper">
+      <div className='wrapper'>
         <div className={`nes-container with-title ${styles['container']}`}>
-          <h3 className="title is-dark" style={{ backgroundColor: '#000' }}>
+          <h3 className='title is-dark' style={{ backgroundColor: '#000' }}>
             Profile
           </h3>
-          <div className="nes-table-responsive">
+          <div className='nes-table-responsive'>
             <form onSubmit={onSubmit}>
               <table
                 className={`nes-table is-bordered is-centered is-dark`}
@@ -154,9 +154,9 @@ const Profile: React.FC = () => {
                     <td rowSpan={8} colSpan={2}>
                       <NesFileInput
                         src={avatar}
-                        label="Аватар"
+                        label='Аватар'
                         login={login}
-                        accept="image/*"
+                        accept='image/*'
                         plain={mode === 'view'}
                         readOnly={mode === 'view'}
                         isDragOver={isDragOver}
@@ -173,7 +173,7 @@ const Profile: React.FC = () => {
                     <td>
                       <NesInput
                         name={'first_name'}
-                        label="First name"
+                        label='First name'
                         labelHidden
                         readOnly={mode === 'view'}
                         plain={mode === 'view'}
@@ -187,7 +187,7 @@ const Profile: React.FC = () => {
                     <td>
                       <NesInput
                         name={'second_name'}
-                        label="Second name"
+                        label='Second name'
                         fullWidth
                         labelHidden
                         readOnly={mode === 'view'}
@@ -202,7 +202,7 @@ const Profile: React.FC = () => {
                     <td>
                       <NesInput
                         name={'display_name'}
-                        label="Display name"
+                        label='Display name'
                         fullWidth
                         labelHidden
                         readOnly={mode === 'view'}
@@ -217,7 +217,7 @@ const Profile: React.FC = () => {
                     <td>
                       <NesInput
                         name={'login'}
-                        label="Login"
+                        label='Login'
                         fullWidth
                         labelHidden
                         readOnly={mode === 'view'}
@@ -232,8 +232,8 @@ const Profile: React.FC = () => {
                     <td>
                       <NesInput
                         name={'email'}
-                        label="Email"
-                        type="email"
+                        label='Email'
+                        type='email'
                         fullWidth
                         labelHidden
                         readOnly={mode === 'view'}
@@ -248,7 +248,7 @@ const Profile: React.FC = () => {
                     <td>
                       <NesInput
                         name={'phone'}
-                        label="Phone"
+                        label='Phone'
                         fullWidth
                         labelHidden
                         readOnly={mode === 'view'}
@@ -263,8 +263,8 @@ const Profile: React.FC = () => {
                     <td>
                       <NesInput
                         name={'old_password'}
-                        label="Password"
-                        type="password"
+                        label='Password'
+                        type='password'
                         fullWidth
                         labelHidden
                         readOnly={mode === 'view'}
@@ -279,8 +279,8 @@ const Profile: React.FC = () => {
                     <td>
                       <NesInput
                         name={'new_password'}
-                        label="Email"
-                        type="password"
+                        label='Email'
+                        type='password'
                         fullWidth
                         labelHidden
                         readOnly={mode === 'view'}
@@ -295,9 +295,9 @@ const Profile: React.FC = () => {
               <div className={styles['control-page-buttons']}>
                 {renderFormButton()}
                 <NesButton
-                  variant="primary"
+                  variant='primary'
                   onClick={() => navigate('/')}
-                  type="button">
+                  type='button'>
                   exit
                 </NesButton>
               </div>
