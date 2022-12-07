@@ -1,15 +1,19 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 
 import { useForm } from 'react-hook-form'
 import { getPattern } from '@/utils/validation'
+
 import styles from './sign-up.module.scss'
 import NesInput from '@/components/UI/nes-input'
 import NesLink from '@/components/UI/nes-link'
 import NesButton from '@/components/UI/nes-button'
 
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { authSlice, fetchRegister } from '@/store/slices/auth'
+
 type RegistrationInputs = {
-  firstName: string,
-  secondName: string,
+  first_name: string,
+  second_name: string,
   email: string,
   login: string,
   password: string
@@ -17,11 +21,20 @@ type RegistrationInputs = {
 }
 
 const SignIn: React.FC = () => {
+  const dispatch = useAppDispatch()
+  const authError = useAppSelector((state) => state.auth.authError)
+
   const { register, handleSubmit, formState: { errors, submitCount } } = useForm<RegistrationInputs>()
   const onSubmit = (data: RegistrationInputs): void => {
-    console.log('from submit', data)
+    dispatch(fetchRegister(data))
   }
   const formErrorsString = useMemo(() => Object.values(errors).map(el => el.ref?.name).join(', '), [submitCount])
+
+  useEffect(() => {
+    return () => {
+      authSlice.actions.clearError()
+    }
+  }, [])
 
   return (
     <div className={styles['sign-up']}>
@@ -31,12 +44,12 @@ const SignIn: React.FC = () => {
           <NesInput
             label='First name'
             fullWidth
-            {...register('firstName', { pattern: getPattern('firstName'), required: true })}
+            {...register('first_name', { pattern: getPattern('firstName'), required: true })}
           />
           <NesInput
             label='Second name'
             fullWidth
-            {...register('secondName', { pattern: getPattern('secondName'), required: true })}
+            {...register('second_name', { pattern: getPattern('secondName'), required: true })}
           />
           <NesInput
             label='Email'
@@ -60,16 +73,16 @@ const SignIn: React.FC = () => {
             {...register('phone', { pattern: getPattern('phone'), required: true })}
           />
           {formErrorsString ?
-            <span className={'error-text'}>Wrong {formErrorsString}</span> :
+            <span className={'error-text'}>{formErrorsString ? 'Wrong ' + formErrorsString : authError}</span> :
             ''
           }
           <NesButton type='submit' variant='primary'>
-            Sign In
+            Sign up
           </NesButton>
           <NesLink
-            to='/sign-up'
+            to='/sign-in'
           >
-            Not registered yet?
+            Already registered?
           </NesLink>
         </form>
       </div>

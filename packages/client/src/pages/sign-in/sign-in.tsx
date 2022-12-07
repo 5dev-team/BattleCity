@@ -1,12 +1,15 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useEffect } from 'react'
 
 import { useForm } from 'react-hook-form'
 import { getPattern } from '@/utils/validation'
+
 import styles from './sign-in.module.scss'
 import NesInput from '@/components/UI/nes-input'
 import NesLink from '@/components/UI/nes-link'
 import NesButton from '@/components/UI/nes-button'
-import { authApi } from '@/api/auth'
+
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { authSlice, fetchLogin } from '@/store/slices/auth'
 
 type LoginInputs = {
   login: string,
@@ -14,13 +17,21 @@ type LoginInputs = {
 }
 
 const SignIn: React.FC = () => {
-  console.log(authApi)
-  authApi.useLoginMutation()
+  const dispatch = useAppDispatch()
+  const authError = useAppSelector((state) => state.auth.authError)
+
   const { register, handleSubmit, formState: { errors, submitCount } } = useForm<LoginInputs>()
   const onSubmit = (data: LoginInputs): void => {
-    // console.log(login(data))
+    dispatch(fetchLogin(data))
   }
-  const formErrorsString = useMemo(() => Object.values(errors).map(el => el.ref?.name).join(', '), [submitCount])
+  const formErrorsString = useMemo(() => Object.values(errors).map(el => el.ref?.name).join(', '),
+    [submitCount])
+
+  useEffect(() => {
+    return () => {
+      authSlice.actions.clearError()
+    }
+  }, [])
 
   return (
     <div className={styles['sign-in']}>
@@ -38,8 +49,8 @@ const SignIn: React.FC = () => {
             fullWidth
             {...register('password', { pattern: getPattern('password'), required: true })}
           />
-          {formErrorsString ?
-            <span className={'error-text'}>Wrong {formErrorsString}</span> :
+          {formErrorsString || authError ?
+            <span className={'error-text'}>{formErrorsString ? 'Wrong ' + formErrorsString : authError}</span> :
             ''
           }
           <NesButton type='submit' variant='primary'>
