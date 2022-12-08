@@ -1,6 +1,7 @@
 import type { AxiosRequestConfig } from 'axios'
 import axios from 'axios'
 import { RoutePaths } from '@/App'
+import history from '@/utils/history'
 
 axios.interceptors.response.use(
   response => {
@@ -10,11 +11,11 @@ axios.interceptors.response.use(
   error => {
     if (error.response.status === 401) {
       if (![RoutePaths.SIGNIN.valueOf(), RoutePaths.SIGNUP.valueOf()].includes(window.location.pathname)) {
-        window.location.pathname = RoutePaths.SIGNIN.valueOf()
+        history.push(RoutePaths.SIGNIN)
       }
     }
     return Promise.reject(error.response.data.reason || 'Server error')
   }
 )
 
-export const request = (config: AxiosRequestConfig) => axios(config)
+export const request = (config: AxiosRequestConfig) => axios({ ...config, withCredentials: true })

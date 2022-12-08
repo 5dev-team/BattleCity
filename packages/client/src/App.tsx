@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { BrowserRouter as Router, Route, Routes, Navigate, redirect } from 'react-router-dom'
+import { unstable_HistoryRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
 import LeaderBoard from '@/pages/leaderboard'
 import SignIn from '@/pages/sign-in'
 import Game from '@/pages/game'
@@ -9,6 +9,7 @@ import Forum from '@/pages/forum'
 import SignUp from '@/pages/sign-up/sign-up'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { fetchUser } from '@/store/slices/auth'
+import history from '@/utils/history'
 
 export enum RoutePaths {
   SIGNIN = '/sign-in',
@@ -31,7 +32,7 @@ const App: React.FC = () => {
   }, [])
 
   return (
-    <Router>
+    <Router history={history}>
       <Routes>
         <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
         <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
