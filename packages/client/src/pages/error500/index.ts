@@ -1,3 +1,3 @@
-import Error500 from './error500';
+import Error500 from './error500'
 
-export default Error500;
+export default Error500

@@ -1,7 +1,7 @@
-import React from 'react';
-import styles from './error404.module.scss';
-import NesLink from '@/components/UI/nes-link';
-import {RoutePaths} from '@/App';
+import React from 'react'
+import styles from './error404.module.scss'
+import NesLink from '@/components/UI/nes-link'
+import {RoutePaths} from '@/App'
 
 const Error404: React.FC = () => {
     return (
@@ -17,4 +17,4 @@ const Error404: React.FC = () => {
     )
 }
 
-export default Error404;
+export default Error404
