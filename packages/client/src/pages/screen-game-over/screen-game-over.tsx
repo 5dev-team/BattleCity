@@ -1,49 +1,74 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import NesButton from '@/components/UI/nes-button'
 import styles from './screen-game-over.module.scss'
 import T0 from '@/assets/tanks/1T.png'
 import T1 from '@/assets/tanks/2T.png'
 import T2 from '@/assets/tanks/3T.png'
 import T3 from '@/assets/tanks/4T.png'
+import GameButton from '@/components/UI/game-button'
+import GameMenu from '@/components/UI/game-menu/game-menu'
 
 const ScreenGameOver: React.FC = () => {
   const navigate = useNavigate()
-  type inputProps = {
+
+  type Stats = Partial<{ P1: number, P2: number, key: number, T: string }>
+
+  interface inputProps {
+    nextGame: boolean
     hiScore: number,
     stage: number,
     players: number,
-    playersStats: { P1: number, P2: number, key: number, T: string }[];
+    playersStats: Stats[]
   }
 
   const props: inputProps = {
+    nextGame: false,
     hiScore: 20000,
     stage: 1,
     players: 2,
     playersStats: [
-      { P1: 10000, P2: 25000, key: 0, T: T0 },
-      { P1: 0, P2: 0, key: 1, T: T1 },
-      { P1: 10000, P2: 0, key: 2, T: T2 },
-      { P1: 10000, P2: 0, key: 3, T: T3 }
+      { P1: 0, P2: 1, key: 0, T: T0 },
+      { P1: 1, P2: 1, key: 1, T: T1 },
+      { P1: 1, P2: 1, key: 2, T: T2 },
+      { P1: 20, P2: 4, key: 3, T: T3 }
     ]
   }
 
-  const template = props.playersStats.map((value) => {
+  const totalPts: Partial<{ P1: number, P2: number }> = props.players == 1 ?
+    props.playersStats.reduce((acc: { P1: number }, value: Stats, index: number) => {
+      if (value.P1 !== undefined) {
+        acc.P1 = acc.P1 + value.P1 * (100 * (index + 1))
+      }
+      return acc
+    }, { P1: 0 }) :
+    props.playersStats.reduce((acc: { P1: number, P2: number }, value: Stats, index: number) => {
+      if (value.P1 !== undefined) {
+        acc.P1 = acc.P1 + value.P1 * (100 * (index + 1))
+      }
+      if (value.P2 != undefined) {
+        acc.P2 = acc.P2 + value.P2 * (100 * (index + 1))
+      }
+      return acc
+    }, { P1: 0, P2: 0 })
+
+
+  const template = props.playersStats.map((value, index: number) => {
     return (
-      <li className={styles['players-stats__item']} key={value.key}>
+      <li className={`${styles['players-stats__item']} ${props.players === 1 && styles['players-stats__item_one']}`}
+          key={value.key}>
         <div className={styles['players-stats__pts-wrapper']}>
-          <p className={styles['players-stats__pts-count']}>{value.P1}</p>
+          <p className={styles['players-stats__pts-count']}>{value.P1 ? (value.P1 * (100 * (index + 1))) : 0}</p>
           <p className={styles['players-stats__pts']}>PTS</p>
         </div>
         <div
           className={`${styles['players-stats__type-tank']} ${props.players === 1 && styles['players-stats__type-tank_one']}`}>
-          <p className={styles['players-stats__text']}>{value.P1}</p>
+          <p className={styles['players-stats__text']}>{value.P1 ? value.P1 : 0}</p>
           <p className={styles['players-stats__arrow']}>🡄</p>
-          <img src={value.T} alt='танк' className={styles['players-stats__image-tank']} />
+          <img src={value.T} alt='tank' className={styles['players-stats__image-tank']} />
           {props.players === 2 &&
             <>
               <p className={`${styles['players-stats__arrow']} ${styles['players-stats__arrow_p2']}`}>🡄</p>
-              <p className={`${styles['players-stats__text']} ${styles['players-stats__text_p2']}`}>{value.P2}</p>
+              <p className={`${styles['players-stats__text']} ${styles['players-stats__text_p2']}`}>{value.P2 ? value.P2: 0}</p>
             </>
           }
         </div>
@@ -51,7 +76,7 @@ const ScreenGameOver: React.FC = () => {
           <div className={styles['players-stats__pts-wrapper']}>
             <p className={styles['players-stats__pts']}>PTS</p>
             <p
-              className={`${styles['players-stats__pts-count']} ${styles['players-stats__pts-count_end']}`}>{value.P2}</p>
+              className={`${styles['players-stats__pts-count']} ${styles['players-stats__pts-count_end']}`}>{value.P2 ? value.P2 * (100 * (index + 1)) : 0}</p>
           </div>
         }
       </li>
@@ -72,16 +97,17 @@ const ScreenGameOver: React.FC = () => {
           </div>
         </div>
         <div className={styles['players']}>
-          {props.players === 1 ? <h3 className={styles['players__common']}>I Player</h3> : <><h3
-            className={styles['players__common']}>I
-            Player</h3><h3 className={styles['players__common']}>II Player</h3></>}
+          {props.players === 1 ? <h3 className={styles['players__common']}>I-Player</h3> : <><h3
+            className={styles['players__common']}>I-Player</h3><h3
+            className={styles['players__common']}>II-Player</h3></>}
         </div>
         <div className={styles['points-common']}>
           {props.players === 1 ?
-            <p className={`${styles['points-common__player']} ${styles['points-common__player_one']}`}>0</p> : <> <p
-              className={styles['points-common__player']}>0</p><p className={styles['points-common__player']}>0</p></>}
+            <p className={styles['points-common__player']}>{totalPts.P1}</p> : <> <p
+              className={styles['points-common__player']}>{totalPts.P1}</p><p
+              className={`${styles['points-common__player']} ${styles['points-common__player_two']}`}>{totalPts.P2}</p></>}
         </div>
-        <div className={`${styles['players-stats']} ${props.players === 1 && styles['players-stats_one-player']}`}>
+        <div className={`${styles['players-stats']}`}>
           <ul className={styles['players-stats__lists']}>
             {template}
           </ul>
@@ -91,32 +117,45 @@ const ScreenGameOver: React.FC = () => {
           <div className={`${styles['players-counting__wrapper']}`}>
             <div className={`${styles['players-counting__player']}`}>
               <p className={`${styles['players-counting__total']}`}>TOTAL</p>
-              <p className={`${styles['players-counting__total-count']}`}>0</p>
+              <p
+                className={`${styles['players-counting__total-count']}`}>{props.playersStats.reduce((acc: number, val: Stats) => {
+                if (val.P1) {
+                  return acc + val.P1
+                }
+                return acc
+              }, 0)}</p>
             </div>
             {props.players === 2 &&
               <div className={`${styles['players-counting__player']}`}>
-                <p className={`${styles['players-counting__total-count']}`}>0</p>
+                <p
+                  className={`${styles['players-counting__total-count']}`}>{props.playersStats.reduce((acc: number, val: Stats) => {
+                  if (val.P2) {
+                    return acc + val.P2
+                  }
+                  return acc
+                }, 0)}</p>
                 <p className={`${styles['players-counting__total']}`}>TOTAL</p>
               </div>
             }
           </div>
         </div>
-        <div className={styles['button-wrapper']}>
-          <NesButton
-            onClick={() => navigate('/game')}
-            type='button'>
-            repeat
-          </NesButton>
-          <NesButton
-            variant='primary'
-            onClick={() => navigate('/')}
-            type='button'>
-            exit
-          </NesButton>
-        </div>
-      </div>
-    </section>
-  )
+        <GameMenu selectItemId={0} className={styles['button-wrapper']}>
+          {props.nextGame ?
+            <GameButton onClick={() => navigate('/game')}>
+              NEXT LEVEL
+            </GameButton> :
+            <GameButton onClick={() => navigate('/game')}>
+              REPEAT
+            </GameButton>
+            }
+            <GameButton onClick={() => navigate('/leaderboard')}>
+          LEADERBOARD
+        </GameButton>
+        <GameButton onClick={() => navigate('/')}>EXIT</GameButton>
+      </GameMenu>
+    </div>
+</section>
+)
 }
 
 export default ScreenGameOver
