@@ -1,0 +1,27 @@
+.profile {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  padding-bottom: 0;
+}
+
+.control-wrapper {
+  width: 100%;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.control-page-buttons {
+  display: flex;
+  flex-direction: column;
+  padding: 0 8px;
+}
+
+.control-page-buttons button {
+  margin-top: 16px;
+}

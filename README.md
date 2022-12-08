@@ -1,3 +1,31 @@
+<h1 align="center">Учебный проект</h1>
+<image src="./packages/client/src/assets/battleCityLogo.png" alt="Logo game">
+
+<br>
+<div align="center">
+    <img src="https://img.shields.io/badge/Year-2022-red">
+    <img src="https://img.shields.io/badge/Open Source-lightgray">
+    <img src="https://img.shields.io/badge/PRs-welcom-red">
+</div>
+<div align="center">
+    <img src="https://img.shields.io/badge/Type Script-success">
+    <img src="https://img.shields.io/badge/Java Script-success">
+    <img src="https://img.shields.io/badge/HTML-success">
+    <img src="https://img.shields.io/badge/SCSS-success">
+    <img src="https://img.shields.io/badge/React-success">
+    <img src="https://img.shields.io/badge/Redux-success">
+</div>
+<br>
+
+<h2 align="center">Описание</h2>
+<p align="center">Battle City — компьютерная игра. В России и странах СНГ выпускалась на пиратских картриджах как в оригинальном виде, так и в модификации Tank 1990, и известна под неофициальным названием «Та́нчики». Её предшественником была аркадная игра Tank Battalion, выпущенная фирмой Namco в 1980 году. Полигон действий виден сверху. Игрок должен, управляя своим танком, уничтожить все вражеские танки на уровне, которые постепенно появляются вверху игрового поля. Враги пытаются уничтожить штаб игрока (внизу игрового поля в виде орла) и его танк. На каждом уровне нужно уничтожить танки противника разных видов. Если противник (или игрок) сможет разрушить штаб или лишит игрока всех жизней — игра окончена.</p>
+<h2 align="center">В проекте используются</h2>
+шрифты: Google Fonts
+
+библиотека стилей: Nes
+
+<h2 align="center">Техническое описание</h2>
+
 ### Как запускать?
 
 1. Убедитесь что у вас установлен `node` и `docker`
