@@ -1,6 +1,6 @@
 import React, { ImgHTMLAttributes } from 'react'
 import styles from './nes-avatar.module.scss'
-import avatarPlaceholder from '../../../assets/avatarPlaceholder.png'
+import avatarPlaceholder from '@/assets/avatarPlaceholder.png'
 
 
 interface IAvatar extends ImgHTMLAttributes<HTMLImageElement> {
