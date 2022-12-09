@@ -16,7 +16,7 @@ export enum RoutePaths {
   SIGNIN = '/sign-in',
   SIGNUP = '/sign-up',
   LEADERBOARD = '/leaderboard',
-  GAME = '/game',
+  GAME = '/',
   ERROR404 = '/404',
   ERROR500 = '/500',
   FORUM = '/forum',
@@ -44,7 +44,6 @@ const App: React.FC = () => {
         <Route path={RoutePaths.ERROR500} element={<Error500 />} />
         <Route path={RoutePaths.FORUM} element={<Forum />} />
         <Route path={RoutePaths.PROFILE} element={<Profile />} />
-        <Route path='/' element={<Navigate to={RoutePaths.GAME} replace />} />
         <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
       </Routes>
     </Router>

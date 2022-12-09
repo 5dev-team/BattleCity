@@ -22,7 +22,7 @@ type RegistrationInputs = {
   phone: string
 }
 
-const SignIn: React.FC = () => {
+const SignUp: React.FC = () => {
   const dispatch = useAppDispatch()
   const authError = useAppSelector((state) => state.auth.authError)
 
@@ -98,4 +98,4 @@ const SignIn: React.FC = () => {
   )
 }
 
-export default SignIn
+export default SignUp
