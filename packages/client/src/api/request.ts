@@ -10,7 +10,7 @@ axios.interceptors.response.use(
   },
   error => {
     if (error.response.status === 401) {
-      if (![RoutePaths.SIGNIN.valueOf(), RoutePaths.SIGNUP.valueOf()].includes(window.location.pathname)) {
+      if (RoutePaths.SIGNIN.valueOf() !== window.location.pathname && RoutePaths.SIGNUP.valueOf() !== window.location.pathname) {
         history.push(RoutePaths.SIGNIN)
       }
     }
