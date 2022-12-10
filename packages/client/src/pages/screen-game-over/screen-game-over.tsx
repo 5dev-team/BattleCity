@@ -5,7 +5,7 @@ import T1 from '@/assets/tanks/T1.png'
 import T2 from '@/assets/tanks/T2.png'
 import T3 from '@/assets/tanks/T3.png'
 import T4 from '@/assets/tanks/T4.png'
-import arrow from '@/assets/arrow.svg'
+import arrow from '@/assets/svg/arrow.svg'
 
 import GameButton from '@/components/UI/game-button'
 import GameMenu from '@/components/UI/game-menu/game-menu'
