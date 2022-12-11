@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { unstable_HistoryRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
-import LeaderBoard from '@/pages/leaderboard'
+import Leaderboard from '@/pages/leaderboard'
 import SignIn from '@/pages/sign-in'
 import Game from '@/pages/game'
 import Error404 from '@/pages/error404'
@@ -38,7 +38,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
         <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
-        <Route path={RoutePaths.LEADERBOARD} element={<LeaderBoard />} />
+        <Route path={RoutePaths.LEADERBOARD} element={<Leaderboard />} />
         <Route path={RoutePaths.GAME} element={<Game />} />
         <Route path={RoutePaths.ERROR404} element={<Error404 />} />
         <Route path={RoutePaths.ERROR500} element={<Error500 />} />
