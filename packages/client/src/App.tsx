@@ -12,6 +12,7 @@ import Profile from '@/pages/profile'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { fetchUser } from '@/store/slices/auth'
 import history from '@/utils/history'
+import Comments from './pages/comments'
 
 
 export enum RoutePaths {
@@ -23,7 +24,8 @@ export enum RoutePaths {
   ERROR500 = '/500',
   FORUM = '/forum',
   GAMEOVER = '/game-over',
-  PROFILE = '/profile'
+  PROFILE = '/profile',
+  COMMENTS = '/forum/:id/:title',
 }
 
 const App: React.FC = () => {
@@ -49,6 +51,7 @@ const App: React.FC = () => {
         <Route path={RoutePaths.FORUM} element={<Forum />} />
         <Route path={RoutePaths.PROFILE} element={<Profile />} />
         <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
+        <Route path={RoutePaths.COMMENTS} element={<Comments />} />
       </Routes>
     </Router>
   )

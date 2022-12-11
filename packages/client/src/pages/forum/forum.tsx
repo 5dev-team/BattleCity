@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import styles from './forum.module.scss'
 import NesButton from '@/components/UI/nes-button'
 import NesInput from '@/components/UI/nes-input'
+import NesLink from '@/components/UI/nes-link'
 
 export type ForumThemesType = {
     title: string,
@@ -39,13 +40,15 @@ const Forum: React.FC = () => {
         }
     ])
 
+    const getChildrenRoute = (id: number, children: ForumThemesType) => `${id.toString()}/${children.title}`
+
     const titles = ['Theme', 'Author', 'Answers', 'Last']
         .map((el, id) => <div key={id} className={`${styles['forum-header-item']}`}>{el}</div>)
 
     const addThemes = (themes: Array<ForumThemesType>) => {
         return themes
-            .map((theme, id) => <div key={id} className={`${styles['forum-theme']}`}>{Object.values(theme)
-                .map((el, id) => <div key={id} className={`${styles['forum-theme-item']}`}>{el}</div>)}</div>)
+            .map((theme, id) => <NesLink to={getChildrenRoute(id, theme)} key={id} className={`${styles['forum-theme']}`}>{Object.values(theme)
+                .map((el, id) => <div key={id} className={`${styles['forum-theme-item']}`}>{el}</div>)}</NesLink>)
     }
 
     const addThem = (themes: Array<ForumThemesType>, templateThem: ForumThemesType): void => {
