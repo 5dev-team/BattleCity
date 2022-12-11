@@ -70,7 +70,7 @@ export const authSlice = createSlice({
     })
     // user
     builder.addCase(fetchUser.fulfilled, (state, { payload }) => {
-      state.user = payload.data
+      state.user = payload
     })
     builder.addCase(fetchUser.rejected, (state) => {
       state.user = null

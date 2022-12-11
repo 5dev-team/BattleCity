@@ -2,6 +2,7 @@ import { LEADERBOARD_RATING_FIELD_NAME } from '@/constants'
 
 export interface IUserScore {
   id: number
+  userId: number
   avatar: string
   name: string
   score: number
