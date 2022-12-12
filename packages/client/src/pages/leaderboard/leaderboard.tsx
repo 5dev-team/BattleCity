@@ -10,7 +10,7 @@ import { LEADERBOARD_RATING_FIELD_NAME } from '@/constants'
 
 export const TABLE_TOTAL_ITEMS = 50
 
-const LeaderBoard: React.FC = () => {
+const Leaderboard: React.FC = () => {
   
   const dispatch = useAppDispatch()
   const leaderboardDataRequest: ILeaderboardRequest = {
@@ -118,4 +118,4 @@ const LeaderBoard: React.FC = () => {
   )
 }
 
-export default LeaderBoard
+export default Leaderboard
