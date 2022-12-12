@@ -1,3 +1,3 @@
-import Error404 from './error404';
+import Error404 from './error404'
 
-export default Error404;
+export default Error404

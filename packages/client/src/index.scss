@@ -15,6 +15,26 @@ body,
   height: 100%;
 }
 
+.visually-hidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
 * {
   color: #fff;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  margin-bottom: 30px;
+}
+
+.error-text {
+  font-size: .8rem;
+  color: #E76E55
 }
