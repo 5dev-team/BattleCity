@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, useId } from 'react'
+import React, { InputHTMLAttributes, useId, forwardRef } from 'react'
 import styles from './nes-input.module.scss'
 
 interface INesInputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -10,7 +10,7 @@ interface INesInputProps extends InputHTMLAttributes<HTMLInputElement> {
   plain?: boolean
 }
 
-const NesInput = React.forwardRef<
+const NesInput = forwardRef<
   HTMLInputElement, INesInputProps
   >(({ inline, label, variant, fullWidth, labelHidden, plain, ...props}, ref) => {
   const id = useId()

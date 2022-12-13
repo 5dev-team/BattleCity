@@ -1,12 +1,24 @@
-// Comment test. Let's make a task for it
+import App from './App'
+import { Provider } from 'react-redux'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const ShallowRenderer = require('react-test-renderer/shallow')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const configureStore = require('redux-mock-store').default
 
-// import App from './App'
-import { render } from '@testing-library/react'
 
-global.fetch = jest.fn(() =>
-  Promise.resolve({ json: () => Promise.resolve('hey') })
-) as jest.Mock
-test('Example test', async () => {
+describe('Wrapper App', () => {
+  const initialState = { defaultValue: 1 }
+  const mockStore = configureStore()
+  let store
 
-  // render(<App />)
+  test('Should render App', () => {
+    const renderer = new ShallowRenderer()
+    store = mockStore(initialState)
+    renderer.render(
+      <Provider store={store}>
+        <App />
+      </Provider>
+    )
+  })
+
 })
