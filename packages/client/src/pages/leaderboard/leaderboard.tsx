@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { fetchLeaderboardAll } from '@/store/slices/leaderboard'
 import { ILeaderboardRequest } from '@/api/leaderboard/leaderboard.models'
-import { LEADERBOARD_RATING_FIELD_NAME } from '@/constants'
+import { LEADERBOARD_RATING_FIELD_NAME } from '@/constants/configs/leaderboard'
 
 export const TABLE_TOTAL_ITEMS = 50
 
