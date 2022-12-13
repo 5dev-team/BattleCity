@@ -1,5 +1,5 @@
 import { IUserScoreRequest } from '@/api/leaderboard/leaderboard.models'
-import { LEADERBOARD_RATING_FIELD_NAME } from '@/constants'
+import { LEADERBOARD_RATING_FIELD_NAME } from '@/constants/configs/leaderboard'
 
 export interface ILeaderboardScoreTransferred {
   id: number
@@ -9,10 +9,7 @@ export interface ILeaderboardScoreTransferred {
 
 export const transformScore = (data: IUserScoreRequest): ILeaderboardScoreTransferred => {
   
-  const formatDate = (date: string) => {
-    const year = Number(date.slice(-4)) % 100
-    return `${date.slice(0, -4)}${year}`.split('-').join('.')
-  }
+  const formatDate = (date: number) => new Date(date).toISOString().split('T')[0].split('-').join('.')
   
   return {
     id: data.data.user_id,

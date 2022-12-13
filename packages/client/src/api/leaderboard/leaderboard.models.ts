@@ -1,4 +1,4 @@
-import { LEADERBOARD_RATING_FIELD_NAME } from '@/constants'
+import { LEADERBOARD_RATING_FIELD_NAME } from '@/constants/configs/leaderboard'
 
 export interface IUserScore {
   id: number
@@ -12,7 +12,7 @@ export interface IUserScore {
 export interface IUserScoreRequest {
   data: {
     user_id: number
-    score_date: string
+    score_date: number
     [LEADERBOARD_RATING_FIELD_NAME]: number
   }
 }
