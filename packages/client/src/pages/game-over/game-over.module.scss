@@ -19,7 +19,6 @@
 
   &__common-title {
     display: flex;
-    flex-direction: row;
     justify-content: space-around;
   }
 
@@ -102,7 +101,6 @@
 
 .players-stats {
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
 
   &__lists {

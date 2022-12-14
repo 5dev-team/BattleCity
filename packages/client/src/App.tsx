@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { unstable_HistoryRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
 import LeaderBoard from '@/pages/leaderboard'
 import SignIn from '@/pages/sign-in'
-import ScreenGameOver from '@/pages/screen-game-over/screen-game-over'
+import GameOver from '@/pages/game-over'
 import Game from '@/pages/game'
 import Error404 from '@/pages/error404'
 import Error500 from '@/pages/error500'
@@ -22,7 +22,7 @@ export enum RoutePaths {
   ERROR404 = '/404',
   ERROR500 = '/500',
   FORUM = '/forum',
-  GAMEOVER = '/game-over'
+  GAMEOVER = '/game-over',
   PROFILE = '/profile'
 }
 
@@ -39,7 +39,7 @@ const App: React.FC = () => {
   return (
     <Router history={history}>
       <Routes>
-        <Route path={RoutePaths.GAMEOVER} element={<ScreenGameOver />} />
+        <Route path={RoutePaths.GAMEOVER} element={<GameOver />} />
         <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
         <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
         <Route path={RoutePaths.LEADERBOARD} element={<LeaderBoard />} />
