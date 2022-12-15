@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useMemo, useState} from 'react'
 import styles from './forum.module.scss'
 import NesButton from '@/components/UI/nes-button'
 import NesInput from '@/components/UI/nes-input'
@@ -40,24 +40,23 @@ const Forum: React.FC = () => {
         }
     ])
 
-    const getChildrenRoute = (id: number, children: ForumThemesType) => `${id.toString()}/${children.title}`
-
-    const titles = ['Theme', 'Author', 'Answers', 'Last']
-        .map((el, id) => <div key={id} className={`${styles['forum-header-item']}`}>{el}</div>)
+    const getChildrenRoute = (children: ForumThemesType, id: string) => `${id}/${children.title}`
 
     const addThemes = (themes: Array<ForumThemesType>) => {
         return themes
-            .map((theme, id) => <NesLink to={getChildrenRoute(id, theme)} key={id} className={`${styles['forum-theme']}`}>{Object.values(theme)
-                .map((el, id) => <div key={id} className={`${styles['forum-theme-item']}`}>{el}</div>)}</NesLink>)
+            .map((theme, id) => <NesLink to={getChildrenRoute(theme, id.toString())} key={id} className={styles['forum-theme']}>{Object.values(theme)
+            .map((el, id) => <div key={id} className={styles['forum-theme-item']}>{el}</div>)}</NesLink>)
     }
 
-    const addThem = (themes: Array<ForumThemesType>, templateThem: ForumThemesType): void => {
-        templateThem.title && setThem([...themes, templateThem])
-    }
+    const addThem = useMemo(() => (themes: Array<ForumThemesType>, templateThem: ForumThemesType): void => {
+        if (templateThem.title) {
+          setThem([...themes, templateThem])
+        }
+    }, [themes])
 
     return (
-        <div className={`${styles['forum']}`}>
-            <div className={`${styles['forum-add-them']}`}>
+        <div className={styles['forum']}>
+            <div className={styles['forum-add-them']}>
                 <NesButton 
                     variant='warning'
                     onClick={() => addThem(themes, templateThem)}
@@ -67,11 +66,16 @@ const Forum: React.FC = () => {
                 <NesInput
                     inline
                     label='theme'
-                    onChange={evt => setTemplateThem({...templateThem, title: evt.target.value})}
+                    onChange={(evt) => setTemplateThem({...templateThem, title: evt.target.value})}
                 />
             </div>
-            <div className={`${styles['forum-header']}`}>{titles}</div>
-            <div className={`${styles['forum-themes']}`}>{addThemes(themes)}</div>
+            <div className={styles['forum-header']}>
+                <div className={styles['forum-header-item']}>Theme</div>
+                <div className={styles['forum-header-item']}>Author</div>
+                <div className={styles['forum-header-item']}>Answers</div>
+                <div className={styles['forum-header-item']}>Last</div>
+            </div>
+            <div className={styles['forum-themes']}>{addThemes(themes)}</div>
         </div>
     )
 }

@@ -50,8 +50,8 @@ const App: React.FC = () => {
         <Route path={RoutePaths.ERROR500} element={<Error500 />} />
         <Route path={RoutePaths.FORUM} element={<Forum />} />
         <Route path={RoutePaths.PROFILE} element={<Profile />} />
-        <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
         <Route path={RoutePaths.COMMENTS} element={<Comments />} />
+        <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
       </Routes>
     </Router>
   )

@@ -16,7 +16,7 @@ const NesTextarea: React.FC<NesTextareaProps> = ({
   const id = useId()
 
   return (
-    <div className={`${styles['textarea-wrapper']}`}>
+    <div className={styles['textarea-wrapper']}>
       <label 
         className={`${labelHidden ? 'visually-hidden' : ''} nes-textarea`}
         htmlFor={id}
