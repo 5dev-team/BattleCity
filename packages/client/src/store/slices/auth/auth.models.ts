@@ -8,3 +8,14 @@ export interface IUser {
   phone: string
   avatar: string
 }
+
+export interface User {
+  id: number
+  firstName: string
+  secondName: string
+  displayName: string
+  login: string
+  email: string
+  phone: string
+  avatar: string
+}

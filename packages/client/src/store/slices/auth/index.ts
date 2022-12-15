@@ -1,12 +1,13 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import api from '@/api'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { ILoginRequest, IRegisterRequest } from '@/api/auth/auth.models'
-import { IUser } from '@/store/slices/auth/auth.models'
+import { IUser, User } from '@/store/slices/auth/auth.models'
+import { transformUser } from '@/utils/transformers'
 
 interface IInitialState {
   authError: string
   isAuthLoading: boolean
-  user: IUser | null
+  user: User | null
 }
 
 const initialState: IInitialState = {
@@ -27,7 +28,7 @@ export const fetchRegister = createAsyncThunk(
 
 export const fetchUser = createAsyncThunk(
   'auth/fetchUser',
-  () => api.auth.user()
+  () => api.auth.user().then(user => transformUser(user as IUser))
 )
 
 export const fetchLogout = createAsyncThunk(
@@ -70,7 +71,7 @@ export const authSlice = createSlice({
     })
     // user
     builder.addCase(fetchUser.fulfilled, (state, { payload }) => {
-      state.user = payload.data
+      state.user = payload
     })
     builder.addCase(fetchUser.rejected, (state) => {
       state.user = null
