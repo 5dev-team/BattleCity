@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import GameButton from '@/components/UI/game-button'
 import tankIcon from '@/assets/avatarPlaceholder.png'
 
@@ -8,7 +8,7 @@ type Props = {
 
 const GameMenu: React.FC<Props> = ({ selectItemId, ...props }) => {
   const [selectedId, setState] = useState<number>(selectItemId)
-  const buttonsRefs = useRef<HTMLButtonElement[]>([])
+  const buttons: HTMLButtonElement[] = []
 
   useEffect(() => {
     const listener = (e: KeyboardEvent) => changeActiveBtn(e)
@@ -21,7 +21,7 @@ const GameMenu: React.FC<Props> = ({ selectItemId, ...props }) => {
   const changeActiveBtn = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault()
-      buttonsRefs.current[selectedId].click()
+      buttons[selectedId].click()
       return
     }
 
@@ -31,7 +31,7 @@ const GameMenu: React.FC<Props> = ({ selectItemId, ...props }) => {
     else if (e.key === 'ArrowDown') nextId = selectedId + 1
     else return
 
-    if (nextId > -1 && nextId < buttonsRefs.current.length) setState(nextId)
+    if (nextId > -1 && nextId < buttons.length) setState(nextId)
   }
 
   return (
@@ -43,7 +43,7 @@ const GameMenu: React.FC<Props> = ({ selectItemId, ...props }) => {
         return (
           <GameButton
             ref={element => {
-              if (element) buttonsRefs.current[index] = element
+              if (element) buttons[index] = element
             }}
             key={index}
             icon={index === selectedId ? tankIcon : undefined}
