@@ -1,5 +1,5 @@
 import { request } from '@/api/request'
-import { IUser } from '@/store/slices/auth/auth.models'
+import { IUserDTO } from '@/store/slices/auth/auth.models'
 import {
   IChangeAvatarRequest,
   IChangeProfileRequest,
@@ -8,7 +8,7 @@ import {
 
 export default {
   changeProfile(data: IChangeProfileRequest) {
-    return request<IUser>({
+    return request<IUserDTO>({
       url: __YANDEX_API__ + '/user/profile',
       method: 'PUT',
       data,
@@ -18,7 +18,7 @@ export default {
     const formData = new FormData()
     formData.append('avatar', data.avatar[0])
 
-    return request<IUser>({
+    return request<IUserDTO>({
       url: __YANDEX_API__ + '/user/profile/avatar',
       method: 'PUT',
       data: formData,
@@ -32,13 +32,13 @@ export default {
     })
   },
   getUser(id: number) {
-    return request<IUser>({
+    return request<IUserDTO>({
       url: __YANDEX_API__ + `/user/${id}`,
       method: 'GET',
     })
   },
   search(login: string) {
-    return request<IUser[]>({
+    return request<IUserDTO[]>({
       url: __YANDEX_API__ + '/user/search',
       method: 'POST',
       data: { login },

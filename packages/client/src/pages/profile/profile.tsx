@@ -7,8 +7,8 @@ import NesButton from '@/components/UI/nes-button'
 import NesInput from '@/components/UI/nes-input'
 import NesFileInput from '@/components/UI/nes-file-input'
 import { fetchLogout, fetchUser } from '@/store/slices/auth'
-import { IUser, User } from '@/store/slices/auth/auth.models'
-import { fetchProfile } from '@/store/slices/profile'
+import { IUserDTO, IUser } from '@/store/slices/auth/auth.models'
+import { fetchProfileUpdate } from '@/store/slices/profile'
 import styles from './profile.module.scss'
 
 type ProfileInputs = {
@@ -16,7 +16,7 @@ type ProfileInputs = {
     newPassword: string
     oldPassword: string
   }
-  profile: Omit<IUser, 'id' | 'avatar'>
+  profile: Omit<IUserDTO, 'id' | 'avatar'>
   avatar: FileList
 }
 
@@ -32,7 +32,8 @@ enum ProfileMode {
 }
 
 const Profile: React.FC = () => {
-  const user = useAppSelector(state => state.auth.user) ?? ({} as Partial<User>)
+  const user =
+    useAppSelector(state => state.auth.user) ?? ({} as Partial<IUser>)
   const responseError = useAppSelector(state => state.profile.fetchError)
 
   const defaultValues = {
@@ -82,7 +83,7 @@ const Profile: React.FC = () => {
     const avatarData = dirtyFields.avatar ? { avatar: data.avatar } : undefined
 
     dispatch(
-      fetchProfile({
+      fetchProfileUpdate({
         profileData,
         passwordData,
         avatarData,

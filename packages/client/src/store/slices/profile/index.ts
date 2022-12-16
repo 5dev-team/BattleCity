@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { fetchUser } from '@/store/slices/auth'
 import { IFetchProfileData } from '@/store/slices/profile/profile.models'
 
-export const fetchProfile = createAsyncThunk(
+export const fetchProfileUpdate = createAsyncThunk(
   'users/fetchProfile',
   (data: IFetchProfileData, { dispatch }) => {
     const promises: Promise<unknown>[] = []
@@ -28,6 +28,9 @@ export const fetchProfile = createAsyncThunk(
 
       if (rejectReasons) {
         dispatch(profileSlice.actions.serError(rejectReasons))
+      }
+      else {
+        dispatch(profileSlice.actions.clearError())
       }
 
       return results
@@ -57,13 +60,13 @@ export const profileSlice = createSlice({
     },
   },
   extraReducers: builder => {
-    builder.addCase(fetchProfile.pending, state => {
+    builder.addCase(fetchProfileUpdate.pending, state => {
       state.isLoading = true
     })
-    builder.addCase(fetchProfile.fulfilled, state => {
+    builder.addCase(fetchProfileUpdate.fulfilled, state => {
       state.isLoading = false
     })
-    builder.addCase(fetchProfile.rejected, (state, { error }) => {
+    builder.addCase(fetchProfileUpdate.rejected, (state, { error }) => {
       state.isLoading = false
 
       if (error.message) {

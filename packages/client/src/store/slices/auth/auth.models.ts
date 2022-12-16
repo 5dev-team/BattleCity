@@ -1,4 +1,4 @@
-export interface IUser {
+export interface IUserDTO {
   id: number
   first_name: string
   second_name: string
@@ -9,7 +9,7 @@ export interface IUser {
   avatar: string
 }
 
-export interface User {
+export interface IUser {
   id: number
   firstName: string
   secondName: string
