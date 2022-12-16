@@ -8,6 +8,7 @@ import Error500 from '@/pages/error500'
 import Forum from '@/pages/forum'
 import SignUp from '@/pages/sign-up/sign-up'
 import Profile from '@/pages/profile'
+import ProtectRoute from '@/components/protect-route/ProtectRoute'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { fetchUser } from '@/store/slices/auth'
 import history from '@/utils/history'
@@ -33,18 +34,24 @@ const App: React.FC = () => {
     }
   }, [])
 
+
   return (
     <Router history={history}>
       <Routes>
-        <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
-        <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
-        <Route path={RoutePaths.LEADERBOARD} element={<LeaderBoard />} />
-        <Route path={RoutePaths.GAME} element={<Game />} />
-        <Route path={RoutePaths.ERROR404} element={<Error404 />} />
         <Route path={RoutePaths.ERROR500} element={<Error500 />} />
-        <Route path={RoutePaths.FORUM} element={<Forum />} />
-        <Route path={RoutePaths.PROFILE} element={<Profile />} />
-        <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
+        <Route path='/404' element={<Error404 />} />
+        <Route element={<ProtectRoute redirectTo={RoutePaths.SIGNIN} protect={true} />}>
+          <Route element={<LeaderBoard />} path={RoutePaths.LEADERBOARD} />
+          <Route element={<Game />} path={RoutePaths.GAME} />
+          <Route element={<Forum />} path={RoutePaths.FORUM} />
+          <Route element={<Profile />} path={RoutePaths.PROFILE} />
+          <Route element={<LeaderBoard />} path={RoutePaths.LEADERBOARD} />
+          <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
+        </Route>
+        <Route element={<ProtectRoute redirectTo={RoutePaths.GAME} />}>
+          <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
+          <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
+        </Route>
       </Routes>
     </Router>
   )
