@@ -26,7 +26,7 @@ export const fetchLeaderboardAll = createAsyncThunk(
     })
     
     responseScoreTransformed.forEach(score => {
-      promises.push(api.user.getUserById(score.id))
+      promises.push(api.user.getUserById(score.userId))
     })
     
     Promise.allSettled(promises).then((results) => {
@@ -64,13 +64,13 @@ export const leaderboardSlice = createSlice({
       state.tableData = state.scores
       .map((score, index) => {
         
-        const user = users.find((user) => user.id === score.id)
+        const user = users.find((user) => user.id === score.userId)
         const userName = user?.display_name || user?.login
         const userAvatar = user?.avatar || ''
         
         return {
           id: index + 1,
-          userId: score.id,
+          userId: score.userId,
           avatar: userAvatar,
           name: userName as string,
           score: score.score,
