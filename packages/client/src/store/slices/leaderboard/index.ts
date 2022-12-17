@@ -90,7 +90,7 @@ export const leaderboardSlice = createSlice({
       state.scores = payload
     })
     builder.addCase(fetchLeaderboardAll.rejected, (state) => {
-      state.isLeaderboardLoading = true
+      state.isLeaderboardLoading = false
     })
     builder.addCase(fetchUserData.pending, (state) => {
       state.isLeaderboardLoading = true
@@ -100,7 +100,7 @@ export const leaderboardSlice = createSlice({
       state.users.push(payload)
     })
     builder.addCase(fetchUserData.rejected, (state) => {
-      state.isLeaderboardLoading = true
+      state.isLeaderboardLoading = false
       
     })
   }
