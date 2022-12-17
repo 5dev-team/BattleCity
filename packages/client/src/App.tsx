@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { unstable_HistoryRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
 import LeaderBoard from '@/pages/leaderboard'
 import SignIn from '@/pages/sign-in'
@@ -25,16 +25,40 @@ export enum RoutePaths {
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch()
-
+  console.log(navigator.onLine)
+  const [online, setOnline] = useState(true)
+  
   const user = useAppSelector((state) => state.auth.user)
+  window.addEventListener('offline', () => {
+    console.log('offline')
+    setOnline(true)
+  })
+  
+  window.addEventListener('online', () => {
+    console.log('online')
+    setOnline(false)
+  })
+  
+  if (navigator.onLine) {
+    console.log('event online')
+    // setOnline(true)
+  } else {
+    console.log('event offline')
+    // setOnline(false)
+  }
+  
   useEffect(() => {
+    
     if (!user) {
       dispatch(fetchUser())
     }
   }, [])
-
+  console.log(online)
   return (
+    
+    
     <Router history={history}>
+      {!online && <>qweqweqew</>}
       <Routes>
         <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
         <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
