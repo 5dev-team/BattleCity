@@ -7,6 +7,8 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { fetchLeaderboardAll } from '@/store/slices/leaderboard'
 import { ILeaderboardRequest } from '@/api/leaderboard/leaderboard.models'
 import { LEADERBOARD_RATING_FIELD_NAME } from '@/constants/configs/leaderboard'
+import ErrorBoundary from '@/components/error-boundary'
+import ErrorFallback from '@/components/UI/error-fallback'
 
 export const TABLE_TOTAL_ITEMS = 50
 
@@ -46,10 +48,10 @@ const Leaderboard: React.FC = () => {
   
   const tableData = useAppSelector(state => state.leaderboard.tableData)
   const loading = useAppSelector(state => state.leaderboard.isLeaderboardLoading)
-  
+  const leaderboardError = useAppSelector(state => state.leaderboard.leaderboardError)
   
   useEffect(() => {
-      dispatch(fetchLeaderboardAll(leaderboardDataRequest))
+    dispatch(fetchLeaderboardAll(leaderboardDataRequest))
   }, [])
   
   const userRows = React.useMemo(
@@ -103,10 +105,13 @@ const Leaderboard: React.FC = () => {
     <div className={styles['leaderboard']}>
       <div className={styles['leaderboard__container']}>
         <div className={styles['table']}>
-          {tableHeaders}
-          {loading && <div style={{ gridColumn: 'span 5' }}><p>Is loading...</p></div>}
-          {!tableData && <div style={{ gridColumn: 'span 5' }}><p>Leaderboard is empty.<br />Be first!</p></div>}
-          {userRows}
+          <ErrorBoundary FallbackComponent={ErrorFallback}>
+            {tableHeaders}
+            {loading && <div style={{ gridColumn: 'span 5' }}><p>Is loading...</p></div>}
+            {leaderboardError && <div style={{ gridColumn: 'span 5' }}><p>Something went wrong..</p></div>}
+            {!tableData && <div style={{ gridColumn: 'span 5' }}><p>Leaderboard is empty.<br />Be first!</p></div>}
+            {userRows}
+          </ErrorBoundary>
         </div>
         <div className={styles['control-wrapper']}>
           <NesButton variant='primary' fullWidth onClick={() => navigate('/')}>

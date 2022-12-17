@@ -8,7 +8,7 @@ interface IInitialState {
   scores: Array<ILeaderboardScoreTransferred>
   users: Array<Partial<IUser>>
   isLeaderboardLoading: boolean
-  leaderboardError: string
+  leaderboardError: string | null
   tableData: Array<IUserScore>
 }
 
@@ -49,7 +49,7 @@ const initialState: IInitialState = {
   scores: [],
   users: [],
   isLeaderboardLoading: false,
-  leaderboardError: '',
+  leaderboardError: null,
   tableData: []
 }
 
@@ -89,8 +89,9 @@ export const leaderboardSlice = createSlice({
       state.isLeaderboardLoading = false
       state.scores = payload
     })
-    builder.addCase(fetchLeaderboardAll.rejected, (state) => {
+    builder.addCase(fetchLeaderboardAll.rejected, (state, {error}) => {
       state.isLeaderboardLoading = false
+      state.leaderboardError = error.message || 'unknown error'
     })
     builder.addCase(fetchUserData.pending, (state) => {
       state.isLeaderboardLoading = true
@@ -99,9 +100,9 @@ export const leaderboardSlice = createSlice({
       state.isLeaderboardLoading = false
       state.users.push(payload)
     })
-    builder.addCase(fetchUserData.rejected, (state) => {
+    builder.addCase(fetchUserData.rejected, (state, {error}) => {
       state.isLeaderboardLoading = false
-      
+      state.leaderboardError = error.message || 'unknown error'
     })
   }
 })
