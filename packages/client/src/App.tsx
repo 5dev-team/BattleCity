@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { unstable_HistoryRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
+import FullScreen from '@/components/full-screen/full-screen'
 import LeaderBoard from '@/pages/leaderboard'
 import SignIn from '@/pages/sign-in'
 import Game from '@/pages/game'
@@ -34,19 +35,21 @@ const App: React.FC = () => {
   }, [])
 
   return (
-    <Router history={history}>
-      <Routes>
-        <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
-        <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
-        <Route path={RoutePaths.LEADERBOARD} element={<LeaderBoard />} />
-        <Route path={RoutePaths.GAME} element={<Game />} />
-        <Route path={RoutePaths.ERROR404} element={<Error404 />} />
-        <Route path={RoutePaths.ERROR500} element={<Error500 />} />
-        <Route path={RoutePaths.FORUM} element={<Forum />} />
-        <Route path={RoutePaths.PROFILE} element={<Profile />} />
-        <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
-      </Routes>
-    </Router>
+    <FullScreen>
+      <Router history={history}>
+        <Routes>
+          <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
+          <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
+          <Route path={RoutePaths.LEADERBOARD} element={<LeaderBoard />} />
+          <Route path={RoutePaths.GAME} element={<Game />} />
+          <Route path={RoutePaths.ERROR404} element={<Error404 />} />
+          <Route path={RoutePaths.ERROR500} element={<Error500 />} />
+          <Route path={RoutePaths.FORUM} element={<Forum />} />
+          <Route path={RoutePaths.PROFILE} element={<Profile />} />
+          <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
+        </Routes>
+      </Router>
+    </FullScreen>
   )
 }
 
