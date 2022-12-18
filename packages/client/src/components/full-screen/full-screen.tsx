@@ -8,16 +8,16 @@ interface IProps {
 }
 
 type HTMLElementWithBrowsersFunctions = HTMLElement & {
-  mozRequestFullScreen(): Promise<void>;
-  webkitRequestFullscreen(): Promise<void>;
-  msRequestFullscreen(): Promise<void>;
+  mozRequestFullScreen(): Promise<void>
+  webkitRequestFullscreen(): Promise<void>
+  msRequestFullscreen(): Promise<void>
 }
 
 type HTMLDcoumentWithBrowsersFunctionns = Document & {
-  mozCancelFullScreen(): Promise<void>;
-  webkitExitFullscreen(): Promise<void>;
-  msExitFullscreen(): Promise<void>;
-};
+  mozCancelFullScreen(): Promise<void>
+  webkitExitFullscreen(): Promise<void>
+  msExitFullscreen(): Promise<void>
+}
 
 const FullScreen = ({ children }: IProps) => {
   const [textButton, setTextButton] = useState<string>('Click Full Screen')
