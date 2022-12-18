@@ -11,4 +11,4 @@ axios.interceptors.response.use(
   }
 )
 
-export const request = (config: AxiosRequestConfig) => axios({ ...config, withCredentials: true })
+export const request = <T>(config: AxiosRequestConfig) => axios.request<never, T>({ ...config, withCredentials: true })
