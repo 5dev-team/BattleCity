@@ -3,7 +3,7 @@
   padding: 16px;
   border: 2px solid transparent;
   width: 240px;
-  height: 240px;
+  height: 200px;
 }
 
 .profile-avatar {
@@ -21,6 +21,7 @@
   align-items: center;
   border: 2px dashed #fff;
   border-radius: 6px;
+  cursor: pointer;
 
   &__input {
     opacity: 0;

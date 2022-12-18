@@ -1,4 +1,4 @@
-type PatternType = 'firstName' | 'secondName' | 'login' | 'displayName' | 'email' | 'password' | 'phone'
+type PatternType = 'firstName' | 'secondName' | 'login' | 'email' | 'password' | 'phone'
 
 export const getPattern = (type: PatternType): RegExp => {
   switch (type) {
@@ -6,7 +6,6 @@ export const getPattern = (type: PatternType): RegExp => {
     case 'secondName':
       return /[A-Z][a-z-]+|[А-Я][а-я-]+/g
     case 'login':
-    case 'displayName':
       return /(?:(?!\d+$)[\da-zA-Z_-]+){3,20}/g
     case 'email':
       return /\w+@\w+\.\w+/g

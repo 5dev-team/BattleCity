@@ -24,10 +24,9 @@ const NesInput = React.forwardRef<
       <input
         id={id}
         ref={ref}
-        className={`nes-input is-${variant} ${styles['nes-btn']} ${
+        className={`is-${variant} ${styles['nes-btn']} ${
           plain ? styles['plaintext'] : 'nes-btn'
         }`}
-        readOnly={plain}
         style={fullWidth ? { width: '100%' } : {}}
         {...props}
       />
