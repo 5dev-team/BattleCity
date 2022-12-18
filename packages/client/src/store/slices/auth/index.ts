@@ -14,7 +14,7 @@ const initialState: IInitialState = {
   authError: '',
   isAuthLoading: false,
   user: null,
-  isLoggedIn: true,
+  isLoggedIn: false
 }
 
 export const fetchLogin = createAsyncThunk(
@@ -76,11 +76,11 @@ export const authSlice = createSlice({
     })
     // user
     builder.addCase(fetchUser.fulfilled, (state, { payload }) => {
-      state.user = payload.data,
+      state.user = payload.data
       state.isLoggedIn = true
     })
     builder.addCase(fetchUser.rejected, (state) => {
-      state.user = null,
+      state.user = null
       state.isLoggedIn = false
     })
     // logout

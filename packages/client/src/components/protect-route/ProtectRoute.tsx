@@ -1,18 +1,17 @@
-import React, { ReactNode } from 'react'
 import useAuth from '@/hooks/useAuth'
 import { Navigate, Outlet } from 'react-router-dom'
 
 
 interface IProps {
-  protect?: boolean
-  redirectTo: string
+  redirectTo?: string
 }
 
-export default function ProtectRoute({ redirectTo, protect = false }: IProps) {
-  const canRender: boolean = useAuth()
-  if (protect) {
-    return canRender ? <Outlet /> : <Navigate to={redirectTo} />
-  } else {
-    return canRender ? <Navigate to={redirectTo} /> : <Outlet />
+ const ProtectRoute = ({redirectTo = '/sing-in'}: IProps) => {
+  const isAuth: boolean = useAuth()
+  if (!isAuth) {
+    return <Navigate to={redirectTo} replace />
   }
+  
+  return <Outlet/>
 }
+export default ProtectRoute

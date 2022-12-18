@@ -26,32 +26,29 @@ export enum RoutePaths {
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch()
-
+  
   const user = useAppSelector((state) => state.auth.user)
   useEffect(() => {
     if (!user) {
       dispatch(fetchUser())
     }
   }, [])
-
-
+  
+  
   return (
     <Router history={history}>
       <Routes>
-        <Route path={RoutePaths.ERROR500} element={<Error500 />} />
-        <Route path='/404' element={<Error404 />} />
-        <Route element={<ProtectRoute redirectTo={RoutePaths.SIGNIN} protect={true} />}>
+        <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
+        <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
+        <Route element={<ProtectRoute redirectTo={RoutePaths.SIGNIN} />}>
           <Route element={<LeaderBoard />} path={RoutePaths.LEADERBOARD} />
           <Route element={<Game />} path={RoutePaths.GAME} />
           <Route element={<Forum />} path={RoutePaths.FORUM} />
           <Route element={<Profile />} path={RoutePaths.PROFILE} />
-          <Route element={<LeaderBoard />} path={RoutePaths.LEADERBOARD} />
-          <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
         </Route>
-        <Route element={<ProtectRoute redirectTo={RoutePaths.GAME} />}>
-          <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
-          <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
-        </Route>
+        <Route path={RoutePaths.ERROR500} element={<Error500 />} />
+        <Route path={RoutePaths.ERROR404} element={<Error404 />} />
+        <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
       </Routes>
     </Router>
   )
