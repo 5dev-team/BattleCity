@@ -7,49 +7,50 @@ interface IProps {
   children: ReactNode
 }
 
-interface IElement extends HTMLDocument {
-  requestFullscreen: () => void
-  mozRequestFullScreen: () => void
-  webkitRequestFullscreen: () => void
-  msRequestFullscreen: () => void
+type HTMLElementWithBrowsersFunctions = HTMLElement & {
+  mozRequestFullScreen(): Promise<void>;
+  webkitRequestFullscreen(): Promise<void>;
+  msRequestFullscreen(): Promise<void>;
 }
 
-interface IDocumentCopy extends Document {
-  exitFullscreen: () => Promise<void>
-  mozCancelFullScreen: () => Promise<void>
-  webkitExitFullscreen: () => Promise<void>
-}
+type HTMLDcoumentWithBrowsersFunctionns = Document & {
+  mozCancelFullScreen(): Promise<void>;
+  webkitExitFullscreen(): Promise<void>;
+  msExitFullscreen(): Promise<void>;
+};
 
 const FullScreen = ({ children }: IProps) => {
   const [textButton, setTextButton] = useState<string>('Click Full Screen')
   const handleFullScreenToggle = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
-    const element = document.documentElement as unknown as IElement
-    const documentEl = document as unknown as IDocumentCopy
+    const docElmWithBrowsersFullScreenFunctions = document.documentElement as HTMLElementWithBrowsersFunctions
+
+    const docWithBrowsersExitFunctions = document as HTMLDcoumentWithBrowsersFunctionns
+
     if (textButton === 'Click Full Screen') {
-      activateFullscreen(element)
+      activateFullscreen(docElmWithBrowsersFullScreenFunctions)
       setTextButton('Exit Full Screen')
     }
     if (textButton === 'Exit Full Screen') {
-      deactivateFullscreen(documentEl)
+      deactivateFullscreen(docWithBrowsersExitFunctions)
       setTextButton('Click Full Screen')
     }
   }
 
-  const activateFullscreen = (element: IElement) => {
+  const activateFullscreen = (element: HTMLElementWithBrowsersFunctions) => {
 
     if (element.requestFullscreen) {
-      element.requestFullscreen()
+      element.requestFullscreen().then()
     } else if (element.mozRequestFullScreen) {
-      element.mozRequestFullScreen()
+      element.mozRequestFullScreen().then()
     } else if (element.webkitRequestFullscreen) {
-      element.webkitRequestFullscreen()
+      element.webkitRequestFullscreen().then()
     } else if (element.msRequestFullscreen) {
-      element.msRequestFullscreen()
+      element.msRequestFullscreen().then()
     }
   }
 
-  const deactivateFullscreen = (element: IDocumentCopy) => {
+  const deactivateFullscreen = (element: HTMLDcoumentWithBrowsersFunctionns) => {
     if (element.exitFullscreen) {
       element.exitFullscreen().then()
     } else if (element.mozCancelFullScreen) {
