@@ -1,7 +1,6 @@
 import useAuth from '@/hooks/useAuth'
 import { Navigate, Outlet } from 'react-router-dom'
 
-
 interface IProps {
   redirectTo?: string
 }

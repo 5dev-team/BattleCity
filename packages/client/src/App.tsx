@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { unstable_HistoryRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
 import LeaderBoard from '@/pages/leaderboard'
 import SignIn from '@/pages/sign-in'
+import GameOver from '@/pages/game-over'
 import Game from '@/pages/game'
 import Error404 from '@/pages/error404'
 import Error500 from '@/pages/error500'
@@ -22,6 +23,7 @@ export enum RoutePaths {
   ERROR404 = '/404',
   ERROR500 = '/500',
   FORUM = '/forum',
+  GAMEOVER = '/game-over',
   PROFILE = '/profile'
 }
 
@@ -46,6 +48,7 @@ const App: React.FC = () => {
         <Route element={<ProtectRoute redirectTo={RoutePaths.SIGNIN} />}>
           <Route element={<LeaderBoard />} path={RoutePaths.LEADERBOARD} />
           <Route element={<Game />} path={RoutePaths.GAME} />
+          <Route element={<GameOver />} path={RoutePaths.GAMEOVER} />
           <Route element={<Forum />} path={RoutePaths.FORUM} />
           <Route element={<Profile />} path={RoutePaths.PROFILE} />
         </Route>
