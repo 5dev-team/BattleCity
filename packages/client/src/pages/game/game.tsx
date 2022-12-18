@@ -12,7 +12,7 @@ const initGame = (players = 1) => {
 const Game: React.FC = () => {
 
   const navigate = useNavigate()
-
+  console.log('game')
   return (
     <div className={styles['game']}>
       <div className={styles['game__container']}>
