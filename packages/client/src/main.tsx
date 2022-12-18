@@ -16,9 +16,10 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     </Provider>
   </React.StrictMode>
 )
+
 // Check for browser support of service worker
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.ts')
+  navigator.serviceWorker.register('/sw.ts')
   .then(function(registration) {
     // Successful registration
     console.log('Hooray. Registration successful, scope is:', registration.scope)

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { unstable_HistoryRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
+import { Navigate, Route, Routes, unstable_HistoryRouter as Router } from 'react-router-dom'
 import LeaderBoard from '@/pages/leaderboard'
 import SignIn from '@/pages/sign-in'
 import Game from '@/pages/game'
@@ -11,6 +11,7 @@ import Profile from '@/pages/profile'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { fetchUser } from '@/store/slices/auth'
 import history from '@/utils/history'
+import Offline from '@/pages/offline'
 
 export enum RoutePaths {
   SIGNIN = '/sign-in',
@@ -25,27 +26,30 @@ export enum RoutePaths {
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch()
-  console.log(navigator.onLine)
   const [online, setOnline] = useState(true)
   
   const user = useAppSelector((state) => state.auth.user)
   window.addEventListener('offline', () => {
     console.log('offline')
+    setOnline(false)
+  })
+
+  window.addEventListener('online', () => {
+    console.log('online')
     setOnline(true)
   })
   
-  window.addEventListener('online', () => {
-    console.log('online')
-    setOnline(false)
-  })
-  
-  if (navigator.onLine) {
-    console.log('event online')
-    // setOnline(true)
-  } else {
-    console.log('event offline')
-    // setOnline(false)
-  }
+  // if (navigator.onLine) {
+  //   console.log('event online')
+  //   if (!online) {
+  //     setOnline(true)
+  //   }
+  // } else {
+  //   console.log('event offline')
+  //   if (online) {
+  //     setOnline(false)
+  //   }
+  // }
   
   useEffect(() => {
     
@@ -53,22 +57,44 @@ const App: React.FC = () => {
       dispatch(fetchUser())
     }
   }, [])
+  
+  // if (!online) {
+  //
+  //   return (
+  //     <>
+  //     asdasdasd</>
+  //   )
+  // }
+  
   console.log(online)
   return (
-    
-    
     <Router history={history}>
-      {!online && <>qweqweqew</>}
       <Routes>
-        <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
-        <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
-        <Route path={RoutePaths.LEADERBOARD} element={<LeaderBoard />} />
-        <Route path={RoutePaths.GAME} element={<Game />} />
-        <Route path={RoutePaths.ERROR404} element={<Error404 />} />
-        <Route path={RoutePaths.ERROR500} element={<Error500 />} />
-        <Route path={RoutePaths.FORUM} element={<Forum />} />
-        <Route path={RoutePaths.PROFILE} element={<Profile />} />
-        <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
+        {!online && (
+          <>
+            <Route path='/sign-in' element={!online && <Navigate to='/offline' />} />
+            <Route path='/offline' element={<Offline />} />
+            <Route path={RoutePaths.GAME} element={<Game />} />
+            <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
+            <Route path={RoutePaths.ERROR404} element={<Error404 />} />
+          </>
+
+        )}
+        {online && (
+          <>
+            <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
+            <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
+            <Route path={RoutePaths.LEADERBOARD} element={<LeaderBoard />} />
+            <Route path={RoutePaths.GAME} element={<Game />} />
+            <Route path={RoutePaths.ERROR404} element={<Error404 />} />
+            <Route path={RoutePaths.ERROR500} element={<Error500 />} />
+            <Route path={RoutePaths.FORUM} element={<Forum />} />
+            <Route path={RoutePaths.PROFILE} element={<Profile />} />
+            <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
+          </>
+
+        )}
+
       </Routes>
     </Router>
   )

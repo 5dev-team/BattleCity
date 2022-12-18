@@ -10,17 +10,20 @@ const initGame = (players = 1) => {
 }
 
 const Game: React.FC = () => {
-
+  
   const navigate = useNavigate()
-
+  
   return (
     <div className={styles['game']}>
       <div className={styles['game__container']}>
         <img className={`${styles['logo']}`}
-          src={logo}
-          alt={'Battle City'}
-          style={{ imageRendering: 'pixelated' }}
+             src={logo}
+             alt={'Battle City'}
+             style={{ imageRendering: 'pixelated' }}
         />
+        <div className={`nes-container is-centered ${styles['offline-warning']} ${styles['flashing']}`}>
+          <span className='nes-text is-error' style={{color: '#f00'}}>OFFLINE</span>
+        </div>
         <GameMenu selectItemId={0} className={`${styles['control-wrapper']} ${styles['control-page-buttons']}`}>
           <GameButton onClick={() => initGame()}>
             1 PLAYER
