@@ -8,12 +8,14 @@ interface IInitialState {
   authError: string
   isAuthLoading: boolean
   user: IUser | null
+  isLoggedIn: boolean | null
 }
 
 const initialState: IInitialState = {
   authError: '',
   isAuthLoading: false,
-  user: null
+  user: null,
+  isLoggedIn: null
 }
 
 export const fetchLogin = createAsyncThunk(
@@ -49,6 +51,7 @@ export const authSlice = createSlice({
     builder.addCase(fetchLogin.fulfilled, (state) => {
       state.isAuthLoading = false
       state.authError = ''
+      state.isLoggedIn = true
     })
     builder.addCase(fetchLogin.pending, (state) => {
       state.isAuthLoading = true
@@ -56,11 +59,13 @@ export const authSlice = createSlice({
     builder.addCase(fetchLogin.rejected, (state, { error }) => {
       state.isAuthLoading = false
       state.authError = error.message as string
+      state.isLoggedIn = false
     })
     // registration
     builder.addCase(fetchRegister.fulfilled, (state) => {
       state.isAuthLoading = false
       state.authError = ''
+      state.isLoggedIn = true
     })
     builder.addCase(fetchRegister.pending, (state) => {
       state.isAuthLoading = true
@@ -68,17 +73,21 @@ export const authSlice = createSlice({
     builder.addCase(fetchRegister.rejected, (state, { error }) => {
       state.isAuthLoading = false
       state.authError = error.message as string
+      state.isLoggedIn = false
     })
     // user
     builder.addCase(fetchUser.fulfilled, (state, { payload }) => {
       state.user = payload
+      state.isLoggedIn = true
     })
     builder.addCase(fetchUser.rejected, (state) => {
       state.user = null
+      state.isLoggedIn = false
     })
     // logout
     builder.addCase(fetchLogout.fulfilled, (state) => {
       state.user = null
+      state.isLoggedIn = false
     })
   }
 })
