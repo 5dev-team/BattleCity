@@ -99,7 +99,7 @@ export default class Stage implements IUpdatable {
       frameDelta,
       world: this
     }
-    objectsArr.filter(obj => obj != undefined && 'update' in obj).map(obj => obj as IUpdatable).forEach((object: IUpdatable) => {
+    objectsArr.filter(obj => obj !== undefined && 'update' in obj).map(obj => obj as IUpdatable).forEach((object: IUpdatable) => {
       object.update(state)
 
     })

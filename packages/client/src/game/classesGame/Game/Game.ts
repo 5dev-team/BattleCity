@@ -11,7 +11,7 @@ export default class Game {
   private readonly stages: Level[]
   private player1: null | Tank
   private player2: null | Tank
-  private stage?: Stage | null
+  private stage: Stage | null
   private lastFrame: number
   private frames: number
   private readonly stageIndex: number

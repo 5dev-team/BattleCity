@@ -11,7 +11,7 @@ export default class EnemyTank extends Tank {
     return new EnemyTank({ x, y, sprites })
   }
 
-  public speed: number
+  protected speed: number
   public direction: number
 
   constructor(args: any) {
