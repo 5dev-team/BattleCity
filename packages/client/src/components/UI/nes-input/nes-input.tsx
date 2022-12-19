@@ -6,27 +6,33 @@ interface INesInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string
   variant?: 'basic' | 'primary' | 'success' | 'warning' | 'error' | 'dark'
   fullWidth?: boolean
+  labelHidden?: boolean
+  plain?: boolean
 }
 
-const NesInput: React.FC<INesInputProps> = ({
-  inline,
-  label,
-  variant = 'basic',
-  fullWidth,
-  ...props
-}) => {
+const NesInput = React.forwardRef<
+  HTMLInputElement, INesInputProps
+  >(({ inline, label, variant, fullWidth, labelHidden, plain, ...props}, ref) => {
   const id = useId()
   return (
     <div className={`nes-field ${inline ? 'is-inline' : ''}`}>
-      <label htmlFor={id}>{label}</label>
+      <label
+        className={`${labelHidden ? 'visually-hidden' : ''}`}
+        htmlFor={id}>
+        {label}
+      </label>
       <input
         id={id}
-        className={`nes-btn is-${variant} ${styles['nes-btn']}`}
+        ref={ref}
+        className={`nes-input is-${variant} ${styles['nes-btn']} ${
+          plain ? styles['plaintext'] : 'nes-btn'
+        }`}
+        readOnly={plain}
         style={fullWidth ? { width: '100%' } : {}}
         {...props}
       />
     </div>
   )
-}
+})
 
 export default NesInput

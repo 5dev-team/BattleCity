@@ -10,10 +10,11 @@ export default defineConfig(({ command, mode }) => {
   return {
     assetsInclude: ['**/*.png'],
     server: {
-      port: Number(process.env.CLIENT_PORT) || 3000
+      port: Number(process.env.CLIENT_PORT) || 3000,
     },
     define: {
-      __SERVER_PORT__: process.env.SERVER_PORT
+      __SERVER_PORT__: process.env.SERVER_PORT,
+      __YANDEX_API__: JSON.stringify(process.env.YANDEX_API)
     },
     resolve: {
       alias: {
@@ -25,7 +26,6 @@ export default defineConfig(({ command, mode }) => {
       manifest: false,
       minify: mode === 'development' ? false : 'terser',
       sourcemap: command === 'serve' ? 'inline' : false,
-
       rollupOptions: {
         output: {
           assetFileNames: 'assets/[name].[hash].[extname]',
