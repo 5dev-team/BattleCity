@@ -1,4 +1,6 @@
-export default class Sprite {
+import { ISprite } from './types'
+
+export default class Sprite implements ISprite {
   public readonly src: string
   public readonly image: HTMLImageElement
 
@@ -8,7 +10,6 @@ export default class Sprite {
   }
 
   async load(): Promise<Sprite> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return new Promise((resolve, _) => {
       this.image.src = this.src
       this.image.addEventListener('load', () => resolve(this))

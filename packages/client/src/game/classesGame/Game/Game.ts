@@ -38,6 +38,12 @@ export default class Game {
     requestAnimationFrame(this.loop)
   }
 
+  public end(): void {
+    this.loop = () => {
+      console.log('Game Over')
+    }
+  }
+
   private loop(currentFrame: number): void {
     const frameDelta: number = currentFrame - this.lastFrame
     if (this.stage instanceof Stage) {
@@ -48,6 +54,8 @@ export default class Game {
     }
     this.frames = 0
     this.lastFrame = currentFrame
+
+    console.log(currentFrame)
     requestAnimationFrame(this.loop)
   }
 
