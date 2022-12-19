@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react'
 import { unstable_HistoryRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
 import LeaderBoard from '@/pages/leaderboard'
@@ -25,6 +26,7 @@ export enum RoutePaths {
   GAMEOVER = '/game-over',
   PROFILE = '/profile'
 }
+
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch()
