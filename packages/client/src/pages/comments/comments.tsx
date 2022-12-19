@@ -4,7 +4,7 @@ import {RoutePaths} from '@/App'
 import {useParams} from 'react-router-dom'
 import NesLink from '@/components/UI/nes-link'
 import NesButton from '@/components/UI/nes-button'
-import NesTextarea from '@/components/UI/nes-textarea'
+import InputEmoji from '@/components/UI/input-emoji/input-emoji'
 
 export interface CommentsProps {
   author: string,
@@ -15,12 +15,14 @@ export interface CommentsProps {
 
 const Comments: React.FC = () => {
   const {title} = useParams()
-  const [templateComment, setTemplateComment] = useState({
+  const [text, setText] = useState('')
+
+  const templateComment = {
     author: 'Admin',
-    content: '',
+    content: text,
     date: new Date().toISOString().split('T')[0],
     id: useId(),
-  })
+  }
 
   const [comments, setComment] = useState([
     {
@@ -37,13 +39,13 @@ const Comments: React.FC = () => {
     },
 ])
 
-const templateRow = (props: CommentsProps) => {
+const templateRow = (props: CommentsProps, id: string) => {
   return (
-    <li key={props.id} className={styles['comments-item']}>
+    <li key={id} className={`${styles['comments-item']} comments-item`} data-id={props.id}>
       <div className={styles['comments-info']}>{props.author}</div>
       <div className={styles['comments-content']}>
         <span className={`${styles['comments-content-date']} nes-text is-disabled`}>{props.date}</span>
-        {props.content}
+          {props.content}
       </div>
     </li>
   )
@@ -55,8 +57,7 @@ const addComment = (comments: Array<CommentsProps>, templateThem: CommentsProps)
   }
 }
 
-const addTemplateRow = (comments: Array<CommentsProps>) => comments.map((comment) => templateRow(comment))
-
+const addTemplateRow = (comments: Array<CommentsProps>) => comments.map((comment, id) => templateRow(comment, id.toString()))
   return (
   <div className={styles['comments']}>
     <NesLink to={RoutePaths.FORUM}>Back</NesLink>
@@ -68,17 +69,26 @@ const addTemplateRow = (comments: Array<CommentsProps>) => comments.map((comment
     <ul className={styles['comments-list']}>
       {addTemplateRow(comments)}
     </ul>
-
-    <NesTextarea
-      label='content to send'
-      labelHidden
-      onChange={evt => setTemplateComment({...templateComment, content: evt.target.value})}
-    ></NesTextarea>
+    <InputEmoji
+      value={text}
+      borderRadius = {0}
+      onChange={setText}
+      cleanOnEnter
+      placeholder='Type a message'
+      onEnter={() => addComment(comments, templateComment)}
+    />
     <NesButton
       type='submit'
       variant='warning'
-      onClick={() => addComment(comments, templateComment)}
-    >Send</NesButton>
+      onClick={(evt) => {
+        return new Promise(resolve => resolve(evt))
+          .then(() => addComment(comments, templateComment))
+          .then(() => setText(''))
+          .then(() => (evt.target as Element).scrollIntoView(false))
+      }}
+    >
+      Send
+    </NesButton>
   </div>
   )
 }

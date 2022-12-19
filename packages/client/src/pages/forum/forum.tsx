@@ -12,12 +12,14 @@ export type ForumThemesType = {
 }
 
 const Forum: React.FC = () => {
-    const [templateThem, setTemplateThem] = useState({
-        title: '',
+    const [text, setText] = useState('')
+
+    const templateThem = {
+        title: text,
         author: 'Admin',
         answers: 0,
         lastAnswer: new Date().toISOString().split('T')[0],
-    })
+    }
 
     const [themes, setThem] = useState([
         {
@@ -40,11 +42,9 @@ const Forum: React.FC = () => {
         }
     ])
 
-    const getChildrenRoute = (children: ForumThemesType, id: string) => `${id}/${children.title}`
-
     const addThemes = (themes: Array<ForumThemesType>) => {
         return themes
-            .map((theme, id) => <NesLink to={getChildrenRoute(theme, id.toString())} key={id} className={styles['forum-theme']}>{Object.values(theme)
+            .map((theme, id) => <NesLink to={theme.title} key={id} className={styles['forum-theme']}>{Object.values(theme)
             .map((el, id) => <div key={id} className={styles['forum-theme-item']}>{el}</div>)}</NesLink>)
     }
 
@@ -59,14 +59,20 @@ const Forum: React.FC = () => {
             <div className={styles['forum-add-them']}>
                 <NesButton 
                     variant='warning'
-                    onClick={() => addThem(themes, templateThem)}
+                    onClick={() => {
+                        addThem(themes, templateThem)
+                        setText('')
+                    }}
                 >
                     Append
                 </NesButton>
                 <NesInput
                     inline
+                    value = {text}
                     label='theme'
-                    onChange={(evt) => setTemplateThem({...templateThem, title: evt.target.value})}
+                    onChange={(evt) => {
+                        setText(evt.target.value)
+                    }}
                 />
             </div>
             <div className={styles['forum-header']}>

@@ -1,5 +1,6 @@
 .comments {
   width: 100%;
+  height: 100%;
   overflow: auto;
   display: flex;
   flex-direction: column;
@@ -36,6 +37,7 @@
 
 .comments-list {
   display: flex;
+  flex-grow: 1;
   flex-direction: column;
   margin: 0;
   padding: 0;
@@ -46,6 +48,15 @@
 .comments-item {
   display: flex;
   width: 100%;
+  transition: 0.2s;
+
+  &:hover {
+    background-color: #f7d51d;
+  }
+
+  &:hover div {
+    color: #000
+  }
 }
 
 .comments-info {

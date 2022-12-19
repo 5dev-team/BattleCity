@@ -25,7 +25,7 @@ export enum RoutePaths {
   FORUM = '/forum',
   GAMEOVER = '/game-over',
   PROFILE = '/profile',
-  COMMENTS = '/forum/:id/:title',
+  COMMENTS = '/forum/:title'
 }
 
 const App: React.FC = () => {
