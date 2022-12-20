@@ -173,7 +173,7 @@ const Profile: React.FC = () => {
 
   const saveBtn = (
     <NesButton
-      type="submit"
+      type='submit'
       variant={isValid && isFormDirty ? 'success' : 'disabled'}
       disabled={!isValid || !isFormDirty}
     >
@@ -183,7 +183,7 @@ const Profile: React.FC = () => {
 
   const cancelBtn = (
     <NesButton
-      variant="error"
+      variant='error'
       onClick={e => {
         e.preventDefault()
         reset(defaultValues)
@@ -199,13 +199,13 @@ const Profile: React.FC = () => {
     <div className={styles['profile']}>
       <div className={styles['profile__body']}>
         <div className={`nes-container with-title ${styles['container']}`}>
-          <h3 className="title is-dark" style={{ backgroundColor: '#000' }}>
-            Profile <span className="error-text">{responseError}</span>
+          <h3 className='title is-dark' style={{ backgroundColor: '#000' }}>
+            Profile <span className='error-text'>{responseError}</span>
           </h3>
           <ErrorBoundary
             FallbackComponent={() => <div>Something went wrong :(</div>}
           >
-            <div className="nes-table-responsive">
+            <div className='nes-table-responsive'>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <table
                   className={`nes-table is-bordered is-centered is-dark`}
@@ -217,8 +217,8 @@ const Profile: React.FC = () => {
                         <NesFileInput
                           control={control}
                           src={avatarSrc ?? user.avatar ?? ''}
-                          label="Avatar"
-                          accept="image/*"
+                          label='Avatar'
+                          accept='image/*'
                           alt={`your avatar ${user.login}`}
                           plain={mode === ProfileMode.View}
                           plainText={'No Avatar'}
@@ -233,7 +233,7 @@ const Profile: React.FC = () => {
                       <td>First name:</td>
                       <th>
                         <NesInput
-                          label="First name"
+                          label='First name'
                           variant={inputVariant<'profile'>('first_name')}
                           {...commonProps}
                           {...register('profile.first_name', {
@@ -247,7 +247,7 @@ const Profile: React.FC = () => {
                       <td>Second name:</td>
                       <th>
                         <NesInput
-                          label="Second name"
+                          label='Second name'
                           variant={inputVariant<'profile'>('second_name')}
                           {...commonProps}
                           {...register('profile.second_name', {
@@ -261,7 +261,7 @@ const Profile: React.FC = () => {
                       <td>Display name:</td>
                       <th>
                         <NesInput
-                          label="Display name"
+                          label='Display name'
                           variant={inputVariant<'profile'>('display_name')}
                           {...commonProps}
                           {...register('profile.display_name', {
@@ -275,7 +275,7 @@ const Profile: React.FC = () => {
                       <td>Login:</td>
                       <th>
                         <NesInput
-                          label="Login"
+                          label='Login'
                           variant={inputVariant<'profile'>('login')}
                           {...commonProps}
                           {...register('profile.login', {
@@ -289,8 +289,8 @@ const Profile: React.FC = () => {
                       <td>Email:</td>
                       <th>
                         <NesInput
-                          label="Email"
-                          type="email"
+                          label='Email'
+                          type='email'
                           variant={inputVariant<'profile'>('email')}
                           {...commonProps}
                           {...register('profile.email', {
@@ -304,7 +304,7 @@ const Profile: React.FC = () => {
                       <td>Phone:</td>
                       <th>
                         <NesInput
-                          label="Phone"
+                          label='Phone'
                           variant={inputVariant<'profile'>('phone')}
                           {...commonProps}
                           {...register('profile.phone', {
@@ -320,8 +320,8 @@ const Profile: React.FC = () => {
                       <td>Old Password:</td>
                       <td colSpan={3}>
                         <NesInput
-                          label="Old Password"
-                          type="password"
+                          label='Old Password'
+                          type='password'
                           fullWidth
                           variant={inputVariant<'passwords'>('oldPassword')}
                           {...commonProps}
@@ -335,8 +335,8 @@ const Profile: React.FC = () => {
                       <td>New Password:</td>
                       <td colSpan={3}>
                         <NesInput
-                          label="New Password"
-                          type="password"
+                          label='New Password'
+                          type='password'
                           fullWidth
                           variant={inputVariant<'passwords'>('newPassword')}
                           {...commonProps}
@@ -369,17 +369,17 @@ const Profile: React.FC = () => {
       <div className={styles['profile__footer']}>
         <NesButton
           fullWidth
-          variant="primary"
+          variant='primary'
           onClick={() => navigate('/')}
-          type="button"
+          type='button'
         >
           menu
         </NesButton>
         <NesButton
           fullWidth
-          variant="warning"
+          variant='warning'
           onClick={() => dispatch(fetchLogout())}
-          type="button"
+          type='button'
         >
           logout
         </NesButton>
