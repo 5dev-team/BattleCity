@@ -3,30 +3,36 @@ import { useNavigate } from 'react-router-dom'
 import logo from '@/assets/battleCityLogo.png'
 import GameMenu from '@/components/UI/game-menu/game-menu'
 import GameButton from '@/components/UI/game-button'
-import styles from './game.module.scss'
+import GameOver from '@/components/UI/game-over'
 import ErrorBoundary from '@/components/error-boundary'
 import ErrorFallback from '@/components/UI/error-fallback'
-import { GameEngine } from '@/game/classesGame/Game'
-import { InputHandler } from '@/game/classesGame/Input'
-import View from '@/game/classesGame/View'
-import SpriteAtlas from '@/game/spriteGame/sprite_1.png'
-import Sprite from '@/game/classesGame/Sprite'
-import { levels as Levels } from '@/game/helpersGame/levels'
+import GameEngine from '@/game/core/game-engine'
+import { InputHandler } from '@/game/core/input'
+import View from '@/game/core/view'
+import SpriteAtlas from '@/game/sprites/sprite_1.png'
+import Sprite from '@/game/core/sprite'
+import { levels as Levels } from '@/game/helpers/levels'
 import T1 from '@/assets/tanks/T1.png'
 import T2 from '@/assets/tanks/T2.png'
 import T3 from '@/assets/tanks/T3.png'
 import T4 from '@/assets/tanks/T4.png'
-import GameOver from '@/components/UI/game-over'
+import styles from './game.module.scss'
 
-enum GameMode {
+enum GameView {
   Menu,
   Game,
   GameOver,
 }
 
+enum GameMode {
+  Singleplayer,
+  Multiplayer,
+  GameOver,
+}
+
 const Game: React.FC = () => {
   const navigate = useNavigate()
-  const [mode, setMode] = useState(GameMode.Menu)
+  const [gameView, setView] = useState(GameView.Menu)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const gameOverProps = {
@@ -62,17 +68,15 @@ const Game: React.FC = () => {
     ],
   }
 
-  const initGame = (players = 1) => {
-    console.log(`init game players: ${players}`)
+  const initGame = (gameMode: GameMode) => {
+    console.log(`init gameMode: ${GameMode[gameMode]}`)
 
-    setMode(GameMode.Game)
+    setView(GameView.Game)
   }
 
   useEffect(() => {
-    if (mode === GameMode.Game) {
+    if (gameView === GameView.Game) {
       const canvas = canvasRef.current
-
-      console.log(canvas)
 
       if (canvas) {
         const viewSprite = new Sprite(SpriteAtlas)
@@ -87,16 +91,16 @@ const Game: React.FC = () => {
         setTimeout(() => {
           game.end()
 
-          setMode(GameMode.GameOver)
+          setView(GameView.GameOver)
         }, 5000)
       }
     }
-  }, [mode])
+  }, [gameView])
 
   return (
     <div className={styles['game']}>
       <div className={styles['game__container']}>
-        {mode === GameMode.Menu && (
+        {gameView === GameView.Menu && (
           <>
             <img
               className={`${styles['logo']}`}
@@ -109,8 +113,12 @@ const Game: React.FC = () => {
                 selectItemId={0}
                 className={`${styles['control-wrapper']} ${styles['control-page-buttons']}`}
               >
-                <GameButton onClick={() => initGame()}>1 PLAYER</GameButton>
-                <GameButton onClick={() => initGame(2)}>2 PLAYERS</GameButton>
+                <GameButton onClick={() => initGame(GameMode.Singleplayer)}>
+                  1 PLAYER
+                </GameButton>
+                <GameButton onClick={() => initGame(GameMode.Multiplayer)}>
+                  2 PLAYERS
+                </GameButton>
                 <GameButton onClick={() => navigate('/leaderboard')}>
                   LEADERBOARD
                 </GameButton>
@@ -125,10 +133,15 @@ const Game: React.FC = () => {
             </footer>
           </>
         )}
-        {mode === GameMode.Game && (
-          <canvas ref={canvasRef} width={640} height={640}></canvas>
+        {gameView === GameView.Game && (
+          <canvas
+            className={styles['game__canvas']}
+            ref={canvasRef}
+            width={640}
+            height={640}
+          ></canvas>
         )}
-        {mode === GameMode.GameOver && (
+        {gameView === GameView.GameOver && (
           <GameOver {...gameOverProps}>
             <GameMenu
               selectItemId={0}
@@ -146,7 +159,7 @@ const Game: React.FC = () => {
               <GameButton onClick={() => navigate('/leaderboard')}>
                 LEADERBOARD
               </GameButton>
-              <GameButton onClick={() => setMode(GameMode.Menu)}>
+              <GameButton onClick={() => setView(GameView.Menu)}>
                 MENU
               </GameButton>
             </GameMenu>
