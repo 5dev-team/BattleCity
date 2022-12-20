@@ -47,6 +47,7 @@ const App: React.FC = () => {
         <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
       </Routes>
     </Router>
+
   )
 }
 
