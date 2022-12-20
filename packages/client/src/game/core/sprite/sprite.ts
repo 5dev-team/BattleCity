@@ -3,7 +3,7 @@ import { ISprite } from './types'
 export default class Sprite implements ISprite {
   public readonly src: string
   public readonly image: HTMLImageElement
-  
+
   constructor(src: string) {
     this.src = src
     this.image = new Image()

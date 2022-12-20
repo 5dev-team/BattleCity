@@ -14,7 +14,7 @@ export default class Stage implements IUpdatable {
     STEEL_WALL: 2,
     TREE: 3,
     WATER: 4,
-    ICE: 5
+    ICE: 5,
   }
 
   static createObject(type: number, x: number, y: number): Wall | null {
@@ -37,10 +37,7 @@ export default class Stage implements IUpdatable {
         const value = level[j][i]
 
         if (value) {
-          const object = Stage.createObject(value,
-            i * TILE_SIZE,
-            j * TILE_SIZE
-          )
+          const object = Stage.createObject(value, i * TILE_SIZE, j * TILE_SIZE)
 
           objects.push(object ? object : undefined)
         }
@@ -56,13 +53,11 @@ export default class Stage implements IUpdatable {
 
   public readonly objects: Set<TObjects>
 
-
   constructor(data: IStageConstructor) {
-
     this.objects = new Set([
       new Base({}),
       new PlayerTank({}),
-      ...Stage.createTerrain(data.stage)
+      ...Stage.createTerrain(data.stage),
     ])
   }
 
@@ -97,15 +92,17 @@ export default class Stage implements IUpdatable {
     const state = {
       input,
       frameDelta,
-      world: this
+      world: this,
     }
-    objectsArr.filter(obj => obj !== undefined && 'update' in obj).map(obj => obj as IUpdatable).forEach((object: IUpdatable) => {
-      object.update(state)
-
-    })
+    objectsArr
+      .filter(obj => obj !== undefined && 'update' in obj)
+      .map(obj => obj as IUpdatable)
+      .forEach((object: IUpdatable) => {
+        object.update(state)
+      })
   }
 
-  public isOutOfBounds(object: (PlayerTank | Bullet)): boolean {
+  public isOutOfBounds(object: PlayerTank | Bullet): boolean {
     return (
       object.top < this.top ||
       object.right > this.right ||
@@ -132,7 +129,11 @@ export default class Stage implements IUpdatable {
     const objects = new Set<TObjects>()
 
     this.objects.forEach(other => {
-      if (other instanceof Wall && other !== object && this.haveCollision(object, other as Wall)) {
+      if (
+        other instanceof Wall &&
+        other !== object &&
+        this.haveCollision(object, other as Wall)
+      ) {
         objects.add(other)
       }
     })
@@ -151,6 +152,5 @@ export default class Stage implements IUpdatable {
     } else {
       return false
     }
-
   }
 }

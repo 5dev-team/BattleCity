@@ -8,7 +8,7 @@ export default class SteelWall extends Wall {
     super({ x, y, sprites: STEEL_WALL_SPRITES } as WallArgs)
   }
 
-  public hit(projectile: Bullet): void {
-    console.log('БУМ', this, projectile)
+  public hit(bullet: Bullet): void {
+    console.log('BOOM', this, bullet)
   }
 }

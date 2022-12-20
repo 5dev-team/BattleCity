@@ -27,12 +27,11 @@ export default class View {
 
   public update(stage: number | Stage): void {
     this.clearScreen()
-    if(typeof stage === 'object'){
+    if (typeof stage === 'object') {
       this.renderObjects(stage)
     }
     // this.renderGrid() // отрисовка сетки
-  };
-
+  }
 
   public renderObjects(objects: Stage): void {
     if (objects) {
@@ -43,8 +42,14 @@ export default class View {
           const [sp1, sp2, sp3, sp4]: number[] = sprite
           this.context.drawImage(
             this.sprite.image,
-            sp1, sp2, sp3, sp4,
-            object.left, object.top, width, height
+            sp1,
+            sp2,
+            sp3,
+            sp4,
+            object.left,
+            object.top,
+            width,
+            height
           )
         }
         // Включение дебага НЕ УДАЛЯТЬ! stage.getCollision
@@ -62,16 +67,26 @@ export default class View {
     for (let y = 0; y < NUMBER_OF_UNITS; y++) {
       for (let x = 0; x < NUMBER_OF_UNITS; x++) {
         this.context.strokeStyle = '#ffffff'
-        this.context.lineWidth = .2
-        this.context.strokeRect(x * UNIT_SIZE + 1, y * UNIT_SIZE + 1, UNIT_SIZE - 2, UNIT_SIZE - 2)
+        this.context.lineWidth = 0.2
+        this.context.strokeRect(
+          x * UNIT_SIZE + 1,
+          y * UNIT_SIZE + 1,
+          UNIT_SIZE - 2,
+          UNIT_SIZE - 2
+        )
       }
     }
 
     for (let y = 0; y < NUMBER_OF_UNITS * 2; y++) {
       for (let x = 0; x < NUMBER_OF_UNITS * 2; x++) {
         this.context.strokeStyle = '#ffffff'
-        this.context.lineWidth = .1
-        this.context.strokeRect(x * TILE_SIZE + 1, y * TILE_SIZE + 1, TILE_SIZE - 2, TILE_SIZE - 2)
+        this.context.lineWidth = 0.1
+        this.context.strokeRect(
+          x * TILE_SIZE + 1,
+          y * TILE_SIZE + 1,
+          TILE_SIZE - 2,
+          TILE_SIZE - 2
+        )
       }
     }
   }

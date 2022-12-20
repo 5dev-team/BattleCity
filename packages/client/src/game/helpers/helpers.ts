@@ -1,8 +1,8 @@
 import { Direction } from './constants'
 
-export function getDirectionForKeys(keys: { has(value: string): boolean; }): number {
-
-
+export function getDirectionForKeys(keys: {
+  has(value: string): boolean
+}): number {
   if (keys.has('ArrowUp')) {
     return Direction.UP
   }
@@ -20,7 +20,6 @@ export function getDirectionForKeys(keys: { has(value: string): boolean; }): num
   }
 
   return Direction.UP
-
 }
 
 export function getAxisForDirection(direction: number): string {
@@ -42,7 +41,9 @@ export function getValueForDirection(direction: number): 1 | -1 {
   }
 }
 
-export function getSideForDirection(direction: number): 'top' | 'right' | 'bottom' | 'left' | undefined {
+export function getSideForDirection(
+  direction: number
+): 'top' | 'right' | 'bottom' | 'left' | undefined {
   switch (direction) {
     case Direction.UP:
       return 'top'

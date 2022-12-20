@@ -1,7 +1,13 @@
 import GameObject from '@/game/core/game-object/game-object'
 import { GameObjectArgs } from '@/game/core/types'
 import Bullet from '@/game/core/bullet/bullet'
-import { TANK_HEIGHT, TANK_SPEED, TANK_TURN_THRESHOLD, TANK_WIDTH, TILE_SIZE } from '@/game/helpers/constants'
+import {
+  TANK_HEIGHT,
+  TANK_SPEED,
+  TANK_TURN_THRESHOLD,
+  TANK_WIDTH,
+  TILE_SIZE,
+} from '@/game/helpers/constants'
 
 export default class Tank extends GameObject {
   protected speed: number
@@ -26,7 +32,10 @@ export default class Tank extends GameObject {
 
     this.direction = direction
 
-    if (direction === GameObject.Direction.UP || direction === GameObject.Direction.DOWN) {
+    if (
+      direction === GameObject.Direction.UP ||
+      direction === GameObject.Direction.DOWN
+    ) {
       if (prevDirection === GameObject.Direction.RIGHT) {
         const value = TILE_SIZE - (this.x % TILE_SIZE)
 
@@ -70,15 +79,9 @@ export default class Tank extends GameObject {
     if (!this.bullet) {
       const [x, y] = this.getBulletStartingPosition()
 
-      this.bullet = new Bullet(
-        this.direction,
-        x,
-        y,
-        this.bulletSpeed,
-        () => {
-          this.bullet = null
-        }
-      )
+      this.bullet = new Bullet(this.direction, x, y, this.bulletSpeed, () => {
+        this.bullet = null
+      })
     }
   }
 

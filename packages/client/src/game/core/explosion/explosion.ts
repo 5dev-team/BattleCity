@@ -1,11 +1,11 @@
 import GameObject from '@/game/core/game-object/game-object'
 import { GameObjectArgs, IUpdatable, UpdateState } from '@/game/core/types'
 import {
-  PROJECTILE_EXPLOSION_HEIGHT, PROJECTILE_EXPLOSION_SPEED,
+  PROJECTILE_EXPLOSION_HEIGHT,
+  PROJECTILE_EXPLOSION_SPEED,
   PROJECTILE_EXPLOSION_SPRITES,
-  PROJECTILE_EXPLOSION_WIDTH
+  PROJECTILE_EXPLOSION_WIDTH,
 } from '@/game/helpers/constants'
-
 
 export default class Explosion extends GameObject implements IUpdatable {
   private speed: number
@@ -17,7 +17,7 @@ export default class Explosion extends GameObject implements IUpdatable {
       height: PROJECTILE_EXPLOSION_HEIGHT,
       sprites: PROJECTILE_EXPLOSION_SPRITES,
       x,
-      y
+      y,
     } as GameObjectArgs)
 
     this.speed = PROJECTILE_EXPLOSION_SPEED
@@ -29,7 +29,6 @@ export default class Explosion extends GameObject implements IUpdatable {
     return this.sprites[this.animationFrame]
   }
 
-
   public get exploded(): boolean {
     return this._exploded
   }
@@ -37,7 +36,6 @@ export default class Explosion extends GameObject implements IUpdatable {
   private set exploded(val: boolean) {
     this._exploded = val
   }
-
 
   update(state: Partial<UpdateState>): void {
     const { frameDelta } = state
@@ -58,6 +56,4 @@ export default class Explosion extends GameObject implements IUpdatable {
       this.frames = 0
     }
   }
-
-
 }

@@ -1,5 +1,14 @@
-import { Keys, PLAYER1_TANK_POSITION, PLAYER1_TANK_SPRITES, TANK_SPEED } from '@/game/helpers/constants'
-import { getDirectionForKeys, getAxisForDirection, getValueForDirection } from '@/game/helpers/helpers'
+import {
+  Keys,
+  PLAYER1_TANK_POSITION,
+  PLAYER1_TANK_SPRITES,
+  TANK_SPEED,
+} from '@/game/helpers/constants'
+import {
+  getDirectionForKeys,
+  getAxisForDirection,
+  getValueForDirection,
+} from '@/game/helpers/helpers'
 import Tank from '@/game/core/tank/tank'
 import { GameObjectArgs, IUpdatable, UpdateState } from '@/game/core/types'
 
@@ -40,5 +49,4 @@ export default class PlayerTank extends Tank implements IUpdatable {
       }
     }
   }
-
 }

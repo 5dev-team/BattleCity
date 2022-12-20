@@ -35,8 +35,8 @@ export default class Input {
   }
 
   has(...arg: string[]) {
-    return Array.isArray(arg) ?
-      arg.some(key => this.keys.has(key)) :
-      this.keys.has(arg)
+    return Array.isArray(arg)
+      ? arg.some(key => this.keys.has(key))
+      : this.keys.has(arg)
   }
 }

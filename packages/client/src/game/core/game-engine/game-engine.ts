@@ -58,5 +58,4 @@ export default class GameEngine {
     console.log(currentFrame)
     requestAnimationFrame(this.loop)
   }
-
 }
