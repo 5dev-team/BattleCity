@@ -1,7 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import api from '@/api'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { ILoginRequest, IRegisterRequest } from '@/api/auth/auth.models'
-import { IUser } from '@/store/slices/auth/auth.models'
+import { IUserDTO, IUser } from '@/store/slices/auth/auth.models'
+import { transformUser } from '@/utils/transformers'
 
 interface IInitialState {
   authError: string
@@ -27,7 +28,7 @@ export const fetchRegister = createAsyncThunk(
 
 export const fetchUser = createAsyncThunk(
   'auth/fetchUser',
-  () => api.auth.user()
+  () => api.auth.user().then(user => transformUser(user as IUserDTO))
 )
 
 export const fetchLogout = createAsyncThunk(

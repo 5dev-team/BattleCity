@@ -1,7 +1,9 @@
+
 import React, { useEffect } from 'react'
 import { unstable_HistoryRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
 import Leaderboard from '@/pages/leaderboard'
 import SignIn from '@/pages/sign-in'
+import GameOver from '@/pages/game-over'
 import Game from '@/pages/game'
 import Error404 from '@/pages/error404'
 import Error500 from '@/pages/error500'
@@ -12,6 +14,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { fetchUser } from '@/store/slices/auth'
 import history from '@/utils/history'
 
+
 export enum RoutePaths {
   SIGNIN = '/sign-in',
   SIGNUP = '/sign-up',
@@ -20,8 +23,10 @@ export enum RoutePaths {
   ERROR404 = '/404',
   ERROR500 = '/500',
   FORUM = '/forum',
+  GAMEOVER = '/game-over',
   PROFILE = '/profile'
 }
+
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch()
@@ -36,6 +41,7 @@ const App: React.FC = () => {
   return (
     <Router history={history}>
       <Routes>
+        <Route path={RoutePaths.GAMEOVER} element={<GameOver />} />
         <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
         <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
         <Route path={RoutePaths.LEADERBOARD} element={<Leaderboard />} />

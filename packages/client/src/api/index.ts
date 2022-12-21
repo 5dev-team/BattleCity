@@ -1,9 +1,9 @@
 import auth from '@/api/auth'
 import leaderboard from '@/api/leaderboard'
-import user from '@/api/user'
+import users from '@/api/users'
 
 export default {
   auth,
-  leaderboard,
-  user
+  users,
+  leaderboard
 }

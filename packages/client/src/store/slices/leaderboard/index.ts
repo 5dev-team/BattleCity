@@ -1,8 +1,9 @@
-import { IUser } from '@/store/slices/auth/auth.models'
+import { IUser, IUserDTO } from '@/store/slices/auth/auth.models'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import api from '@/api'
 import { ILeaderboardRequest, IUserScore } from '@/api/leaderboard/leaderboard.models'
-import { ILeaderboardScoreTransferred, transformScore } from '@/utils/transfromers'
+import { ILeaderboardScoreTransferred } from '@/store/slices/leaderboard/leaderboard.models'
+import { transformScore, transformUser } from '@/utils/transformers'
 
 interface IInitialState {
   scores: Array<ILeaderboardScoreTransferred>
@@ -20,20 +21,20 @@ export const fetchLeaderboardAll = createAsyncThunk(
     
     const responseScore = await api.leaderboard.getAll(data)
     const responseUsers: Array<IUser> = []
-    const promises: Array<Promise<IUser>> = []
+    const promises: Array<Promise<IUserDTO>> = []
     
     const responseScoreTransformed = responseScore.map(item => {
       return transformScore(item)
     })
     
     responseScoreTransformed.forEach(score => {
-      promises.push(api.user.getUserById(score.userId))
+      promises.push(api.users.getUser(score.userId))
     })
     
     Promise.all(promises)
     .then((results) => {
       results.forEach((result) => {
-        responseUsers.push(result)
+        responseUsers.push(transformUser(result))
       })
       dispatch(leaderboardSlice.actions.clearError())
       dispatch(leaderboardSlice.actions.fillTableData(responseUsers))
@@ -47,11 +48,6 @@ export const fetchLeaderboardAll = createAsyncThunk(
     
     return responseScoreTransformed
   }
-)
-
-export const fetchUserData = createAsyncThunk(
-  'user/getById',
-  async (id: number) => api.user.getUserById(id)
 )
 
 const initialState: IInitialState = {
@@ -83,7 +79,7 @@ export const leaderboardSlice = createSlice({
       .map((score, index) => {
         
         const user = users.find((user) => user.id === score.userId)
-        const userName = user?.display_name || user?.login
+        const userName = user?.displayName || user?.login
         const userAvatar = user?.avatar || ''
         
         return {
