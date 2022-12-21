@@ -16,8 +16,9 @@ export const fetchLeaderboardAll = createAsyncThunk(
   'leaderboard/fetchAll',
   async (data: ILeaderboardRequest, { dispatch }) => {
     
-    const responseScore = await api.leaderboard.getAll(data)
+    dispatch(leaderboardSlice.actions.setLoading(true))
     
+    const responseScore = await api.leaderboard.getAll(data)
     const responseUsers: Array<IUser> = []
     const promises: Array<Promise<IUser>> = []
     
@@ -29,11 +30,19 @@ export const fetchLeaderboardAll = createAsyncThunk(
       promises.push(api.user.getUserById(score.userId))
     })
     
-    Promise.allSettled(promises).then((results) => {
-      results.filter(({ status }) => status === 'fulfilled').forEach((result) => {
-        responseUsers.push((result as PromiseFulfilledResult<IUser>).value)
+    Promise.all(promises)
+    .then((results) => {
+      results.forEach((result) => {
+        responseUsers.push(result)
       })
+      dispatch(leaderboardSlice.actions.clearError())
       dispatch(leaderboardSlice.actions.fillTableData(responseUsers))
+    })
+    .catch(error => {
+      dispatch(leaderboardSlice.actions.serError(error))
+    })
+    .finally(() => {
+      dispatch(leaderboardSlice.actions.setLoading(false))
     })
     
     return responseScoreTransformed
@@ -57,6 +66,15 @@ export const leaderboardSlice = createSlice({
   name: 'leaderboard',
   initialState,
   reducers: {
+    setLoading: (state, action) => {
+      state.isLeaderboardLoading = action.payload
+    },
+    serError: (state, action) => {
+      state.leaderboardError = action.payload
+    },
+    clearError: state => {
+      state.leaderboardError = ''
+    },
     fillTableData: (state, action) => {
       
       const users: Array<IUser> = action.payload
@@ -82,26 +100,10 @@ export const leaderboardSlice = createSlice({
     }
   },
   extraReducers: builder => {
-    builder.addCase(fetchLeaderboardAll.pending, (state) => {
-      state.isLeaderboardLoading = true
-    })
     builder.addCase(fetchLeaderboardAll.fulfilled, (state, { payload }) => {
-      state.isLeaderboardLoading = false
       state.scores = payload
     })
-    builder.addCase(fetchLeaderboardAll.rejected, (state, {error}) => {
-      state.isLeaderboardLoading = false
-      state.leaderboardError = error.message || 'unknown error'
-    })
-    builder.addCase(fetchUserData.pending, (state) => {
-      state.isLeaderboardLoading = true
-    })
-    builder.addCase(fetchUserData.fulfilled, (state, { payload }) => {
-      state.isLeaderboardLoading = false
-      state.users.push(payload)
-    })
-    builder.addCase(fetchUserData.rejected, (state, {error}) => {
-      state.isLeaderboardLoading = false
+    builder.addCase(fetchLeaderboardAll.rejected, (state, { error }) => {
       state.leaderboardError = error.message || 'unknown error'
     })
   }

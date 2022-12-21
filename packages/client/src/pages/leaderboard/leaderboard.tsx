@@ -44,19 +44,20 @@ const Leaderboard: React.FC = () => {
     }
   ]
   
+  useEffect(() => {
+    console.log('asd')
+    dispatch(fetchLeaderboardAll(leaderboardDataRequest))
+  }, [])
+  
   const navigate = useNavigate()
   
   const tableData = useAppSelector(state => state.leaderboard.tableData)
   const loading = useAppSelector(state => state.leaderboard.isLeaderboardLoading)
   const leaderboardError = useAppSelector(state => state.leaderboard.leaderboardError)
   
-  useEffect(() => {
-    dispatch(fetchLeaderboardAll(leaderboardDataRequest))
-  }, [])
-  
   const userRows = React.useMemo(
     () => {
-      if (!tableData) {
+      if (!tableData.length) {
         return <></>
       }
       
@@ -100,17 +101,28 @@ const Leaderboard: React.FC = () => {
       </div>
     )
   })
-  
   return (
     <div className={styles['leaderboard']}>
       <div className={styles['leaderboard__container']}>
         <div className={styles['table']}>
           <ErrorBoundary FallbackComponent={ErrorFallback}>
             {tableHeaders}
-            {loading && <div style={{ gridColumn: 'span 5' }}><p>Is loading...</p></div>}
-            {leaderboardError && <div style={{ gridColumn: 'span 5' }}><p>Something went wrong..</p></div>}
-            {!tableData && <div style={{ gridColumn: 'span 5' }}><p>Leaderboard is empty.<br />Be first!</p></div>}
-            {userRows}
+            {
+              loading
+                ?
+                <div style={{ gridColumn: 'span 5' }}><p>Is loading...</p></div>
+                :
+                leaderboardError
+                  ?
+                  <div style={{ gridColumn: 'span 5' }}><p>Something went wrong..</p></div>
+                  :
+                  !tableData.length
+                    ?
+                    <div style={{ gridColumn: 'span 5' }}><p>Leaderboard is empty.<br />Be first!</p></div>
+                    :
+                    <>{ userRows }</>
+            }
+          
           </ErrorBoundary>
         </div>
         <div className={styles['control-wrapper']}>

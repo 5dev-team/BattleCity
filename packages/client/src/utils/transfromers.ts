@@ -9,8 +9,11 @@ export interface ILeaderboardScoreTransferred {
 
 export const transformScore = (data: IUserScoreRequest): ILeaderboardScoreTransferred => {
   
-  const formatDate = (date: number) => new Date(date).toISOString().split('T')[0].split('-').join('.')
-  
+  const formatDate = (seconds: number) => {
+    const date = new Date(seconds*1e3)
+    return `${date.getDay()}.${date.getMonth()}.${String(date.getUTCFullYear()).slice(2)}`
+  }
+
   return {
     userId: data.data.user_id,
     date: formatDate(data.data.score_date),
