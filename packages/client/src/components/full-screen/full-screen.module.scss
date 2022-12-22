@@ -1,9 +1,16 @@
-.header{
-  margin: 0;
-  padding: 0;
+.full-screen-button{
   position: absolute;
-  width: 100%;
-  max-width: 288px;
-  right: 20px;
-  top: 20px
+  right: 40px;
+  top: 40px;
+
+  &__image{
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    opacity: 0.5;
+    transition: all 0.5s ease-in-out;
+  }
+  &__image:hover{
+    opacity: 1;
+  }
 }

@@ -1,11 +1,7 @@
 import React, { ReactNode, useState } from 'react'
-import NesButton from '@/components/UI/nes-button'
 import styles from './full-screen.module.scss'
-
-
-interface IProps {
-  children: ReactNode
-}
+import fullScreenIconButton from '@/assets/svg/fullScreenIconButton.svg'
+import { Outlet } from 'react-router-dom'
 
 type HTMLElementWithBrowsersFunctions = HTMLElement & {
   mozRequestFullScreen(): Promise<void>
@@ -19,19 +15,22 @@ type HTMLDcoumentWithBrowsersFunctionns = Document & {
   msExitFullscreen(): Promise<void>
 }
 
-const FullScreen = ({ children }: IProps) => {
+const FullScreen = () => {
   const [textButton, setTextButton] = useState<string>('Click Full Screen')
-  const handleFullScreenToggle = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const [activeFullScreen, setActiveFullScreen] = useState<boolean>(false)
+  const handleFullScreenToggle = (e: React.MouseEvent<HTMLImageElement>) => {
     e.preventDefault()
     const docElmWithBrowsersFullScreenFunctions = document.documentElement as HTMLElementWithBrowsersFunctions
 
     const docWithBrowsersExitFunctions = document as HTMLDcoumentWithBrowsersFunctionns
 
-    if (textButton === 'Click Full Screen') {
+    if (!activeFullScreen) {
+      setActiveFullScreen(prev => !prev)
       activateFullscreen(docElmWithBrowsersFullScreenFunctions)
       setTextButton('Exit Full Screen')
     }
-    if (textButton === 'Exit Full Screen') {
+    if (activeFullScreen) {
+      setActiveFullScreen(prev => !prev)
       deactivateFullscreen(docWithBrowsersExitFunctions)
       setTextButton('Click Full Screen')
     }
@@ -60,16 +59,15 @@ const FullScreen = ({ children }: IProps) => {
     }
   }
 
+
   return (
     <>
-      <div className={styles['header']}>
-        <NesButton onClick={(e) => {
+      <div className={styles['full-screen-button']}>
+        <img onClick={(e) => {
           handleFullScreenToggle(e)
-        }}>
-          {textButton}
-        </NesButton>
+        }} src={fullScreenIconButton} alt={textButton} className={styles['full-screen-button__image']} />
       </div>
-      {children}
+      {<Outlet />}
     </>
   )
 }

@@ -35,21 +35,22 @@ const App: React.FC = () => {
   }, [])
 
   return (
-    <FullScreen>
-      <Router history={history}>
-        <Routes>
-          <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
-          <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
-          <Route path={RoutePaths.LEADERBOARD} element={<LeaderBoard />} />
+    <Router history={history}>
+      <Routes>
+        <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
+        <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
+        <Route path={RoutePaths.LEADERBOARD} element={<LeaderBoard />} />
+        <Route element={<FullScreen/>}>
           <Route path={RoutePaths.GAME} element={<Game />} />
-          <Route path={RoutePaths.ERROR404} element={<Error404 />} />
-          <Route path={RoutePaths.ERROR500} element={<Error500 />} />
-          <Route path={RoutePaths.FORUM} element={<Forum />} />
-          <Route path={RoutePaths.PROFILE} element={<Profile />} />
-          <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
-        </Routes>
-      </Router>
-    </FullScreen>
+        </Route>
+        <Route path={RoutePaths.ERROR404} element={<Error404 />} />
+        <Route path={RoutePaths.ERROR500} element={<Error500 />} />
+        <Route path={RoutePaths.FORUM} element={<Forum />} />
+        <Route path={RoutePaths.PROFILE} element={<Profile />} />
+        <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
+      </Routes>
+    </Router>
+
   )
 }
 
