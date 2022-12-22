@@ -11,6 +11,7 @@ import { IUserDTO, IUser } from '@/store/slices/auth/auth.models'
 import { fetchProfileUpdate } from '@/store/slices/profile'
 import styles from './profile.module.scss'
 import ErrorBoundary from '@/components/error-boundary'
+import { selectProfile } from '@/store/slices/profile/select-profile'
 
 type ProfileInputs = {
   passwords: {
@@ -34,7 +35,7 @@ enum ProfileMode {
 
 const Profile: React.FC = () => {
   const user =
-    useAppSelector(state => state.auth.user) ?? ({} as Partial<IUser>)
+    useAppSelector(selectProfile) ?? ({} as Partial<IUser>)
   const responseError = useAppSelector(state => state.profile.fetchError)
 
   const defaultValues = {
