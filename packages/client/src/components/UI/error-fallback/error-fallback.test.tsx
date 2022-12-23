@@ -15,8 +15,8 @@ describe('Wrapper GameButton', () => {
   })
   test('Should render ErrorFallback from props ', () => {
     render(<ErrorFallback error={error} errorInfo={errorInfo} />)
-    const h2 = screen.getByTestId('h2')
-    const paragraph = screen.getByTestId('p')
+    const h2 = screen.getByTestId('h2-ErrorFallBack')
+    const paragraph = screen.getByTestId('p-ErrorFallBack')
     expect(h2).toHaveTextContent('errorMessage')
     expect(paragraph).toHaveTextContent('componentStack')
   })
