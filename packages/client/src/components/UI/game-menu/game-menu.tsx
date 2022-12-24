@@ -19,7 +19,6 @@ const GameMenu: React.FC<Props> = ({ selectItemId, ...props }) => {
   }, [selectedId])
 
   const changeActiveBtn = (e: KeyboardEvent) => {
-
     if (e.key === 'Enter') {
       e.preventDefault()
       buttons[selectedId].click()
