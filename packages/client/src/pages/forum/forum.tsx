@@ -1,7 +1,8 @@
-import React, {useState} from 'react'
+import React, {useMemo, useState} from 'react'
 import styles from './forum.module.scss'
 import NesButton from '@/components/UI/nes-button'
 import NesInput from '@/components/UI/nes-input'
+import NesLink from '@/components/UI/nes-link'
 
 export type ForumThemesType = {
     title: string,
@@ -11,12 +12,14 @@ export type ForumThemesType = {
 }
 
 const Forum: React.FC = () => {
-    const [templateThem, setTemplateThem] = useState({
-        title: '',
+    const [text, setText] = useState('')
+
+    const templateThem = {
+        title: text,
         author: 'Admin',
         answers: 0,
         lastAnswer: new Date().toISOString().split('T')[0],
-    })
+    }
 
     const [themes, setThem] = useState([
         {
@@ -39,36 +42,46 @@ const Forum: React.FC = () => {
         }
     ])
 
-    const titles = ['Theme', 'Author', 'Answers', 'Last']
-        .map((el, id) => <div key={id} className={`${styles['forum-header-item']}`}>{el}</div>)
-
     const addThemes = (themes: Array<ForumThemesType>) => {
         return themes
-            .map((theme, id) => <div key={id} className={`${styles['forum-theme']}`}>{Object.values(theme)
-                .map((el, id) => <div key={id} className={`${styles['forum-theme-item']}`}>{el}</div>)}</div>)
+            .map((theme, id) => <NesLink to={theme.title} key={id} className={styles['forum-theme']}>{Object.values(theme)
+            .map((el, id) => <div key={id} className={styles['forum-theme-item']}>{el}</div>)}</NesLink>)
     }
 
-    const addThem = (themes: Array<ForumThemesType>, templateThem: ForumThemesType): void => {
-        templateThem.title && setThem([...themes, templateThem])
-    }
+    const addThem = useMemo(() => (themes: Array<ForumThemesType>, templateThem: ForumThemesType): void => {
+        if (templateThem.title) {
+          setThem([...themes, templateThem])
+        }
+    }, [themes])
 
     return (
-        <div className={`${styles['forum']}`}>
-            <div className={`${styles['forum-add-them']}`}>
+        <div className={styles['forum']}>
+            <div className={styles['forum-add-them']}>
                 <NesButton 
                     variant='warning'
-                    onClick={() => addThem(themes, templateThem)}
+                    onClick={() => {
+                        addThem(themes, templateThem)
+                        setText('')
+                    }}
                 >
                     Append
                 </NesButton>
                 <NesInput
                     inline
+                    value = {text}
                     label='theme'
-                    onChange={evt => setTemplateThem({...templateThem, title: evt.target.value})}
+                    onChange={(evt) => {
+                        setText(evt.target.value)
+                    }}
                 />
             </div>
-            <div className={`${styles['forum-header']}`}>{titles}</div>
-            <div className={`${styles['forum-themes']}`}>{addThemes(themes)}</div>
+            <div className={styles['forum-header']}>
+                <div className={styles['forum-header-item']}>Theme</div>
+                <div className={styles['forum-header-item']}>Author</div>
+                <div className={styles['forum-header-item']}>Answers</div>
+                <div className={styles['forum-header-item']}>Last</div>
+            </div>
+            <div className={styles['forum-themes']}>{addThemes(themes)}</div>
         </div>
     )
 }

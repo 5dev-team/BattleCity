@@ -23,6 +23,9 @@
     "@commitlint/cli": "17.3.0",
     "@commitlint/config-conventional": "17.3.0",
     "@evilmartians/lefthook": "1.1.1",
-    "lerna": "5.4.3"
+    "i": "^0.3.7",
+    "lerna": "5.4.3",
+    "npm": "^9.2.0",
+    "react-input-emoji": "^4.3.0"
   }
 }
