@@ -56,6 +56,7 @@ const Profile: React.FC = () => {
     reset,
     register,
     handleSubmit,
+    setValue,
     control,
     formState: { errors, isValid, dirtyFields },
   } = useForm<ProfileInputs>({
@@ -124,9 +125,10 @@ const Profile: React.FC = () => {
 
   const handleDrop = (e: DragEvent<HTMLInputElement>) => {
     if (isEditingDragEvent(e)) {
-      const file = e.dataTransfer.files[0]
+      const files = e.dataTransfer.files
 
-      setAvatarSrc(URL.createObjectURL(file))
+      setValue('avatar', files, { shouldDirty: true, shouldValidate: true })
+      setAvatarSrc(URL.createObjectURL(files[0]))
       setIsDragOver(false)
     }
   }
