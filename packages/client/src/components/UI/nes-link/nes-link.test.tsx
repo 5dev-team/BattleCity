@@ -5,7 +5,7 @@ import history from '@/utils/history'
 import '@testing-library/jest-dom'
 
 describe('nes-link', () => {
-  test('Should render with prop to', async () => {
+  test('Should render with prop to',  () => {
     render(
       <Router history={history}>
         <NesLink to={'/start'} />
