@@ -10,7 +10,8 @@ export default {
   },
   // css, scss imports mock
   moduleNameMapper: {
-    '\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2|svg)$': 'identity-obj-proxy',
+    '\\.(css|scss)$': 'identity-obj-proxy',
+    "\\.(png|jpg|svg|jpeg)$": "jest-transform-stub",
     "^@/(.*)$": "<rootDir>/src/$1",
   }
 }
