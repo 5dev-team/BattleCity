@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import logo from '@/assets/battleCityLogo.png'
 import GameMenu from '@/components/UI/game-menu/game-menu'
@@ -12,6 +12,28 @@ const initGame = (players = 1) => {
 const Game: React.FC = () => {
   
   const navigate = useNavigate()
+  const [online, setOnline] = useState(true)
+  useEffect(() => {
+    window.addEventListener('offline', () => {
+      setOnline(false)
+    })
+  
+    window.addEventListener('online', () => {
+      setOnline(true)
+    })
+    
+    return () => {
+      window.removeEventListener('offline', () => {
+        setOnline(false)
+      })
+  
+      window.removeEventListener('online', () => {
+        setOnline(true)
+      })
+    
+    }
+  },[])
+
   
   return (
     <div className={styles['game']}>
@@ -21,9 +43,10 @@ const Game: React.FC = () => {
              alt={'Battle City'}
              style={{ imageRendering: 'pixelated' }}
         />
-        <div className={`nes-container is-centered ${styles['offline-warning']} ${styles['flashing']}`}>
-          <span className='nes-text is-error' style={{color: '#f00'}}>OFFLINE</span>
-        </div>
+        {!online && <div className={`nes-container is-centered ${styles['offline-warning']} ${styles['flashing']}`}>
+          <span className='nes-text is-error' style={{ color: '#f00' }}>OFFLINE</span>
+        </div>}
+        
         <GameMenu selectItemId={0} className={`${styles['control-wrapper']} ${styles['control-page-buttons']}`}>
           <GameButton onClick={() => initGame()}>
             1 PLAYER

@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "lint": "eslint ./src/**/*.{tsx,ts} --fix && stylelint ./src/**/*.scss --fix",
     "format": "prettier --write .",
-    "test": "jest ./"
+    "test": "jest ./",
+    "compile-to-ts": "tsc src/sw.ts"
   },
   "dependencies": {
     "@reduxjs/toolkit": "1.9.0",
@@ -27,6 +28,7 @@
     "react-router-dom": "6.4.2"
   },
   "devDependencies": {
+    "@rollup/plugin-typescript": "10.0.1",
     "@testing-library/react": "13.3.0",
     "@types/jest": "29.2.4",
     "@types/react": "18.0.17",
