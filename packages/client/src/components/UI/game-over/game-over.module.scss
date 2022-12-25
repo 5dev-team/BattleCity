@@ -1,0 +1,239 @@
+.game-over {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 640px;
+    margin: auto;
+  }
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  &__common-title {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  &__title {
+    margin: 0;
+    padding: 0;
+    font-size: 1.5em;
+    font-weight: 400;
+    color: #F00F;
+  }
+
+  &__score {
+    margin: 0;
+    padding: 0;
+    font-size: 1.5em;
+    font-weight: 400;
+    color: #FFA500FF;
+  }
+
+  &__common-subtitle {
+    justify-content: space-around;
+    padding-top: 15px;
+    display: flex;
+    flex-direction: row;
+  }
+
+  &__subtitle {
+    padding: 0;
+    margin: 0 0 0 120px;
+    font-weight: 400;
+    font-size: 1.5em;
+    color: #fff;
+  }
+
+  &__stage {
+    padding: 0;
+    margin: 0 120px 0 0;
+    font-weight: 400;
+    font-size: 1.5em;
+    color: #fff;
+  }
+}
+
+.players {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 15px;
+
+  &__common {
+    margin: 0;
+    padding: 0;
+    font-size: 1.5em;
+    font-weight: 400;
+    color: #F00F;
+  }
+}
+
+.points-common {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 15px;
+
+  &__player {
+    margin: 0;
+    padding: 0;
+    text-align: end;
+    font-size: 1.5em;
+    font-weight: 400;
+    width: 192px;
+    color: #FFA500FF;
+
+    &_two {
+      text-align: start;
+      margin-right: 20px;
+    }
+  }
+}
+
+.players-stats {
+  display: flex;
+  justify-content: space-between;
+
+  &__lists {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__item {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    margin-top: 15px;
+    justify-items: center;
+
+    &_one {
+      justify-items: start;
+      grid-template-columns: 200px 122px;
+      gap: 30px;
+    }
+  }
+
+  &__pts-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 200px;
+  }
+
+  &__pts-count {
+    font-size: 1.5em;
+    margin: 15px 0 0;
+    text-align: end;
+    font-weight: 400;
+    width: 96px;
+
+    &_end {
+      text-align: start;
+    }
+  }
+
+  &__pts {
+    margin: 15px 0 0;
+    padding: 0;
+    font-size: 1.5em;
+    font-weight: 400;
+    width: 72px;
+  }
+
+
+  &__type-tank {
+    display: grid;
+    grid-template-columns: 50px 22px 50px 22px 50px;
+    justify-items: center;
+
+    &_one {
+      justify-items: start;
+      grid-template-columns: 50px 22px 50px;
+    }
+  }
+
+  &__text {
+    margin: 14px auto 0 0;
+    padding: 0;
+    font-size: 1.5em;
+    font-weight: 400;
+    width: 100%;
+    text-align: end;
+
+    &_p2 {
+      margin-left: 5px;
+      text-align: start;
+    }
+  }
+
+  &__arrow {
+    padding: 0;
+    margin: 20px 0 0;
+    width: 20px;
+    height: 20px;
+
+    &_p2 {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__image-tank {
+    object-fit: cover;
+    width: 50px
+  }
+}
+
+.players-counting {
+  display: flex;
+  margin: 10px auto;
+  flex-direction: column;
+  width: 100%;
+
+
+  &__line {
+    border-top: 5px solid white;
+    width: 30%;
+    margin: 0 auto;
+  }
+
+  &__wrapper {
+    width: 100%;
+    max-width: 640px;
+    display: flex;
+    flex-direction: row;
+    margin: 1px auto;
+    justify-content: space-between;
+  }
+
+  &__player {
+    display: flex;
+    flex-direction: row;
+    width: 275px;
+    justify-content: space-between;
+  }
+
+  &__total-count {
+    margin: 0;
+    padding: 0;
+    font-size: 1.5em;
+    font-weight: 400;
+  }
+
+  &__total {
+    margin: 0;
+    padding: 0;
+    font-size: 1.5em;
+    font-weight: 400;
+  }
+}

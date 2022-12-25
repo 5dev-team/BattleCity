@@ -1,48 +1,49 @@
-import React, { InputHTMLAttributes, useId } from 'react'
+import React, { forwardRef, InputHTMLAttributes, useId } from 'react'
 import styles from './nes-file-input.module.scss'
-import NesButton from '@/components/UI/nes-button'
+import { Control, useController } from 'react-hook-form'
 
 interface INesInputProps extends InputHTMLAttributes<HTMLInputElement> {
+  name: string
   label: string
   src: string
-  login: string
   alt: string
   plain?: boolean
+  plainText?: string
   isDragOver?: boolean
-  removeFile?: () => void
+  control: Control
 }
 
-const NesFileInput: React.FC<INesInputProps> = ({
+const NesFileInput: React.FC<INesInputProps> = forwardRef<HTMLInputElement, INesInputProps>(({
+  name,
   src,
   label,
   alt,
   plain,
+  plainText,
+  control,
   isDragOver,
-  removeFile,
+  onChange,
   ...props
-}) => {
+}, ref) => {
+  const { field } = useController({ control, name })
+  const [value, setValue] = React.useState("")
   const id = useId()
 
   return (
     <>
-      {!plain && (
-          <div className={styles['upload-file__caption']}>
-            {isDragOver ? 'Drop file to load' : (
-                <>
-                  <p className={styles['caption-title']} >Change avatar</p>
-                  <span className={`nes-text is-primary ${styles['caption-subtitle']}`}>Drag&Drop</span>
-                </>
-            )}
-          </div>
-      )}
+      <div className={styles['upload-file__caption']}>
+        <p className={styles['caption-title']}>Avatar</p>
+        <span className={`nes-text ${styles['caption-subtitle']}`}>
+          {!plain && (isDragOver ? 'Drop file to load' : 'Drag&Drop')}
+        </span>
+      </div>
 
-      <div
-        className={`${styles['wrapper']} ${
-          !plain ? styles['upload-file'] : ''
-        }`}>
-        
+      <div className={`${styles['wrapper']} ${styles['upload-file']}`}>
         {src === '' ? (
-          <div>Load avatar</div>
+          <div className={`nes-text ${!plain ? 'is-primary' : ''}`}>
+            {plain && (plainText ?? 'Load avatar')}
+            {!plain && 'Choose File'}
+          </div>
         ) : (
           <img
             src={src}
@@ -56,26 +57,24 @@ const NesFileInput: React.FC<INesInputProps> = ({
           {label}
         </label>
         <input
-          id={id}
-          className={`${styles['upload-file__input']} nes-pointer`}
           type='file'
+          id={id}
+          value={value}
+          ref={ref}
+          className={`${styles['upload-file__input']} nes-pointer`}
+          onChange={ (e) => {
+            if (onChange) {
+              onChange(e)
+            }
+            setValue(e.target.value)
+            field.onChange(e.target.files)
+          }}
           disabled={plain}
           {...props}
         />
       </div>
-      {!plain && (
-        <div className={styles['upload-file__control']}>
-          <NesButton
-            onClick={removeFile}
-            variant={src === '' ? 'disabled' : 'error'}
-            disabled={src === ''}
-            type='button'>
-            delete
-          </NesButton>
-        </div>
-      )}
     </>
   )
-}
+})
 
 export default NesFileInput

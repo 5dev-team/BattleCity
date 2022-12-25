@@ -14,7 +14,7 @@ export default defineConfig(({ command, mode }) => {
     },
     define: {
       __SERVER_PORT__: process.env.SERVER_PORT,
-      __YANDEX_API__: JSON.stringify(process.env.YANDEX_API)
+      __YANDEX_API__: JSON.stringify(process.env.YANDEX_API.trim())
     },
     resolve: {
       alias: {
