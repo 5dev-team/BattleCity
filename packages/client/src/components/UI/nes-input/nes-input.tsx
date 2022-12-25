@@ -10,29 +10,36 @@ interface INesInputProps extends InputHTMLAttributes<HTMLInputElement> {
   plain?: boolean
 }
 
-const NesInput = React.forwardRef<
-  HTMLInputElement, INesInputProps
-  >(({ inline, label, variant, fullWidth, labelHidden, plain, ...props}, ref) => {
-  const id = useId()
-  return (
-    <div className={`nes-field ${inline ? 'is-inline' : ''}`}>
-      <label
-        className={`${labelHidden ? 'visually-hidden' : ''}`}
-        htmlFor={id}>
-        {label}
-      </label>
-      <input
-        id={id}
-        ref={ref}
-        className={`nes-input is-${variant} ${styles['nes-btn']} ${
-          plain ? styles['plaintext'] : 'nes-btn'
-        }`}
-        readOnly={plain}
-        style={fullWidth ? { width: '100%' } : {}}
-        {...props}
-      />
-    </div>
-  )
-})
+const NesInput = React.forwardRef<HTMLInputElement, INesInputProps>(
+  (
+    { inline, label, variant, fullWidth, labelHidden, plain, ...props },
+    ref
+  ) => {
+    const id = useId()
+    return (
+      <div data-testid='nes-input__field' className={`nes-field ${inline ? 'is-inline' : ''}`}>
+        <label
+          data-testid='nes-input__label'
+          className={`${labelHidden ? 'visually-hidden' : ''}`}
+          htmlFor={id}
+        >
+          {label}
+        </label>
+
+        <input
+          data-testid='nes-input__input'
+          id={id}
+          ref={ref}
+          className={`nes-input ${variant ? `is-${variant}` : ''} ${
+            styles['nes-input__input']
+          } ${plain ? styles['plaintext'] : 'nes-btn'}`}
+          readOnly={plain}
+          style={fullWidth ? { width: '100%' } : {}}
+          {...props}
+        />
+      </div>
+    )
+  }
+)
 
 export default NesInput
