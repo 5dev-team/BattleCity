@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
-import { Navigate, Route, Routes, unstable_HistoryRouter as Router } from 'react-router-dom'
-import LeaderBoard from '@/pages/leaderboard'
+import { unstable_HistoryRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
+import Leaderboard from '@/pages/leaderboard'
 import SignIn from '@/pages/sign-in'
 import Game from '@/pages/game'
 import Error404 from '@/pages/error404'
@@ -26,10 +26,9 @@ export enum RoutePaths {
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch()
-  const user = useAppSelector((state) => state.auth.user)
   
+  const user = useAppSelector((state) => state.auth.user)
   useEffect(() => {
-    
     if (!user) {
       dispatch(fetchUser())
     }
@@ -38,16 +37,16 @@ const App: React.FC = () => {
   return (
     <Router history={history}>
       <Routes>
-            <Route path='/offline' element={<Offline />} />
-            <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
-            <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
-            <Route path={RoutePaths.LEADERBOARD} element={<LeaderBoard />} />
-            <Route path={RoutePaths.GAME} element={<Game />} />
-            <Route path={RoutePaths.ERROR404} element={<Error404 />} />
-            <Route path={RoutePaths.ERROR500} element={<Error500 />} />
-            <Route path={RoutePaths.FORUM} element={<Forum />} />
-            <Route path={RoutePaths.PROFILE} element={<Profile />} />
-            <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
+        <Route path='/offline' element={<Offline />} />
+        <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
+        <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
+        <Route path={RoutePaths.LEADERBOARD} element={<Leaderboard />} />
+        <Route path={RoutePaths.GAME} element={<Game />} />
+        <Route path={RoutePaths.ERROR404} element={<Error404 />} />
+        <Route path={RoutePaths.ERROR500} element={<Error500 />} />
+        <Route path={RoutePaths.FORUM} element={<Forum />} />
+        <Route path={RoutePaths.PROFILE} element={<Profile />} />
+        <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
       </Routes>
     </Router>
   )

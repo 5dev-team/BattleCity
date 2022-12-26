@@ -34,7 +34,7 @@ export default defineConfig(({ command, mode }) => {
     },
     define: {
       __SERVER_PORT__: process.env.SERVER_PORT,
-      __YANDEX_API__: JSON.stringify(process.env.YANDEX_API)
+      __YANDEX_API__: JSON.stringify(process.env.YANDEX_API.trim())
     },
     resolve: {
       alias: {
@@ -47,10 +47,11 @@ export default defineConfig(({ command, mode }) => {
       minify: mode === 'development' ? false : 'terser',
       sourcemap: command === 'serve' ? 'inline' : false,
       rollupOptions: {
+        //TODO: add hash to filename after service worker fix dynamic names
         output: {
-          assetFileNames: 'assets/[name].[hash].[extname]',
-          chunkFileNames: '[name].[hash].js',
-          entryFileNames: '[name].[hash].js'
+          assetFileNames: 'assets/[name][extname]',
+          chunkFileNames: '[name].js',
+          entryFileNames: '[name].js'
         }
       }
     }
