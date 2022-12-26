@@ -80,9 +80,10 @@ export const authSlice = createSlice({
       state.user = payload
       state.isLoggedIn = true
     })
-    builder.addCase(fetchUser.rejected, (state) => {
+    builder.addCase(fetchUser.rejected, (state, { error }) => {
       state.user = null
-      state.isLoggedIn = false
+      const status = Number(error.code)
+      status === 401 ? state.isLoggedIn = false : state.isLoggedIn = true
     })
     // logout
     builder.addCase(fetchLogout.fulfilled, (state) => {
