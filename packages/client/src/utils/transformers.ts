@@ -1,6 +1,7 @@
 import { IUserDTO, IUser } from "@/store/slices/auth/auth.models"
 
 export const transformUser = (user: IUserDTO): IUser => {
+  console.log(user)
   const avatar = user.avatar? `${__YANDEX_API__}/resources/${user.avatar}` : ''
   return {
     id: user.id,

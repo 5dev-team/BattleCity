@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { unstable_HistoryRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
 import LeaderBoard from '@/pages/leaderboard'
 import SignIn from '@/pages/sign-in'
@@ -14,6 +14,8 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { fetchUser } from '@/store/slices/auth'
 import history from '@/utils/history'
 import ProtectRouteForSignIn from '@/components/protect-route-for-sign-in/ProtectRouteForSignIn'
+import { interceptor } from '@/api/request'
+import { IUser } from '@/store/slices/auth/auth.models'
 
 export enum RoutePaths {
   SIGNIN = '/sign-in',
@@ -29,15 +31,15 @@ export enum RoutePaths {
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch()
-  
   const user = useAppSelector((state) => state.auth.user)
   useEffect(() => {
     if (!user) {
       dispatch(fetchUser())
+      interceptor(dispatch)
     }
-  }, [])
-  
-  
+  }, [user])
+
+
   return (
     <Router history={history}>
       <Routes>

@@ -36,6 +36,7 @@ enum ProfileMode {
 const Profile: React.FC = () => {
   const user =
     useAppSelector(state => state.auth.user) ?? ({} as Partial<IUser>)
+
   const responseError = useAppSelector(state => state.profile.fetchError)
   
   const defaultValues = {

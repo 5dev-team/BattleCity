@@ -8,14 +8,14 @@ interface IInitialState {
   authError: string
   isAuthLoading: boolean
   user: IUser | null
-  isLoggedIn: boolean | null
+  isLoggedIn: boolean
 }
 
 const initialState: IInitialState = {
   authError: '',
   isAuthLoading: false,
   user: null,
-  isLoggedIn: null
+  isLoggedIn: false
 }
 
 export const fetchLogin = createAsyncThunk(
@@ -51,7 +51,6 @@ export const authSlice = createSlice({
     builder.addCase(fetchLogin.fulfilled, (state) => {
       state.isAuthLoading = false
       state.authError = ''
-      state.isLoggedIn = true
     })
     builder.addCase(fetchLogin.pending, (state) => {
       state.isAuthLoading = true
@@ -59,13 +58,11 @@ export const authSlice = createSlice({
     builder.addCase(fetchLogin.rejected, (state, { error }) => {
       state.isAuthLoading = false
       state.authError = error.message as string
-      state.isLoggedIn = false
     })
     // registration
     builder.addCase(fetchRegister.fulfilled, (state) => {
       state.isAuthLoading = false
       state.authError = ''
-      state.isLoggedIn = true
     })
     builder.addCase(fetchRegister.pending, (state) => {
       state.isAuthLoading = true
@@ -73,17 +70,20 @@ export const authSlice = createSlice({
     builder.addCase(fetchRegister.rejected, (state, { error }) => {
       state.isAuthLoading = false
       state.authError = error.message as string
-      state.isLoggedIn = false
     })
     // user
     builder.addCase(fetchUser.fulfilled, (state, { payload }) => {
+      console.log('fulfilled')
       state.user = payload
       state.isLoggedIn = true
     })
     builder.addCase(fetchUser.rejected, (state, { error }) => {
+      console.log('rejected')
+      console.log(error)
       state.user = null
-      const status = Number(error.code)
-      status === 401 ? state.isLoggedIn = false : state.isLoggedIn = true
+      const result: number | string = error.message === 'Cookie is not valid' ? 401 : error.code || 401
+      const status = Number(result)
+      state.isLoggedIn = status !== 401
     })
     // logout
     builder.addCase(fetchLogout.fulfilled, (state) => {

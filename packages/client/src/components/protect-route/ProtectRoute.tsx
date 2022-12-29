@@ -6,8 +6,8 @@ interface IProps {
 }
 
  const ProtectRoute = ({redirectTo = '/sing-in'}: IProps) => {
-  const isAuth: boolean | null = useAuth()
-
+  const isAuth: boolean  = useAuth()
+   console.log(isAuth)
   if (isAuth !== null && !isAuth) {
     return <Navigate to={redirectTo} replace />
   }
