@@ -1,7 +1,7 @@
 import React, { ChangeEvent, DragEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useNavigate } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
+import { Control, useForm } from 'react-hook-form'
 import { getPattern } from '@/utils/validation'
 import NesButton from '@/components/UI/nes-button'
 import NesInput from '@/components/UI/nes-input'
@@ -218,7 +218,8 @@ const Profile: React.FC = () => {
                     <tr>
                       <th colSpan={2} rowSpan={6}>
                         <NesFileInput
-                          control={control}
+                          //TODO: fix types
+                          control={control as unknown as Control}
                           src={avatarSrc ?? user.avatar ?? ''}
                           label='Avatar'
                           accept='image/*'

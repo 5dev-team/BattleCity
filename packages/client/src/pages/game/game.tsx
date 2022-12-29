@@ -34,7 +34,27 @@ const Game: React.FC = () => {
   const navigate = useNavigate()
   const [gameView, setView] = useState(GameView.Menu)
   const canvasRef = useRef<HTMLCanvasElement>(null)
-
+  const [online, setOnline] = useState(true)
+  useEffect(() => {
+    window.addEventListener('offline', () => {
+      setOnline(false)
+    })
+    
+    window.addEventListener('online', () => {
+      setOnline(true)
+    })
+    
+    return () => {
+      window.removeEventListener('offline', () => {
+        setOnline(false)
+      })
+      
+      window.removeEventListener('online', () => {
+        setOnline(true)
+      })
+      
+    }
+  },[])
   const gameOverProps = {
     nextGame: true,
     hiScore: 20000,
@@ -108,6 +128,9 @@ const Game: React.FC = () => {
               alt={'Battle City'}
               style={{ imageRendering: 'pixelated' }}
             />
+            {!online && <div className={`nes-container is-centered ${styles['offline-warning']} ${styles['flashing']}`}>
+              <span className='nes-text is-error' style={{ color: '#f00' }}>OFFLINE</span>
+            </div>}
             <ErrorBoundary FallbackComponent={ErrorFallback}>
               <GameMenu
                 selectItemId={0}
