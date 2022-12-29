@@ -30,7 +30,10 @@ export const fetchRegister = createAsyncThunk(
 
 export const fetchUser = createAsyncThunk(
   'auth/fetchUser',
-  () => api.auth.user().then(user => transformUser(user as IUserDTO))
+  () => api.auth.user().then(response => {
+    console.log(response)
+    return transformUser(response.data as IUserDTO)
+  })
 )
 
 export const fetchLogout = createAsyncThunk(
