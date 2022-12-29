@@ -1,15 +1,11 @@
 import type { AxiosRequestConfig } from 'axios'
 import axios from 'axios'
-
 import { fetchLogout } from '@/store/slices/auth'
 import { AppDispatch } from '@/store'
 
-
 export const interceptor = (dispatch: AppDispatch) => {
-  
   axios.interceptors.response.use(
-    
-    (response)=> {
+    (response) => {
       return response
     },
     error => {

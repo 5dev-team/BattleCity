@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { unstable_HistoryRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
 import LeaderBoard from '@/pages/leaderboard'
 import SignIn from '@/pages/sign-in'
@@ -9,13 +9,13 @@ import Error500 from '@/pages/error500'
 import Forum from '@/pages/forum'
 import SignUp from '@/pages/sign-up/sign-up'
 import Profile from '@/pages/profile'
-import ProtectRoute from '@/components/protect-route/ProtectRoute'
+import ProtectRoute from '@/components/protect-route'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { fetchUser } from '@/store/slices/auth'
 import history from '@/utils/history'
-import ProtectRouteForSignIn from '@/components/protect-route-for-sign-in/ProtectRouteForSignIn'
+import ProtectRouteForSignIn from '@/components/protect-route-for-sign-in'
 import { interceptor } from '@/api/request'
-import { IUser } from '@/store/slices/auth/auth.models'
+
 
 export enum RoutePaths {
   SIGNIN = '/sign-in',

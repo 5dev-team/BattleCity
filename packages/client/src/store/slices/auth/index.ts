@@ -8,14 +8,14 @@ interface IInitialState {
   authError: string
   isAuthLoading: boolean
   user: IUser | null
-  isLoggedIn: boolean
+  isLoggedIn: boolean | null
 }
 
 const initialState: IInitialState = {
   authError: '',
   isAuthLoading: false,
   user: null,
-  isLoggedIn: false
+  isLoggedIn: null
 }
 
 export const fetchLogin = createAsyncThunk(
@@ -31,7 +31,6 @@ export const fetchRegister = createAsyncThunk(
 export const fetchUser = createAsyncThunk(
   'auth/fetchUser',
   () => api.auth.user().then(response => {
-    console.log(response)
     return transformUser(response.data as IUserDTO)
   })
 )
@@ -76,17 +75,14 @@ export const authSlice = createSlice({
     })
     // user
     builder.addCase(fetchUser.fulfilled, (state, { payload }) => {
-      console.log('fulfilled')
       state.user = payload
       state.isLoggedIn = true
     })
     builder.addCase(fetchUser.rejected, (state, { error }) => {
-      console.log('rejected')
-      console.log(error)
       state.user = null
       const result: number | string = error.message === 'Cookie is not valid' ? 401 : error.code || 401
       const status = Number(result)
-      state.isLoggedIn = status !== 401
+      state.isLoggedIn = status ? null : false
     })
     // logout
     builder.addCase(fetchLogout.fulfilled, (state) => {
