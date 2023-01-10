@@ -5,8 +5,8 @@ const ErrorFallback: React.FC<FallbackProps> = ({ error, errorInfo }) => {
   return (
     <div role='alert'>
       <h1>Something went wrong :(</h1>
-      {error && <h2>{error.message}</h2>}
-      {errorInfo && <p>{errorInfo.componentStack}</p>}
+      {error && <h2 data-testid='h2-ErrorFallBack'>{error.message}</h2>}
+      {errorInfo && <p data-testid='p-ErrorFallBack'>{errorInfo.componentStack}</p>}
     </div>
   )
 }
