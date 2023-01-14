@@ -1,12 +1,15 @@
 import React, { useEffect, useMemo } from 'react'
+
 import { useForm } from 'react-hook-form'
 import { getPattern } from '@/utils/validation'
+
 import styles from './sign-up.module.scss'
 import NesInput from '@/components/UI/nes-input'
 import NesLink from '@/components/UI/nes-link'
 import NesButton from '@/components/UI/nes-button'
+
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { authSlice, fetchRegister, fetchUser } from '@/store/slices/auth'
+import { authSlice, fetchRegister } from '@/store/slices/auth'
 import { RoutePaths } from '@/App'
 import { useNavigate } from 'react-router-dom'
 
@@ -29,9 +32,7 @@ const SignUp: React.FC = () => {
   const onSubmit = (data: RegistrationInputs): void => {
     dispatch(fetchRegister(data)).then((val) => {
       if (val.meta.requestStatus !== 'rejected') {
-        dispatch(fetchUser()).then(() => {
-          navigate(RoutePaths.GAME)
-        })
+        navigate(RoutePaths.GAME)
       }
     })
   }

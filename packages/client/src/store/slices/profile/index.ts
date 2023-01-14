@@ -20,6 +20,7 @@ export const fetchProfileUpdate = createAsyncThunk(
 
     return Promise.allSettled(promises).then(results => {
       dispatch(fetchUser())
+
       const rejectReasons = results
         .filter(({ status }) => status === 'rejected')
         .map(result => (result as PromiseRejectedResult).reason)
