@@ -1,42 +1,21 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
 import styles from './game-over.module.scss'
-import T1 from '@/assets/tanks/T1.png'
-import T2 from '@/assets/tanks/T2.png'
-import T3 from '@/assets/tanks/T3.png'
-import T4 from '@/assets/tanks/T4.png'
 import arrow from '@/assets/svg/arrow.svg'
 
-import GameButton from '@/components/UI/game-button'
-import GameMenu from '@/components/UI/game-menu/game-menu'
+type PlayerStatsType = { count: number, total: number }
+type StatsType = Partial<{ P1: PlayerStatsType, P2: PlayerStatsType, key: number, T: string }>
 
-const GameOver: React.FC = () => {
-  const navigate = useNavigate()
-  type PlayerStatsType = { count: number, total: number }
-  type StatsType = Partial<{ P1: PlayerStatsType, P2: PlayerStatsType, key: number, T: string }>
+interface IGameOverProps extends React.HTMLAttributes<HTMLDivElement> {
+  nextGame: boolean
+  hiScore: number,
+  stage: number,
+  players: { count: number, totalPts: Partial<{ P1: number, P2: number }> },
+  playersStats: StatsType[],
+}
 
-  interface IinputProps {
-    nextGame: boolean
-    hiScore: number,
-    stage: number,
-    players: { count: number, totalPts: Partial<{ P1: number, P2: number }> },
-    playersStats: StatsType[]
-  }
-
-  const props: IinputProps = {
-    nextGame: true,
-    hiScore: 20000,
-    stage: 1,
-    players: { count: 2, totalPts: { P1: 1000, P2: 1000 } },
-    playersStats: [
-      { P1: { count: 1, total: 100 }, P2: { count: 1, total: 100 }, key: 0, T: T1 },
-      { P1: { count: 1, total: 200 }, P2: { count: 1, total: 200 }, key: 1, T: T2 },
-      { P1: { count: 1, total: 300 }, P2: { count: 1, total: 400 }, key: 2, T: T3 },
-      { P1: { count: 1, total: 400 }, P2: { count: 1, total: 400 }, key: 3, T: T4 }
-    ]
-  }
-
-
+const GameOver: React.FC<IGameOverProps> = ({
+  ...props
+}) => {
   const template = props.playersStats.map((value: StatsType) => {
     return (
       <li
@@ -117,20 +96,7 @@ const GameOver: React.FC = () => {
             }
           </div>
         </div>
-        <GameMenu selectItemId={0} className={styles['button-wrapper']}>
-          {props.nextGame ?
-            <GameButton onClick={() => navigate('/game')}>
-              NEXT LEVEL
-            </GameButton> :
-            <GameButton onClick={() => navigate('/game')}>
-              REPEAT
-            </GameButton>
-          }
-          <GameButton onClick={() => navigate('/leaderboard')}>
-            LEADERBOARD
-          </GameButton>
-          <GameButton onClick={() => navigate('/')}>EXIT</GameButton>
-        </GameMenu>
+        {props.children}
       </div>
     </section>
   )

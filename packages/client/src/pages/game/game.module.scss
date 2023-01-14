@@ -9,6 +9,12 @@
   &__container {
     max-width: 800px;
   }
+
+  &__canvas {
+    margin: auto;
+    display: flex;
+    background-color: black;
+  }
 }
 
 .logo {
@@ -27,4 +33,32 @@
 .control-page-buttons {
   justify-content: space-between;
   list-style-type: none;
+}
+
+.game-over-page-buttons {
+  display: flex;
+  flex-direction: column;
+  margin: 20px auto 0;
+}
+
+.offline-warning {
+  font-size: 24px;
+}
+
+.flashing {
+  animation: blink 2s linear infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1.0;
+  }
+
+  50% {
+    opacity: 0.0;
+  }
+
+  100% {
+    opacity: 1.0;
+  }
 }
