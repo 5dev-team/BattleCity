@@ -7,13 +7,14 @@ import NesButton from '@/components/UI/nes-button'
 import NesInput from '@/components/UI/nes-input'
 import NesFileInput from '@/components/UI/nes-file-input'
 import { fetchLogout, fetchUser } from '@/store/slices/auth'
-import { IUserDTO, IUser } from '@/store/slices/auth/auth.models'
+import { IUser, IUserDTO } from '@/store/slices/auth/auth.models'
 import { fetchProfileUpdate } from '@/store/slices/profile'
 import styles from './profile.module.scss'
 import ErrorBoundary from '@/components/error-boundary'
 import { selectProfile } from '@/store/slices/profile/select-profile'
 
-type ProfileInputs = {
+
+export type ProfileInputs = {
   passwords: {
     newPassword: string
     oldPassword: string
@@ -38,6 +39,9 @@ const Profile: React.FC = () => {
     useAppSelector(selectProfile) ?? ({} as Partial<IUser>)
   const responseError = useAppSelector(state => state.profile.fetchError)
 
+
+  const responseError = useAppSelector(state => state.profile.fetchError)
+  
   const defaultValues = {
     profile: {
       first_name: user.firstName,
@@ -45,29 +49,29 @@ const Profile: React.FC = () => {
       display_name: user.displayName,
       login: user.login,
       email: user.email,
-      phone: user.phone,
+      phone: user.phone
     },
     passwords: {
       newPassword: '',
-      oldPassword: '',
-    },
+      oldPassword: ''
+    }
   } as ProfileInputs
-
+  
   const {
     reset,
     register,
     handleSubmit,
     setValue,
     control,
-    formState: { errors, isValid, dirtyFields },
+    formState: { errors, isValid, dirtyFields }
   } = useForm<ProfileInputs>({
     defaultValues,
-    mode: 'onChange',
+    mode: 'onChange'
   })
-
+  
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
-
+  
   useEffect(() => {
     if (!user) {
       dispatch(fetchUser())
@@ -75,28 +79,28 @@ const Profile: React.FC = () => {
       reset(defaultValues)
     }
   }, [user])
-
+  
   const [avatarSrc, setAvatarSrc] = useState<string>()
   const [isDragOver, setIsDragOver] = useState(false)
   const [mode, setMode] = useState<ProfileMode>(ProfileMode.View)
-
+  
   const onSubmit = (data: ProfileInputs): void => {
     const profileData = dirtyFields.profile ? data.profile : undefined
     const passwordData = dirtyFields.passwords ? data.passwords : undefined
     const avatarData = dirtyFields.avatar ? { avatar: data.avatar } : undefined
-
+    
     dispatch(
       fetchProfileUpdate({
         profileData,
         passwordData,
-        avatarData,
+        avatarData
       })
     )
-
+    
     setMode(ProfileMode.View)
     reset(defaultValues)
   }
-
+  
   const handleChangeAvatar = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length) {
       setAvatarSrc(URL.createObjectURL(e.target.files[0]))
@@ -104,26 +108,26 @@ const Profile: React.FC = () => {
       setAvatarSrc(user.avatar)
     }
   }
-
+  
   const isEditingDragEvent = (e: DragEvent) => {
     if (mode === ProfileMode.Edit) {
       e.preventDefault()
       e.stopPropagation()
-
+      
       return true
     }
-
+    
     return false
   }
-
+  
   const handleDragStart = (e: DragEvent<HTMLInputElement>) => {
     if (isEditingDragEvent(e)) setIsDragOver(true)
   }
-
+  
   const handleDragLeave = (e: DragEvent<HTMLInputElement>) => {
     if (isEditingDragEvent(e)) setIsDragOver(false)
   }
-
+  
   const handleDrop = (e: DragEvent<HTMLInputElement>) => {
     if (isEditingDragEvent(e)) {
       const files = e.dataTransfer.files
@@ -133,19 +137,19 @@ const Profile: React.FC = () => {
       setIsDragOver(false)
     }
   }
-
+  
   const dragHandlers = {
     onDrop: (e: React.DragEvent<HTMLInputElement>) => handleDrop(e),
     onDragOver: (e: React.DragEvent<HTMLInputElement>) => handleDragStart(e),
     onDragStart: (e: React.DragEvent<HTMLInputElement>) => handleDragStart(e),
-    onDragLeave: (e: React.DragEvent<HTMLInputElement>) => handleDragLeave(e),
+    onDragLeave: (e: React.DragEvent<HTMLInputElement>) => handleDragLeave(e)
   }
-
+  
   const commonProps = {
     labelHidden: true,
-    plain: mode === ProfileMode.View,
+    plain: mode === ProfileMode.View
   }
-
+  
   function inputVariant<T = keyof ProfileInputs>(
     name: InputName<T>
   ): InputVariant {
@@ -154,13 +158,13 @@ const Profile: React.FC = () => {
         val =>
           Object.keys(val as object).find(key => key === name) !== undefined
       )
-
+    
     const isDirtyField = isDirtyOrError(dirtyFields)
     const isErrorField = isDirtyOrError(errors)
-
+    
     return isDirtyField ? (isErrorField ? 'error' : 'success') : 'basic'
   }
-
+  
   const editBtn = (
     <NesButton
       onClick={e => {
@@ -171,9 +175,9 @@ const Profile: React.FC = () => {
       edit profile
     </NesButton>
   )
-
+  
   const isFormDirty = Object.keys(dirtyFields).length > 0
-
+  
   const saveBtn = (
     <NesButton
       type='submit'
@@ -183,7 +187,7 @@ const Profile: React.FC = () => {
       save
     </NesButton>
   )
-
+  
   const cancelBtn = (
     <NesButton
       variant='error'
@@ -197,7 +201,7 @@ const Profile: React.FC = () => {
       cancel
     </NesButton>
   )
-
+  
   return (
     <div className={styles['profile']}>
       <div className={styles['profile__body']}>
