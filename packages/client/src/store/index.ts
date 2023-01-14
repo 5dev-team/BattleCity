@@ -1,9 +1,11 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
 import { authSlice } from '@/store/slices/auth'
+import { leaderboardSlice } from '@/store/slices/leaderboard'
 import { profileSlice } from './slices/profile'
 
 const rootReducer = combineReducers({
   auth: authSlice.reducer,
+  leaderboard: leaderboardSlice.reducer,
   profile: profileSlice.reducer,
 })
 
