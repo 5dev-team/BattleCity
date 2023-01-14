@@ -80,8 +80,15 @@ export const authSlice = createSlice({
     })
     builder.addCase(fetchUser.rejected, (state, { error }) => {
       state.user = null
-      const result: number | string = error.message === 'Cookie is not valid' ? 401 : error.code || 401
+      let result: number | string | null = null
+      if (error.message === 'Cookie is not valid') {
+        result = 401
+      }
+      if (error.code) {
+        result = error.code
+      }
       const status = Number(result)
+      console.log(status)
       state.isLoggedIn = status ? null : false
     })
     // logout
