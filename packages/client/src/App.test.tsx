@@ -1,12 +1,8 @@
-// Comment test. Let's make a task for it
-
-// import App from './App'
 import { render } from '@testing-library/react'
+import NesButton from '@/components/UI/nes-button'
 
-global.fetch = jest.fn(() =>
-  Promise.resolve({ json: () => Promise.resolve('hey') })
-) as jest.Mock
-test('Example test', async () => {
-
-  // render(<App />)
+describe('Wrapper App', () => {
+  test('Should render App', () => {
+  render(<NesButton />)
+  })
 })
