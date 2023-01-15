@@ -1,4 +1,4 @@
-import { getByTestId, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import ErrorFallback from '@/components/UI/error-fallback'
 import '@testing-library/jest-dom'
 
