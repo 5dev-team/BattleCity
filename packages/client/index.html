@@ -15,5 +15,8 @@
   <body>
     <div id="root"><!--ssr-outlet--></div>
     <script type="module" src="/src/entry-client.tsx"></script>
+    <script>
+      window.__PRELOADED_STATE__ = 'ssr-initial-state'
+    </script>
   </body>
 </html>

@@ -35,26 +35,26 @@ const Game: React.FC = () => {
   const [gameView, setView] = useState(GameView.Menu)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [online, setOnline] = useState(true)
-  // useEffect(() => {
-  //   window.addEventListener('offline', () => {
-  //     setOnline(false)
-  //   })
-  //
-  //   window.addEventListener('online', () => {
-  //     setOnline(true)
-  //   })
-  //
-  //   return () => {
-  //     window.removeEventListener('offline', () => {
-  //       setOnline(false)
-  //     })
-  //
-  //     window.removeEventListener('online', () => {
-  //       setOnline(true)
-  //     })
-  //
-  //   }
-  // },[])
+  useEffect(() => {
+    window.addEventListener('offline', () => {
+      setOnline(false)
+    })
+
+    window.addEventListener('online', () => {
+      setOnline(true)
+    })
+
+    return () => {
+      window.removeEventListener('offline', () => {
+        setOnline(false)
+      })
+
+      window.removeEventListener('online', () => {
+        setOnline(true)
+      })
+
+    }
+  },[])
   const gameOverProps = {
     nextGame: true,
     hiScore: 20000,

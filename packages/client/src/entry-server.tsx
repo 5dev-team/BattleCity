@@ -1,8 +1,8 @@
 import { renderToString } from 'react-dom/server'
-import { Router } from './router'
 import { StaticRouter } from 'react-router-dom/server'
 import { Provider } from 'react-redux'
 import { setupStore } from '@/store'
+import App from '@/App'
 
 const store = setupStore()
 
@@ -11,11 +11,14 @@ interface IRenderProps {
 }
 
 export function render({ url }: IRenderProps) {
-  return renderToString(
-    <Provider store={store}>
-      <StaticRouter location={url}>
-        <Router />
-      </StaticRouter>
-    </Provider>
-  )
+  return {
+    html: renderToString(
+      <Provider store={store}>
+        <StaticRouter location={url}>
+          <App/>
+        </StaticRouter>
+      </Provider>
+    ),
+    state: store.getState(),
+  }
 }

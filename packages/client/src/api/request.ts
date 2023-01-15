@@ -1,7 +1,5 @@
 import type { AxiosRequestConfig } from 'axios'
 import axios from 'axios'
-// import { RoutePaths } from '@/router'
-// import history from '@/utils/history'
 
 axios.interceptors.response.use(
   response => {

@@ -9,8 +9,10 @@ const rootReducer = combineReducers({
   profile: profileSlice.reducer,
 })
 
-export const setupStore = () => configureStore({
+export const setupStore = (initialState = {}) => configureStore({
   reducer: rootReducer,
+  preloadedState: initialState,
+
 })
 
 export type RootState = ReturnType<typeof rootReducer>
