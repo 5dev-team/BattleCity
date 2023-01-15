@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { authSlice, fetchLogin } from '@/store/slices/auth'
-import { RoutePaths } from '@/App'
+import { RoutePaths } from '@/router'
 
 type LoginInputs = {
   login: string,

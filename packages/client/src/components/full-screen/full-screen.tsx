@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react'
+import React, { useState } from 'react'
 import styles from './full-screen.module.scss'
 import fullScreenIconButton from '@/assets/svg/fullScreenIconButton.svg'
 import { Outlet } from 'react-router-dom'
@@ -20,9 +20,11 @@ const FullScreen = () => {
   const [activeFullScreen, setActiveFullScreen] = useState<boolean>(false)
   const handleFullScreenToggle = (e: React.MouseEvent<HTMLImageElement>) => {
     e.preventDefault()
-    const docElmWithBrowsersFullScreenFunctions = document.documentElement as HTMLElementWithBrowsersFunctions
+    const docElmWithBrowsersFullScreenFunctions =
+      document.documentElement as HTMLElementWithBrowsersFunctions
 
-    const docWithBrowsersExitFunctions = document as HTMLDcoumentWithBrowsersFunctionns
+    const docWithBrowsersExitFunctions =
+      document as HTMLDcoumentWithBrowsersFunctionns
 
     if (!activeFullScreen) {
       setActiveFullScreen(prev => !prev)
@@ -37,7 +39,6 @@ const FullScreen = () => {
   }
 
   const activateFullscreen = (element: HTMLElementWithBrowsersFunctions) => {
-
     if (element.requestFullscreen) {
       element.requestFullscreen().then()
     } else if (element.mozRequestFullScreen) {
@@ -49,7 +50,9 @@ const FullScreen = () => {
     }
   }
 
-  const deactivateFullscreen = (element: HTMLDcoumentWithBrowsersFunctionns) => {
+  const deactivateFullscreen = (
+    element: HTMLDcoumentWithBrowsersFunctionns
+  ) => {
     if (element.exitFullscreen) {
       element.exitFullscreen().then()
     } else if (element.mozCancelFullScreen) {
@@ -59,13 +62,17 @@ const FullScreen = () => {
     }
   }
 
-
   return (
     <>
       <div className={styles['full-screen-button']}>
-        <img onClick={(e) => {
-          handleFullScreenToggle(e)
-        }} src={fullScreenIconButton} alt={textButton} className={styles['full-screen-button__image']} />
+        <img
+          onClick={e => {
+            handleFullScreenToggle(e)
+          }}
+          src={fullScreenIconButton}
+          alt={textButton}
+          className={styles['full-screen-button__image']}
+        />
       </div>
       {<Outlet />}
     </>

@@ -10,7 +10,7 @@ import NesButton from '@/components/UI/nes-button'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { authSlice, fetchRegister } from '@/store/slices/auth'
-import { RoutePaths } from '@/App'
+import { RoutePaths } from '@/router'
 import { useNavigate } from 'react-router-dom'
 
 type RegistrationInputs = {
