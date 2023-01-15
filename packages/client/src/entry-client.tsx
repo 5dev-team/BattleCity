@@ -1,7 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.scss'
-import { BrowserRouter } from 'react-router-dom'
+import { unstable_HistoryRouter as Router } from 'react-router-dom'
+import history from '@/utils/history'
 import { Provider } from 'react-redux'
 import { setupStore } from '@/store'
 import App from '@/App'
@@ -14,9 +15,9 @@ ReactDOM.hydrateRoot(
   document.getElementById('root') as HTMLElement,
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
+      <Router history={history}>
         <App/>
-      </BrowserRouter>
+      </Router>
     </Provider>
   </React.StrictMode>
 )
