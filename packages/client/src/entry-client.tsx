@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.scss'
 import { unstable_HistoryRouter as Router } from 'react-router-dom'
-import history from '@/utils/history'
+import useBrowserHistory from '@/utils/history'
 import { Provider } from 'react-redux'
 import { setupStore } from '@/store'
 import App from '@/App'
@@ -15,7 +15,7 @@ ReactDOM.hydrateRoot(
   document.getElementById('root') as HTMLElement,
   <React.StrictMode>
     <Provider store={store}>
-      <Router history={history}>
+      <Router history={useBrowserHistory()}>
         <App/>
       </Router>
     </Provider>

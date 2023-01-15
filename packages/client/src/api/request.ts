@@ -1,10 +1,11 @@
 import type { AxiosRequestConfig } from 'axios'
 import { RoutePaths } from '@/router'
-import history from '@/utils/history'
+import useBrowserHistory from '@/utils/history'
 
 export const request = async <T>(config: AxiosRequestConfig) => {
   // ssr hack
   const { default: axios } = await import('axios')
+  const history = useBrowserHistory()
 
   axios.interceptors.response.use(
     response => {

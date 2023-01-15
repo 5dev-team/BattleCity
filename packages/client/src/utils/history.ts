@@ -1,5 +1,12 @@
-import { createBrowserHistory } from 'history'
+import { createBrowserHistory, History } from 'history'
 
-const history = createBrowserHistory()
+let history: History | undefined
+function useBrowserHistory() {
+  if (!history) {
+    history = createBrowserHistory()
+  }
 
-export default history
+  return history
+}
+
+export default useBrowserHistory
