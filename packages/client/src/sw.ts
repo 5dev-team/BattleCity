@@ -1,5 +1,7 @@
 export type {}
-const sw = self as ServiceWorkerGlobalScope & typeof globalThis
+
+// temp hack
+const sw = self as unknown as ServiceWorkerGlobalScope & typeof globalThis
 
 const CACHE_NAME = 'my-pwa-cache-v1'
   // write path manually after build from dist/

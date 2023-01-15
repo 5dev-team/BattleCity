@@ -24,7 +24,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "typeRoots": ["./src/client.d.ts"]
+    "typeRoots": ["src/global.d.ts", "node_modules/@types"],
   },
   "include": ["./src","./src/client.d.ts"],
   "references": [
