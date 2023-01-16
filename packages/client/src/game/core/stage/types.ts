@@ -16,5 +16,5 @@ export type TObjects =
 
 export interface IStageConstructor {
   stage: number[][]
-  tanks: number[]
+  enemies: number[]
 }

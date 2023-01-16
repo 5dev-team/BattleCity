@@ -108,11 +108,11 @@ const Game: React.FC = () => {
 
         game.init().then(() => game.start())
 
-        setTimeout(() => {
-          game.end()
-
-          setView(GameView.GameOver)
-        }, 5000)
+        // setTimeout(() => {
+        //   game.end()
+        //
+        //   setView(GameView.GameOver)
+        // }, 5000)
       }
     }
   }, [gameView])

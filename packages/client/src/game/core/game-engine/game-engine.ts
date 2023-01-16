@@ -34,7 +34,7 @@ export default class GameEngine {
   }
 
   public start(): void {
-    this.stage = new Stage(this.stages[this.stageIndex])
+    this.stage = new Stage(this.stages[this.stageIndex], this.stageIndex)
     requestAnimationFrame(this.loop)
   }
 
@@ -55,7 +55,7 @@ export default class GameEngine {
     this.frames = 0
     this.lastFrame = currentFrame
 
-    console.log(currentFrame)
+    //console.log(currentFrame)
     requestAnimationFrame(this.loop)
   }
 }
