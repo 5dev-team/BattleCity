@@ -40,3 +40,25 @@
   flex-direction: column;
   margin: 20px auto 0;
 }
+
+.offline-warning {
+  font-size: 24px;
+}
+
+.flashing {
+  animation: blink 2s linear infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1.0;
+  }
+
+  50% {
+    opacity: 0.0;
+  }
+
+  100% {
+    opacity: 1.0;
+  }
+}

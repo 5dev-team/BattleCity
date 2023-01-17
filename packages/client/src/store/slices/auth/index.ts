@@ -1,19 +1,21 @@
 import api from '@/api'
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { ILoginRequest, IRegisterRequest } from '@/api/auth/auth.models'
-import { IUserDTO, IUser } from '@/store/slices/auth/auth.models'
+import { IUser, IUserDTO } from '@/store/slices/auth/auth.models'
 import { transformUser } from '@/utils/transformers'
 
 interface IInitialState {
   authError: string
   isAuthLoading: boolean
   user: IUser | null
+  isLoggedIn: boolean | null
 }
 
 const initialState: IInitialState = {
   authError: '',
   isAuthLoading: false,
-  user: null
+  user: null,
+  isLoggedIn: null
 }
 
 export const fetchLogin = createAsyncThunk(
@@ -28,7 +30,9 @@ export const fetchRegister = createAsyncThunk(
 
 export const fetchUser = createAsyncThunk(
   'auth/fetchUser',
-  () => api.auth.user().then(user => transformUser(user as IUserDTO))
+  () => api.auth.user().then(response => {
+    return transformUser(response.data as IUserDTO)
+  })
 )
 
 export const fetchLogout = createAsyncThunk(
@@ -72,13 +76,22 @@ export const authSlice = createSlice({
     // user
     builder.addCase(fetchUser.fulfilled, (state, { payload }) => {
       state.user = payload
+      state.isLoggedIn = true
     })
-    builder.addCase(fetchUser.rejected, (state) => {
+    builder.addCase(fetchUser.rejected, (state, { error }) => {
       state.user = null
+
+      let result: 401 | null = null
+      if (error.message === 'Cookie is not valid') {
+        result = 401
+      }
+
+      state.isLoggedIn = result && false
     })
     // logout
     builder.addCase(fetchLogout.fulfilled, (state) => {
       state.user = null
+      state.isLoggedIn = false
     })
   }
 })

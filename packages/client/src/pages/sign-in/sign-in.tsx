@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react'
+import React, { useMemo, useEffect, useState } from 'react'
 
 import { useForm } from 'react-hook-form'
 import { getPattern } from '@/utils/validation'
@@ -11,7 +11,7 @@ import NesButton from '@/components/UI/nes-button'
 import { useNavigate } from 'react-router-dom'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { authSlice, fetchLogin } from '@/store/slices/auth'
+import { authSlice, fetchLogin, fetchUser } from '@/store/slices/auth'
 import { RoutePaths } from '@/App'
 
 type LoginInputs = {
@@ -22,17 +22,21 @@ type LoginInputs = {
 const SignIn: React.FC = () => {
   const dispatch = useAppDispatch()
   const authError = useAppSelector((state) => state.auth.authError)
-
   const { register, handleSubmit, formState: { errors, submitCount } } = useForm<LoginInputs>()
 
   const navigate = useNavigate()
   const onSubmit = (data: LoginInputs): void => {
-    dispatch(fetchLogin(data)).then((val) => {
+     dispatch(fetchLogin(data)).then((val) => {
       if (val.meta.requestStatus !== 'rejected') {
-        navigate(RoutePaths.GAME)
+        dispatch(fetchUser()).then(() => {
+          navigate(RoutePaths.GAME)
+        })
       }
     })
+
   }
+
+
   const formErrorsString = useMemo(() => Object.values(errors).map(el => el.ref?.name).join(', '),
     [submitCount])
 
