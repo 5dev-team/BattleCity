@@ -15,7 +15,7 @@ const initialState: IInitialState = {
   authError: '',
   isAuthLoading: false,
   user: null,
-  isLoggedIn: null
+  isLoggedIn: null,
 }
 
 export const fetchLogin = createAsyncThunk(
@@ -28,33 +28,36 @@ export const fetchRegister = createAsyncThunk(
   (data: IRegisterRequest) => api.auth.register(data)
 )
 
-export const fetchUser = createAsyncThunk(
-  'auth/fetchUser',
-  () => api.auth.user().then(response => {
+export const fetchYandexOauth = createAsyncThunk(
+  'oauth/fetchYandexOauth',
+  (redirectUri: string) => api.yandexOauth.redirect(redirectUri)
+)
+
+export const fetchUser = createAsyncThunk('auth/fetchUser', () =>
+  api.auth.user().then(response => {
     return transformUser(response.data as IUserDTO)
   })
 )
 
-export const fetchLogout = createAsyncThunk(
-  'auth/fetchLogout',
-  () => api.auth.logout()
+export const fetchLogout = createAsyncThunk('auth/fetchLogout', () =>
+  api.auth.logout()
 )
 
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    clearError: (state) => {
+    clearError: state => {
       state.authError = ''
-    }
+    },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     // login
-    builder.addCase(fetchLogin.fulfilled, (state) => {
+    builder.addCase(fetchLogin.fulfilled, state => {
       state.isAuthLoading = false
       state.authError = ''
     })
-    builder.addCase(fetchLogin.pending, (state) => {
+    builder.addCase(fetchLogin.pending, state => {
       state.isAuthLoading = true
     })
     builder.addCase(fetchLogin.rejected, (state, { error }) => {
@@ -62,14 +65,26 @@ export const authSlice = createSlice({
       state.authError = error.message as string
     })
     // registration
-    builder.addCase(fetchRegister.fulfilled, (state) => {
+    builder.addCase(fetchRegister.fulfilled, state => {
       state.isAuthLoading = false
       state.authError = ''
     })
-    builder.addCase(fetchRegister.pending, (state) => {
+    builder.addCase(fetchRegister.pending, state => {
       state.isAuthLoading = true
     })
     builder.addCase(fetchRegister.rejected, (state, { error }) => {
+      state.isAuthLoading = false
+      state.authError = error.message as string
+    })
+    // oauth
+    builder.addCase(fetchYandexOauth.fulfilled, state => {
+      state.isAuthLoading = false
+      state.authError = ''
+    })
+    builder.addCase(fetchYandexOauth.pending, state => {
+      state.isAuthLoading = true
+    })
+    builder.addCase(fetchYandexOauth.rejected, (state, { error }) => {
       state.isAuthLoading = false
       state.authError = error.message as string
     })
@@ -89,9 +104,9 @@ export const authSlice = createSlice({
       state.isLoggedIn = result && false
     })
     // logout
-    builder.addCase(fetchLogout.fulfilled, (state) => {
+    builder.addCase(fetchLogout.fulfilled, state => {
       state.user = null
       state.isLoggedIn = false
     })
-  }
+  },
 })

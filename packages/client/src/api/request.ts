@@ -1,28 +1,27 @@
 import type { AxiosRequestConfig } from 'axios'
 import axios from 'axios'
-import { fetchLogout, fetchUser } from '@/store/slices/auth'
+import { fetchUser } from '@/store/slices/auth'
 import { AppDispatch } from '@/store'
-import oauth from '@/api/yandex-oauth'
+import yandexOauth from '@/api/yandex-oauth'
 
 export const interceptor = (dispatch: AppDispatch) => {
   axios.interceptors.response.use(
     response => {
-      return response
+      return Promise.resolve(response)
     },
     error => {
-      if (error.response.status === 401) {
+      if (error?.response?.status === 401) {
         const yandexCodeParam = /code=([^&]+)/.exec(window.location.search)
 
         if (yandexCodeParam) {
           const code = yandexCodeParam[1]
-          oauth
-            .signIn({ code, redirect_uri: 'http://localhost:3000' })
+          yandexOauth
+            .signIn({ code, redirect_uri: window.location.origin })
             .then(() => dispatch(fetchUser()))
-        } else {
-          dispatch(fetchLogout)
         }
       }
-      return Promise.reject(error.response.data.reason || 'Server error')
+
+      return Promise.reject(error?.response.data.reason || 'Server Error')
     }
   )
 }

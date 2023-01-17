@@ -19,7 +19,7 @@ export default {
       }
     }).then(response => {
       const serviceId = response.data.service_id
-      window.open(getRedirectQuery(serviceId, redirectUri), '_blank')
+      window.open(getRedirectQuery(serviceId, redirectUri), '_self')
     })
   },
 }

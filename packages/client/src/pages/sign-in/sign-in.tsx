@@ -7,13 +7,8 @@ import styles from './sign-in.module.scss'
 import NesInput from '@/components/UI/nes-input'
 import NesLink from '@/components/UI/nes-link'
 import NesButton from '@/components/UI/nes-button'
-
-import { useNavigate } from 'react-router-dom'
-
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { authSlice, fetchLogin, fetchUser } from '@/store/slices/auth'
-import { RoutePaths } from '@/App'
-import yandexOauth from '@/api/yandex-oauth'
+import { authSlice, fetchLogin, fetchUser, fetchYandexOauth } from '@/store/slices/auth'
 
 type LoginInputs = {
   login: string
@@ -29,13 +24,10 @@ const SignIn: React.FC = () => {
     formState: { errors, submitCount },
   } = useForm<LoginInputs>()
 
-  const navigate = useNavigate()
   const onSubmit = (data: LoginInputs): void => {
     dispatch(fetchLogin(data)).then(val => {
       if (val.meta.requestStatus !== 'rejected') {
-        dispatch(fetchUser()).then(() => {
-          navigate(RoutePaths.GAME)
-        })
+        dispatch(fetchUser())
       }
     })
   }
@@ -63,7 +55,7 @@ const SignIn: React.FC = () => {
             type='button'
             variant='warning'
             fullWidth
-            onClick={() => yandexOauth.redirect('http://localhost:3000')}
+            onClick={() => dispatch(fetchYandexOauth(__YANDEX_CALLBACK_URI__))}
           >
             Use Yandex ID
           </NesButton>
