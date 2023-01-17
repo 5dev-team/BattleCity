@@ -9,7 +9,7 @@ import NesAvatar from '@/components/UI/nes-avatar'
 import NesButton from '@/components/UI/nes-button'
 import ErrorBoundary from '@/components/error-boundary'
 import ErrorFallback from '@/components/UI/error-fallback'
-import useEffectOnce from '@/utils/useEffectOnce';
+import useEffectOnce from '@/utils/useEffectOnce'
 
 export const TABLE_TOTAL_ITEMS = 50
 

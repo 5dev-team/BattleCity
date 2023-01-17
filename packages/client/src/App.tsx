@@ -59,11 +59,11 @@ const App: React.FC = () => {
           <Route element={<Profile />} path={RoutePaths.PROFILE} />
           <Route path={RoutePaths.PROFILE} element={<Profile />} />
         </Route>
-        <Route path="/offline" element={<Offline />} />
+        <Route path='/offline' element={<Offline />} />
         <Route path={RoutePaths.ERROR404} element={<Error404 />} />
         <Route path={RoutePaths.ERROR500} element={<Error500 />} />
         <Route
-          path="*"
+          path='*'
           element={<Navigate to={RoutePaths.ERROR404} replace />}
         />
       </Routes>
