@@ -6,3 +6,4 @@ dist
 tmp
 lerna-debug.log
 .DS_Store
+postgresdata

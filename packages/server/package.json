@@ -24,7 +24,8 @@
     "helmet": "5.1.0",
     "joi": "17.6.0",
     "validator": "13.7.0",
-    "winston": "3.7.2"
+    "winston": "3.7.2",
+    "http-proxy-middleware": "2.0.6"
   },
   "devDependencies": {
     "@types/cors": "2.8.12",

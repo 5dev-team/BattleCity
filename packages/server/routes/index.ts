@@ -1,8 +1,11 @@
 import { Router } from 'express'
-import { userRouter } from './users'
+import { forumRouter } from './forum'
+import { forumPostRouter } from './forumPost'
+
 const router = Router()
 
-router.use(userRouter)
+router.use(forumRouter)
+router.use(forumPostRouter)
 
 export {
   router as indexRouters

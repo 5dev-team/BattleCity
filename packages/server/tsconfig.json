@@ -21,11 +21,15 @@
     "forceConsistentCasingInFileNames": true,
     "importsNotUsedAsValues": "error",
     "lib": ["es2019", "esnext.asynciterable"],
-    "types": ["node", "jest"],
     "baseUrl": "./",
     "paths": {
       "*": ["types/*"]
     },
+    "typeRoots": [
+      "@types",
+      "./node_modules/@types"
+    ],
     "outDir": "dist"
   }
 }
+

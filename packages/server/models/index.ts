@@ -1,7 +1,8 @@
-import { User } from './User'
+import { forumPostsModel } from './forumPosts'
+import { forumModel } from './forum'
 
 
 export {
-  User,
-
+  forumPostsModel,
+  forumModel
 }
