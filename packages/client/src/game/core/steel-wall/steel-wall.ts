@@ -6,9 +6,10 @@ import { STEEL_WALL_SPRITES } from '@/game/helpers/constants'
 export default class SteelWall extends Wall {
   constructor(x: number, y: number) {
     super({ x, y, sprites: STEEL_WALL_SPRITES } as WallArgs)
+    this.name = 'steel-wall'
   }
 
-  public hit(bullet: Bullet): void {
-    console.log('BOOM', this, bullet)
+  public hit(): void {
+    // console.log('BOOM', this, bullet)
   }
 }

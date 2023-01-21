@@ -1,26 +1,30 @@
 import Input from '@/game/core/input/input'
 import Stage from '@/game/core/stage/stage'
 import Tank from '@/game/core/tank/tank'
-import {
-  ENEMY_TANK_SPRITES,
-  ENEMY_TANK_START_POSITIONS, PLAYER1_TANK_SPRITES,
-  TANK_SPEED
-} from '@/game/helpers/constants'
+import { ENEMY_TANK_SPRITES, ENEMY_TANK_START_POSITIONS, TANK_SPEED } from '@/game/helpers/constants'
 import { getAxisForDirection, getValueForDirection } from '@/game/helpers/helpers'
 
 export default class EnemyTank extends Tank {
   
   protected speed: number
-  protected respawn: number
+  public type: number
   public direction: number
   
   constructor(args: any) {
     super({ ...args, sprites: ENEMY_TANK_SPRITES, debug: true })
-    this.respawn = args.respawn
     this.direction = Tank.Direction.DOWN
-    this.x = ENEMY_TANK_START_POSITIONS[0][0]
-    this.y = ENEMY_TANK_START_POSITIONS[0][1]
+    this.x = 0
+    this.y = 0
     this.speed = TANK_SPEED
+    this.name = 'enemy-tank'
+    this.type = args.type
+  }
+  
+  hit() {
+    if (!this.isDestroyed) {
+      this.isDestroyed = true
+    }
+      super.hit()
   }
   
   private invertDirection() {
@@ -61,7 +65,6 @@ export default class EnemyTank extends Tank {
   
   private changeDirectionWhenTileReach() {
     if (Math.round(Math.random()) === 0) {
-      console.log('смени направление на базу или игрока')
       this.changeDirection()
       // eslint-disable-next-line no-dupe-else-if
     } else if (Math.round(Math.random()) === 0) {
@@ -73,7 +76,12 @@ export default class EnemyTank extends Tank {
   }
   
   private changeDirection() {
-    const periodDuration = this.respawn / 8
+    // const periodDuration = this.respawn / 8
+  }
+  
+  public setPosition(positionIndex: number) {
+    this.x = ENEMY_TANK_START_POSITIONS[positionIndex][0]
+    this.y = ENEMY_TANK_START_POSITIONS[positionIndex][1]
   }
   
   update({
@@ -85,12 +93,23 @@ export default class EnemyTank extends Tank {
     input: Input
     frameDelta: number
   }): void {
+    if (this.isDestroyed) {
+      world.objects.delete(this)
+    }
+    
     const direction = this.direction
     const axis = getAxisForDirection(direction)
     const value = getValueForDirection(direction)
     
     this.turn(direction)
     this.move(axis, value)
+    if (Math.floor(Math.random() * 31) === 1) {
+      this.fire()
+      if (this.bullet) {
+        world.objects.add(this.bullet)
+      }
+    }
+    
     this.animate(frameDelta)
     
     const isOutOfBounds = world.isOutOfBounds(this)

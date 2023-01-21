@@ -17,6 +17,9 @@ import T2 from '@/assets/tanks/T2.png'
 import T3 from '@/assets/tanks/T3.png'
 import T4 from '@/assets/tanks/T4.png'
 import styles from './game.module.scss'
+import { useAppDispatch } from '@/hooks/redux'
+import { saveGameScores } from '@/store/slices/game'
+import { IGameOverData } from '@/game/core/game-engine/types'
 
 enum GameView {
   Menu,
@@ -31,6 +34,7 @@ enum GameMode {
 }
 
 const Game: React.FC = () => {
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const [gameView, setView] = useState(GameView.Menu)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -54,7 +58,7 @@ const Game: React.FC = () => {
       })
       
     }
-  },[])
+  }, [])
   const gameOverProps = {
     nextGame: true,
     hiScore: 20000,
@@ -65,58 +69,64 @@ const Game: React.FC = () => {
         P1: { count: 1, total: 100 },
         P2: { count: 1, total: 100 },
         key: 0,
-        T: T1,
+        T: T1
       },
       {
         P1: { count: 1, total: 200 },
         P2: { count: 1, total: 200 },
         key: 1,
-        T: T2,
+        T: T2
       },
       {
         P1: { count: 1, total: 300 },
         P2: { count: 1, total: 400 },
         key: 2,
-        T: T3,
+        T: T3
       },
       {
         P1: { count: 1, total: 400 },
         P2: { count: 1, total: 400 },
         key: 3,
-        T: T4,
-      },
-    ],
+        T: T4
+      }
+    ]
   }
-
+  
   const initGame = (gameMode: GameMode) => {
     console.log(`init gameMode: ${GameMode[gameMode]}`)
-
+    
     setView(GameView.Game)
   }
-
+  
   useEffect(() => {
     if (gameView === GameView.Game) {
       const canvas = canvasRef.current
-
+      
       if (canvas) {
         const viewSprite = new Sprite(SpriteAtlas)
         const game = new GameEngine({
           input: new InputHandler(),
           view: new View(canvas, viewSprite),
-          levels: Levels,
+          levels: Levels
         })
-
-        game.init().then(() => game.start())
-
-        // setTimeout(() => {
-        //   game.end()
-        //
-        //   setView(GameView.GameOver)
-        // }, 5000)
+        
+        
+        let resolve: (value: IGameOverData | PromiseLike<IGameOverData>) => void
+        
+        new Promise<IGameOverData>((res, _) => {resolve = res})
+        .then(response => {
+          dispatch(saveGameScores(response))
+          setView(GameView.GameOver)
+        })
+        .catch(error => console.log(error))
+        
+        
+        game.init().then(() => game.start(resolve))
+        
       }
     }
   }, [gameView])
-
+  
   return (
     <div className={styles['game']}>
       <div className={styles['game__container']}>

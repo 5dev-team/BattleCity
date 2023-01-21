@@ -71,7 +71,7 @@ export const PLAYER1_TANK_START_Y = 12 * UNIT_SIZE
 
 export const TANK_WIDTH = UNIT_SIZE
 export const TANK_HEIGHT = UNIT_SIZE
-export const TANK_SPEED = 1
+export const TANK_SPEED = 2
 export const TANK_TURN_THRESHOLD = 12
 
 export const PLAYER1_TANK_POSITION: DefaultPosition = [

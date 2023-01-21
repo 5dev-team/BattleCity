@@ -56,13 +56,21 @@ export default class View {
             width,
             height
           )
+
+          
         }
         // Включение дебага НЕ УДАЛЯТЬ! stage.getCollision
-        if (object.debug) {
-          this.context.strokeStyle = '#fafafa'
-          this.context.lineWidth = 2
-          this.context.strokeRect(x + 1, y + 1, width - 2, height - 2)
-          object.debug = false
+        // if (object.debug) {
+        //   this.context.strokeStyle = '#fafafa'
+        //   this.context.lineWidth = 2
+        //   this.context.strokeRect(x + 1, y + 1, width - 2, height - 2)
+        //   object.debug = false
+        // }
+  
+        if (object?.debug && object?.id) {
+          this.context.font = "10px Arial"
+          this.context.fillStyle = "#00F"
+          this.context.fillText(`${object.id}`, object.left, object.top)
         }
       }
     }

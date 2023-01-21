@@ -8,8 +8,9 @@ import { IUpdatable, UpdateState } from '@/game/core/types'
 import { IStageConstructor, TObjects } from '@/game/core/stage/types'
 import { STAGE_SIZE, TILE_SIZE } from '@/game/helpers/constants'
 import EnemyTank from '@/game/core/enemy-tank/enemy-tank'
+import EventBus from '@/game/core/event-bus/event-bus'
 
-export default class Stage implements IUpdatable {
+export default class Stage extends EventBus {
   static TerrainType = {
     BRICK_WALL: 1,
     STEEL_WALL: 2,
@@ -17,9 +18,19 @@ export default class Stage implements IUpdatable {
     WATER: 4,
     ICE: 5
   }
+  private respawn: number
+  private enemies: EnemyTank[]
+  private readonly playerTank: PlayerTank
+  private readonly base: Base
+  private readonly terrain: (Wall | undefined)[]
+  private enemyTankCount: number
+  private enemyTankTimer: number
+  private enemyTankStartPosition: number
+  private enemyTankPositionIndex: number
   
-  static createObject(type: number, x: number, y: number): Wall | null {
-    let wall: Wall | null = null
+  
+  static createObject(type: number, x: number, y: number): Wall | undefined {
+    let wall: Wall | undefined = undefined
     switch (type) {
       case Stage.TerrainType.BRICK_WALL:
         wall = new BrickWall(x, y) as Wall
@@ -40,34 +51,111 @@ export default class Stage implements IUpdatable {
         if (value) {
           const object = Stage.createObject(value, i * TILE_SIZE, j * TILE_SIZE)
           
-          objects.push(object ? object : undefined)
+          objects.push(object)
         }
       }
     }
     return objects
   }
   
-  static createEnemies(types) {
-    return types.map(type => new EnemyTank({ type, respawn:  this.respawn}))
+  static createEnemies(types: number[]): EnemyTank[] {
+    return types.map(type => new EnemyTank({ type }))
   }
   
   public readonly objects: Set<TObjects>
   
   constructor(data: IStageConstructor, stageIndex: number) {
+    super()
     //TODO add 2 players: (1 - 1) and (2 - 1)
     this.respawn = (190 - stageIndex * 4 - (1 - 1) * 20) * 60
+    console.log(Stage.createEnemies(data.enemies))
     this.enemies = Stage.createEnemies(data.enemies)
     this.playerTank = new PlayerTank({})
     this.base = new Base({})
     this.terrain = Stage.createTerrain(data.stage)
+    this.enemyTankCount = 0
+    this.enemyTankTimer = 0
+    this.enemyTankStartPosition = 0
+    this.enemyTankPositionIndex = 0
     
     this.objects = new Set([
       this.base,
       this.playerTank,
-      ...this.terrain,
-      this.enemies.shift()
+      ...this.terrain
     
     ])
+    this.initListeners()
+    
+  }
+  public getPlayerTank() {
+    return this.playerTank
+  }
+  private initListeners() {
+    
+    this.on('killAll', () => {
+      this.emit('gameOver')
+    })
+    
+    this.base.on('destroyed', () => {
+      this.emit('gameOver')
+    })
+    
+    this.enemies.map(enemyTank => {
+      enemyTank.on('fire', bullet => {
+        // console.log('Добавлено' + bullet.id)
+        this.objects.add(bullet)
+        // console.log('Добавлено: ' + this.objects.has(bullet))
+        // bullet.on('explode', explosion => {
+        //   this.objects.add(explosion)
+        //
+        //   explosion.on('destroyed', () => {
+        //     this.objects.delete(explosion)
+        //   })
+        // })
+        
+        bullet.on('destroyed', () => {
+          // console.log('Удалено' + bullet.id)
+          // console.log(this.objects.has(bullet))
+          this.objects.delete(bullet)
+          // console.log(this.objects.has(bullet))
+          //console.log([...this.objects].filter(item => console.log(item.id)))
+        })
+      })
+      
+      enemyTank.on('explode', explosion => {
+        this.objects.add(explosion)
+        
+        explosion.on('destroyed', () => {
+          this.objects.delete(explosion)
+        })
+      })
+      
+      enemyTank.on('destroyed', () => {
+        this.playerTank.getScore()[enemyTank.type] += 1
+        this.removeEnemyTank(enemyTank)
+
+        if (this.enemyTankCount < 1) {
+          this.emit('killAll')
+        }
+      })
+      
+      this.playerTank.on('fire', bullet => {
+        this.objects.add(bullet)
+        
+        // bullet.on('explode', explosion => {
+        //   this.objects.add(explosion)
+        //
+        //   explosion.on('destroyed', () => {
+        //     this.objects.delete(explosion)
+        //   })
+        // })
+        
+        bullet.on('destroyed', () => {
+          this.objects.delete(bullet)
+        })
+      })
+    })
+    
   }
   
   public get width(): number {
@@ -94,15 +182,21 @@ export default class Stage implements IUpdatable {
     return 0
   }
   
-  public update(stage: Partial<UpdateState>): void {
+  public update(stage: Omit<UpdateState, 'world'>): void {
     const objectsArr: TObjects[] = [...this.objects]
     const { input, frameDelta } = stage
+    
+    if (this.enemyTankCount < 4) {
+      
+      this.addEnemyTank(frameDelta)
+    }
     
     const state = {
       input,
       frameDelta,
       world: this
     }
+    
     objectsArr
     .filter(obj => obj !== undefined && 'update' in obj)
     .map(obj => obj as IUpdatable)
@@ -111,7 +205,7 @@ export default class Stage implements IUpdatable {
     })
   }
   
-  public isOutOfBounds(object: PlayerTank | Bullet): boolean {
+  public isOutOfBounds(object: PlayerTank | EnemyTank | Bullet): boolean {
     return (
       object.top < this.top ||
       object.right > this.right ||
@@ -122,14 +216,15 @@ export default class Stage implements IUpdatable {
   
   public hasCollision(object: TObjects) {
     const collision = this.getCollision(object)
-    
+    //console.log(collision)
     return Boolean(collision)
   }
   
   getCollision(object: TObjects) {
+    //console.log(object.name)
     const collisionObjects = this.getCollisionObjects(object)
-    
     if (collisionObjects.size > 0) {
+      
       return { objects: collisionObjects }
     }
   }
@@ -139,18 +234,17 @@ export default class Stage implements IUpdatable {
     
     this.objects.forEach(other => {
       if (
-        other instanceof Wall &&
         other !== object &&
         this.haveCollision(object, other as Wall)
       ) {
         objects.add(other)
       }
     })
-    
     return objects
   }
   
   private haveCollision(a: TObjects, b: Wall) {
+    
     if (a) {
       return (
         a.left < b.right &&
@@ -160,6 +254,27 @@ export default class Stage implements IUpdatable {
       )
     } else {
       return false
+    }
+  }
+  
+  private removeEnemyTank(enemyTank: EnemyTank) {
+    this.objects.delete(enemyTank)
+    this.enemyTankCount -= 1
+  }
+  
+  private addEnemyTank(frameDelta: number) {
+    this.enemyTankTimer += frameDelta
+    if (this.enemyTankTimer > 1000 && this.enemyTankCount < 4) {
+      const enemyTank = this.enemies.shift()
+      if (!enemyTank) {
+        return
+      }
+      enemyTank.setPosition(this.enemyTankPositionIndex)
+      
+      this.enemyTankPositionIndex = (this.enemyTankPositionIndex + 1) % 3
+      this.enemyTankCount += 1
+      this.enemyTankTimer = 0
+      this.objects.add(enemyTank)
     }
   }
 }

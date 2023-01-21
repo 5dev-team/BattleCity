@@ -11,15 +11,33 @@ import {
 } from '@/game/helpers/helpers'
 import Tank from '@/game/core/tank/tank'
 import { GameObjectArgs, IUpdatable, UpdateState } from '@/game/core/types'
+import { IScoreResult } from '@/game/core/player-tank/types'
+
+
 
 export default class PlayerTank extends Tank implements IUpdatable {
-  //TODO create uniq Tanks
+  private score: IScoreResult
   constructor(args: Partial<GameObjectArgs>) {
     super({ ...args, sprites: PLAYER1_TANK_SPRITES })
     this.x = args.x ? args.x : PLAYER1_TANK_POSITION[0]
     this.y = args.y ? args.y : PLAYER1_TANK_POSITION[1]
     this.direction = Tank.Direction.UP
     this.speed = TANK_SPEED
+    this.name = 'player tank'
+    this.score = {
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0,
+    }
+  }
+  
+  public getScore() {
+    return this.score
+  }
+  
+  public setScore(newScore: IScoreResult) {
+    this.score = newScore
   }
 
   update(state: UpdateState): void {
