@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  unstable_HistoryRouter as Router,
+  BrowserRouter,
   Route,
   Routes,
   Navigate,
@@ -17,7 +17,6 @@ import Profile from '@/pages/profile'
 import ProtectRoute from '@/components/protect-route'
 import { useAppDispatch } from '@/hooks/redux'
 import { fetchUser } from '@/store/slices/auth'
-import history from '@/utils/history'
 import Offline from '@/pages/offline'
 import ProtectRouteForSignIn from '@/components/protect-route-for-sign-in'
 import { interceptor } from '@/api/request'
@@ -36,16 +35,15 @@ export enum RoutePaths {
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch()
-
   useEffectOnce(() => {
     dispatch(interceptor)
     dispatch(fetchUser())
   })
 
   return (
-    <Router history={history}>
+    <BrowserRouter>
       <Routes>
-        <Route element={<ProtectRouteForSignIn redirectTo={RoutePaths.GAME}/>}>
+        <Route element={<ProtectRouteForSignIn redirectTo={RoutePaths.GAME}/>} loader={async () => Promise.resolve(true)}>
           <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
           <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
         </Route>
@@ -67,7 +65,7 @@ const App: React.FC = () => {
           element={<Navigate to={RoutePaths.ERROR404} replace />}
         />
       </Routes>
-    </Router>
+    </BrowserRouter>
   )
 }
 

@@ -55,7 +55,7 @@ const SignIn: React.FC = () => {
             type='button'
             variant='warning'
             fullWidth
-            onClick={() => dispatch(fetchYandexOauth(__YANDEX_CALLBACK_URI__))}
+            onClick={() => dispatch(fetchYandexOauth())}
           >
             Use Yandex ID
           </NesButton>

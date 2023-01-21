@@ -1,8 +1,10 @@
 import api from '@/api'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { ILoginRequest, IRegisterRequest } from '@/api/auth/auth.models'
+import { IYandexAuthQueryParams } from '@/api/yandex-oauth/oauth.models'
 import { IUser, IUserDTO } from '@/store/slices/auth/auth.models'
 import { transformUser } from '@/utils/transformers'
+import queryStringify from '@/utils/queryStringify'
 
 interface IInitialState {
   authError: string
@@ -30,7 +32,18 @@ export const fetchRegister = createAsyncThunk(
 
 export const fetchYandexOauth = createAsyncThunk(
   'oauth/fetchYandexOauth',
-  (redirectUri: string) => api.yandexOauth.redirect(redirectUri)
+  () =>
+    api.yandexOauth
+      .redirect(__YANDEX_REDIRECT_URI__)
+      .then(response => {
+        const data: IYandexAuthQueryParams = {
+          response_type: 'code',
+          client_id: response.data.service_id,
+          redirect_uri: __YANDEX_REDIRECT_URI__,
+        }
+        window.open(__YANDEX_OAUTH_URL__ + queryStringify(data), '_self')
+      })
+      .catch(reason => console.log('ERROR: Yandex oauth failed', reason))
 )
 
 export const fetchUser = createAsyncThunk('auth/fetchUser', () =>
