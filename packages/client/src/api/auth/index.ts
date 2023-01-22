@@ -1,7 +1,7 @@
 import { request } from '@/api/request'
 import { ILoginRequest, IRegisterRequest } from '@/api/auth/auth.models'
 import { IUserDTO } from '@/store/slices/auth/auth.models'
-import { Axios, AxiosResponse } from 'axios'
+import { AxiosResponse } from 'axios'
 
 export default {
   login(data: ILoginRequest) {

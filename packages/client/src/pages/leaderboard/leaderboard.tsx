@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import styles from './leaderboard.module.scss'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -9,6 +9,7 @@ import NesAvatar from '@/components/UI/nes-avatar'
 import NesButton from '@/components/UI/nes-button'
 import ErrorBoundary from '@/components/error-boundary'
 import ErrorFallback from '@/components/UI/error-fallback'
+import useEffectOnce from '@/utils/useEffectOnce'
 
 export const TABLE_TOTAL_ITEMS = 50
 
@@ -44,10 +45,9 @@ const Leaderboard: React.FC = () => {
     }
   ]
   
-  useEffect(() => {
-    console.log('asd')
+  useEffectOnce(() => {
     dispatch(fetchLeaderboardAll(leaderboardDataRequest))
-  }, [])
+  })
   
   const navigate = useNavigate()
   
