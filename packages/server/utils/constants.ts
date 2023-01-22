@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv'
+import { createProxyMiddleware } from 'http-proxy-middleware'
 
 dotenv.config({ path: __dirname + '../../.env' })
-import { createProxyMiddleware } from 'http-proxy-middleware'
 
 export const {
   SERVER_PORT = 3001,
@@ -31,3 +31,6 @@ export const corsOptions = {
   credentials: true,  //access-control-allow-credentials:true
   optionSuccessStatus: 200
 }
+
+
+

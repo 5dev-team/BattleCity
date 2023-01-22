@@ -3,11 +3,12 @@ import type { ModelAttributes } from 'sequelize/types'
 
 export interface IForumPosts {
   id: number;
-  author: string;
+  authorId: number;
   content: string
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | number;
+  updatedAt?: Date | number;
   forumId?: number;
+  rootPost: number | null
 }
 
 export const forumPostsModel: ModelAttributes<Model, IForumPosts> = {
@@ -17,12 +18,16 @@ export const forumPostsModel: ModelAttributes<Model, IForumPosts> = {
     autoIncrement: true,
     primaryKey: true
   },
-  author: {
+  authorId: {
     type: DataType.INTEGER,
     allowNull: false
   },
   content: {
     type: DataType.STRING,
     allowNull: false
+  },
+  rootPost: {
+    type: DataType.INTEGER,
+    allowNull: true
   }
 }

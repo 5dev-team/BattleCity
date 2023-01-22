@@ -10,11 +10,10 @@ import { limiter } from './utils/rateLimit'
 import { corsOptions, SERVER_PORT, yandexRouter } from './utils/constants'
 import { dbConnect } from './init'
 import cors from 'cors'
-dbConnect().then(() => {
-  console.log('все ок')
-}).catch((err) => {
-  console.log(err)
-})
+
+(async () => {
+  await dbConnect()
+})()
 
 const app: Express = express()
 
@@ -27,7 +26,7 @@ app.use(requestLogger)
 app.use('/api/v2', yandexRouter)
 
 app.use(express.json())
-app.use('/api/', indexRouters)
+app.use('/api/', isAuthorized, indexRouters)
 
 app.use(isAuthorized, (_req: Request, _res: Response, next: NextFunction) => next(new NotFoundError('Страница не найдена')))
 

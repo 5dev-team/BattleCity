@@ -1,7 +1,7 @@
 import api from '@/api'
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { ILoginRequest, IRegisterRequest } from '@/api/auth/auth.models'
-import { IUserDTO, IUser } from '@/store/slices/auth/auth.models'
+import { IUser, IUserDTO } from '@/store/slices/auth/auth.models'
 import { transformUser } from '@/utils/transformers'
 
 interface IInitialState {
@@ -80,9 +80,13 @@ export const authSlice = createSlice({
     })
     builder.addCase(fetchUser.rejected, (state, { error }) => {
       state.user = null
-      const result: number | string = error.message === 'Cookie is not valid' ? 401 : error.code || 401
-      const status = Number(result)
-      state.isLoggedIn = status ? null : false
+
+      let result: 401 | null = null
+      if (error.message === 'Cookie is not valid') {
+        result = 401
+      }
+
+      state.isLoggedIn = result && false
     })
     // logout
     builder.addCase(fetchLogout.fulfilled, (state) => {

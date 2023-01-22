@@ -3,12 +3,15 @@ import type { ModelAttributes } from 'sequelize/types'
 
 export interface IForum {
   id: number;
-  owner_id: number;
+  authorId: number;
   title: string;
-  author: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | number;
+  updatedAt?: Date | number;
+  countMessage?: number | null;
+  lastMessageDate?: number | null;
+  lastMessageId?: number | null
 }
+
 
 export const forumModel: ModelAttributes<Model, IForum> = {
   id: {
@@ -16,15 +19,11 @@ export const forumModel: ModelAttributes<Model, IForum> = {
     autoIncrement: true,
     primaryKey: true
   },
-  owner_id: {
+  authorId: {
     type: DataType.INTEGER,
     allowNull: false
   },
   title: {
-    type: DataType.STRING,
-    allowNull: false
-  },
-  author: {
     type: DataType.STRING,
     allowNull: false
   }

@@ -1,12 +1,12 @@
-class AuthError extends Error {
+class ServerError extends Error {
   statusCode: number
 
   constructor(message: string) {
     super(message)
-    this.statusCode = 401
+    this.statusCode = 500
   }
 }
 
 export {
-  AuthError
+  ServerError
 }
