@@ -21,6 +21,8 @@ import Offline from '@/pages/offline'
 import ProtectRouteForSignIn from '@/components/protect-route-for-sign-in'
 import { interceptor } from '@/api/request'
 import useEffectOnce from './utils/useEffectOnce'
+import Comments from '@/pages/comments'
+
 
 export enum RoutePaths {
   SIGNIN = '/sign-in',
@@ -31,6 +33,7 @@ export enum RoutePaths {
   ERROR500 = '/500',
   FORUM = '/forum',
   PROFILE = '/profile',
+  COMMENTS = '/forum/:title',
 }
 
 const App: React.FC = () => {
@@ -54,6 +57,7 @@ const App: React.FC = () => {
           </Route>
           <Route path={RoutePaths.FORUM} element={<Forum />} />
           <Route element={<Forum />} path={RoutePaths.FORUM} />
+          <Route path={RoutePaths.COMMENTS} element={<Comments />} />
           <Route element={<Profile />} path={RoutePaths.PROFILE} />
           <Route path={RoutePaths.PROFILE} element={<Profile />} />
         </Route>
