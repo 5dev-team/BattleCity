@@ -4,8 +4,10 @@ import cors from 'cors'
 dotenv.config()
 
 import express from 'express'
+import serveStatic from 'serve-static'
 import * as path from 'path'
 import * as fs from 'fs'
+
 
 import { createServer as createViteServer } from 'vite'
 import type { ViteDevServer } from 'vite'
@@ -34,6 +36,8 @@ async function startServer() {
     })
 
     app.use(vite.middlewares)
+  } else {
+    app.use(serveStatic(distPath, {index: false}))
   }
 
   app.get('/api', (_, res) => {
@@ -62,6 +66,7 @@ async function startServer() {
       }
 
       let render: ({ url }: { url: string }) => Promise<{ html: string, state: any}>
+
       if (!isDev()) {
         render = (await import(ssrClientPath)).render
       } else {

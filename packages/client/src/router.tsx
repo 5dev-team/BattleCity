@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import Offline from '@/pages/offline'
 import SignIn from '@/pages/sign-in'
 import SignUp from '@/pages/sign-up'
@@ -35,7 +35,6 @@ export const Router = () => {
       <Route path={RoutePaths.ERROR500} element={<Error500 />} />
       <Route path={RoutePaths.FORUM} element={<Forum />} />
       <Route path={RoutePaths.PROFILE} element={<Profile />} />
-      <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
     </Routes>
   )
 }
