@@ -2258,6 +2258,14 @@
     expect "^29.0.0"
     pretty-format "^29.0.0"
 
+"@types/jest@29.2.5":
+  version "29.2.5"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-29.2.5.tgz#c27f41a9d6253f288d1910d3c5f09484a56b73c0"
+  integrity sha512-H2cSxkKgVmqNHXP7TC2L/WUorrZu8ZigyRywfVzv6EyBlxj39n4C00hjXYQWsbwqgElaj/CiAeSRmk5GoaKTgw==
+  dependencies:
+    expect "^29.0.0"
+    pretty-format "^29.0.0"
+
 "@types/jest@^28.1.8":
   version "28.1.8"
   resolved "https://registry.npmjs.org/@types/jest/-/jest-28.1.8.tgz"
@@ -2265,14 +2273,6 @@
   dependencies:
     expect "^28.0.0"
     pretty-format "^28.0.0"
-
-"@types/jest@^29.2.5":
-  version "29.2.5"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-29.2.5.tgz#c27f41a9d6253f288d1910d3c5f09484a56b73c0"
-  integrity sha512-H2cSxkKgVmqNHXP7TC2L/WUorrZu8ZigyRywfVzv6EyBlxj39n4C00hjXYQWsbwqgElaj/CiAeSRmk5GoaKTgw==
-  dependencies:
-    expect "^29.0.0"
-    pretty-format "^29.0.0"
 
 "@types/jsdom@^20.0.0":
   version "20.0.1"
