@@ -5,7 +5,7 @@ import { BASE_HEIGHT, BASE_POSITION, BASE_SPRITES, BASE_WIDTH } from '@/game/hel
 export default class Base extends GameObject {
   private readonly destroyed: boolean
   
-  constructor(args: Partial<GameObjectArgs>) {
+  constructor(args: GameObjectArgs) {
     super({
       ...args,
       x: BASE_POSITION[0],

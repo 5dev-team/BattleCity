@@ -8,9 +8,8 @@ import {
 } from '@/game/helpers/constants'
 
 export default class Explosion extends GameObject implements IUpdatable {
-  private speed: number
-  private _exploded: boolean
-
+  protected speed: number
+  
   constructor(x: number, y: number) {
     super({
       width: PROJECTILE_EXPLOSION_WIDTH,
@@ -19,38 +18,39 @@ export default class Explosion extends GameObject implements IUpdatable {
       x,
       y,
     } as GameObjectArgs)
-
+    
     this.speed = PROJECTILE_EXPLOSION_SPEED
 
-    this._exploded = false
   }
-
+  
   public get sprite() {
     return this.sprites[this.animationFrame]
   }
-
-  public get exploded(): boolean {
-    return this._exploded
+  
+  get isExploding() {
+    return this.animationFrame < this.sprites.length
   }
-
-  private set exploded(val: boolean) {
-    this._exploded = val
+  
+  destroy() {
+    this.emit('destroyed', this)
   }
-
-  update(state: Partial<UpdateState>): void {
+  
+  public hit() {
+    return
+  }
+  
+  update(state: Partial<UpdateState>) {
     const { frameDelta } = state
-    if (!this.exploded && frameDelta) {
-      if (this.animationFrame === 3) {
-        this.exploded = true
-      } else {
-        this.animate(frameDelta)
-      }
+    if (this.isExploding && frameDelta) {
+      this.animate(frameDelta)
+    } else {
+      this.destroy()
     }
   }
-
+  
   public animate(frameDelta: number): void {
     this.frames += frameDelta
-
+    
     if (this.frames > 50) {
       this.animationFrame = (this.animationFrame + 1) % 4
       this.frames = 0

@@ -110,7 +110,6 @@ export default class Tank extends GameObject {
   }
   
   hit() {
-    console.log('hit')
     // this.explode();
     this.destroy()
   }

@@ -23,6 +23,7 @@ export default class PlayerTank extends Tank implements IUpdatable {
     this.y = args.y ? args.y : PLAYER1_TANK_POSITION[1]
     this.direction = Tank.Direction.UP
     this.speed = TANK_SPEED
+    this.objectType = 'playerTank'
     this.name = 'player tank'
     this.score = {
       1: 0,

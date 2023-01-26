@@ -88,7 +88,6 @@ export const authSlice = createSlice({
         result = error.code
       }
       const status = Number(result)
-      console.log(status)
       state.isLoggedIn = status ? null : false
     })
     // logout

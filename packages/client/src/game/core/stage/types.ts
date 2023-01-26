@@ -14,7 +14,6 @@ export type TObjects =
   | SteelWall
   | Explosion
   | Bullet
-  | undefined
 
 export interface IStageConstructor {
   stage: number[][]

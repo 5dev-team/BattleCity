@@ -68,7 +68,6 @@ export default class Stage extends EventBus {
     super()
     //TODO add 2 players: (1 - 1) and (2 - 1)
     this.respawn = (190 - stageIndex * 4 - (1 - 1) * 20) * 60
-    console.log(Stage.createEnemies(data.enemies))
     this.enemies = Stage.createEnemies(data.enemies)
     this.playerTank = new PlayerTank({})
     this.base = new Base({})
@@ -102,23 +101,18 @@ export default class Stage extends EventBus {
     
     this.enemies.map(enemyTank => {
       enemyTank.on('fire', bullet => {
-        // console.log('Добавлено' + bullet.id)
         this.objects.add(bullet)
-        // console.log('Добавлено: ' + this.objects.has(bullet))
-        // bullet.on('explode', explosion => {
-        //   this.objects.add(explosion)
-        //
-        //   explosion.on('destroyed', () => {
-        //     this.objects.delete(explosion)
-        //   })
-        // })
+        bullet.on('explode', explosion => {
+          this.objects.add(explosion)
+
+          explosion.on('destroyed', () => {
+            this.objects.delete(explosion)
+          })
+        })
         
         bullet.on('destroyed', () => {
-          // console.log('Удалено' + bullet.id)
-          // console.log(this.objects.has(bullet))
           this.objects.delete(bullet)
-          // console.log(this.objects.has(bullet))
-          //console.log([...this.objects].filter(item => console.log(item.id)))
+
         })
       })
       
@@ -142,13 +136,13 @@ export default class Stage extends EventBus {
       this.playerTank.on('fire', bullet => {
         this.objects.add(bullet)
         
-        // bullet.on('explode', explosion => {
-        //   this.objects.add(explosion)
-        //
-        //   explosion.on('destroyed', () => {
-        //     this.objects.delete(explosion)
-        //   })
-        // })
+        bullet.on('explode', explosion => {
+          this.objects.add(explosion)
+
+          explosion.on('destroyed', () => {
+            this.objects.delete(explosion)
+          })
+        })
         
         bullet.on('destroyed', () => {
           this.objects.delete(bullet)
@@ -216,12 +210,10 @@ export default class Stage extends EventBus {
   
   public hasCollision(object: TObjects) {
     const collision = this.getCollision(object)
-    //console.log(collision)
     return Boolean(collision)
   }
   
   getCollision(object: TObjects) {
-    //console.log(object.name)
     const collisionObjects = this.getCollisionObjects(object)
     if (collisionObjects.size > 0) {
       
@@ -244,8 +236,26 @@ export default class Stage extends EventBus {
   }
   
   private haveCollision(a: TObjects, b: Wall) {
-    
     if (a) {
+      if (a.objectType === 'enemyTank' && b.objectType === 'playerTank') {
+        if (        a.left < b.right &&
+          a.right > b.left &&
+          a.top < b.bottom &&
+          a.bottom > b.top) {
+           if (
+             Math.abs(b.left - a.left) < 30 ||
+             Math.abs(b.right - a.right) < 30 ||
+             Math.abs(b.top - a.top) < 30 ||
+             Math.abs(b.bottom - a.bottom) < 30
+           ) {
+             return false
+           } else {
+             return true
+           }
+
+        }
+
+      }
       return (
         a.left < b.right &&
         a.right > b.left &&

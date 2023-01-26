@@ -3,21 +3,27 @@ import Stage from '@/game/core/stage/stage'
 import Tank from '@/game/core/tank/tank'
 import { ENEMY_TANK_SPRITES, ENEMY_TANK_START_POSITIONS, TANK_SPEED } from '@/game/helpers/constants'
 import { getAxisForDirection, getValueForDirection } from '@/game/helpers/helpers'
+import { GameObjectArgs } from '@/game/core/types'
+
+type EnemyGameObjectArgs = GameObjectArgs & {
+  type: number
+}
 
 export default class EnemyTank extends Tank {
   
   protected speed: number
-  public type: number
   public direction: number
+  public type: number
   
-  constructor(args: any) {
-    super({ ...args, sprites: ENEMY_TANK_SPRITES, debug: true })
+  constructor(args: EnemyGameObjectArgs) {
+    super({ ...args, sprites: ENEMY_TANK_SPRITES})
     this.direction = Tank.Direction.DOWN
     this.x = 0
     this.y = 0
     this.speed = TANK_SPEED
     this.name = 'enemy-tank'
     this.type = args.type
+    this.objectType = 'enemyTank'
   }
   
   hit() {

@@ -1,7 +1,7 @@
 import { IUser, IUserDTO } from '@/store/slices/auth/auth.models'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import api from '@/api'
-import { ILeaderboardRequest, IUserScore } from '@/api/leaderboard/leaderboard.models'
+import { ILeaderboardNewLeaderRequest, ILeaderboardRequest, IUserScore } from '@/api/leaderboard/leaderboard.models'
 import { ILeaderboardScoreTransferred } from '@/store/slices/leaderboard/leaderboard.models'
 import { transformScore, transformUser } from '@/utils/transformers'
 
@@ -13,6 +13,11 @@ interface IInitialState {
   tableData: Array<IUserScore>
 }
 
+export const addScoreToLeaderboard = createAsyncThunk('leaderboard/addScore', async (data: ILeaderboardNewLeaderRequest, {dispatch}) => {
+  const response = await api.leaderboard.addScore(data)
+  console.log(response)
+})
+
 export const fetchLeaderboardAll = createAsyncThunk(
   'leaderboard/fetchAll',
   async (data: ILeaderboardRequest, { dispatch }) => {
@@ -20,10 +25,11 @@ export const fetchLeaderboardAll = createAsyncThunk(
     dispatch(leaderboardSlice.actions.setLoading(true))
     
     const responseScore = await api.leaderboard.getAll(data)
+    console.log(responseScore)
     const responseUsers: Array<IUser> = []
     const promises: Array<Promise<IUserDTO>> = []
     
-    const responseScoreTransformed = responseScore.map(item => {
+    const responseScoreTransformed = responseScore.data.map(item => {
       return transformScore(item)
     })
     
@@ -34,15 +40,18 @@ export const fetchLeaderboardAll = createAsyncThunk(
     Promise.all(promises)
     .then((results) => {
       results.forEach((result) => {
-        responseUsers.push(transformUser(result))
+        console.log(result)
+        responseUsers.push(transformUser(result.data))
       })
       dispatch(leaderboardSlice.actions.clearError())
       dispatch(leaderboardSlice.actions.fillTableData(responseUsers))
+      console.log('finnaly')
     })
     .catch(error => {
       dispatch(leaderboardSlice.actions.serError(error))
     })
     .finally(() => {
+      console.log('finnaly')
       dispatch(leaderboardSlice.actions.setLoading(false))
     })
     

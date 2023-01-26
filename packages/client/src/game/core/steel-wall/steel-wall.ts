@@ -7,6 +7,7 @@ export default class SteelWall extends Wall {
   constructor(x: number, y: number) {
     super({ x, y, sprites: STEEL_WALL_SPRITES } as WallArgs)
     this.name = 'steel-wall'
+    this.objectType = 'steelWall'
   }
 
   public hit(): void {

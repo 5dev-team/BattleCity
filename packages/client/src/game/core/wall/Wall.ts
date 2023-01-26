@@ -14,6 +14,7 @@ export default abstract class Wall extends GameObject implements IHitable {
     this.damage = 0
     this.type = args.type
     this.name = 'wall'
+    this.objectType = 'wallObject'
     this.state = 0b0000
   }
   

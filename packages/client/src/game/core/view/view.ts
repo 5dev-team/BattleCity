@@ -39,11 +39,7 @@ export default class View {
         if (object) {
           const { width, height, sprite }: IObjectOfWorld = object
           if (!sprite) return
-          if (!Array.isArray(sprite)) {
-            console.log(object)
-            console.log(sprite)
-          }
-          
+
           const [sp1, sp2, sp3, sp4]: number[] = sprite
           this.context.drawImage(
             this.sprite.image,
@@ -56,22 +52,55 @@ export default class View {
             width,
             height
           )
+          // Включение дебага НЕ УДАЛЯТЬ! stage.getCollision
+          // if (object.debug) {
+          //debug border object
+          this.context.strokeStyle = '#fafafa'
+          this.context.lineWidth = 2
+          this.context.strokeRect(
+            object.left + 1,
+            object.top + 1,
+            width - 2,
+            height - 2
+          )
 
-          
+          //debug object info
+          // if (object.objectType === 'enemyTank') {
+          //   let i = 0
+          //   const text = Object.entries(object).map(([key, value], index) => {
+          //     if (
+          //       key !== 'events' &&
+          //       key !== 'sprites' &&
+          //       key !== 'frames' &&
+          //       key !== 'eventBus' &&
+          //       key !== 'name'
+          //     ) {
+          //       i++
+          //       this.context.font = '12px roboto'
+          //       this.context.shadowColor = 'black'
+          //       this.context.shadowBlur = 7
+          //       this.context.strokeText(
+          //         `${key}: ${value}`,
+          //         object.right,
+          //         object.top + i * 12
+          //       )
+          //       this.context.shadowBlur = 0
+          //       this.context.fillStyle = '#5bff18'
+          //       this.context.fillText(
+          //         `${key}: ${value}`,
+          //         object.right,
+          //         object.top + i * 12
+          //       )
+          //     }
+          //   })
+          // }
         }
-        // Включение дебага НЕ УДАЛЯТЬ! stage.getCollision
-        // if (object.debug) {
-        //   this.context.strokeStyle = '#fafafa'
-        //   this.context.lineWidth = 2
-        //   this.context.strokeRect(x + 1, y + 1, width - 2, height - 2)
-        //   object.debug = false
+
+        // if (object?.debug && object?.id) {
+        //   this.context.font = "10px Arial"
+        //   this.context.fillStyle = "#00F"
+        //   this.context.fillText(`${object.id}`, object.left, object.top)
         // }
-  
-        if (object?.debug && object?.id) {
-          this.context.font = "10px Arial"
-          this.context.fillStyle = "#00F"
-          this.context.fillText(`${object.id}`, object.left, object.top)
-        }
       }
     }
   }

@@ -18,7 +18,6 @@ class EventBus {
   
   
   public once(event: string, handler: IFn): void {
-    console.log(handler)
     const onceFn = (...res: any[]) => {
       handler(...res)
       this.off(event, handler)

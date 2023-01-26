@@ -15,8 +15,10 @@ export default class GameEngine {
   private lastFrame: number
   private frames: number
   private isGameOver: boolean
+  private debugMode: boolean
+  private pause: boolean
   private readonly stageIndex: number
-  
+
   constructor({ input, view, levels }: IGameConstructor) {
     this.input = input
     this.view = view
@@ -29,16 +31,36 @@ export default class GameEngine {
     this.lastFrame = 0
     this.loop = this.loop.bind(this)
     this.isGameOver = false
+    this.debugMode = false
+    this.pause = false
   }
   
-  public async init(): Promise<void> {
+  /**
+   @method init
+   @param debug {Boolean} Enable debugging mode with grid rendering and information output
+   */
+  public async init(debug = false): Promise<void> {
+    if (debug) {
+      window.addEventListener('keydown', e => {
+        if (e.code === 'Space' && !this.pause) {
+          this.pause = true
+        } else if (e.code === 'Space' && this.pause) {
+          this.pause = false
+          this.loop(0)
+        }
+      })
+    }
+
     await this.view.init()
   }
-  
-  public start(resolve: (value: IGameOverData | PromiseLike<IGameOverData>) => void): void {
+
+  public start(
+    resolve: (value: IGameOverData | PromiseLike<IGameOverData>) => void, debug = false
+  ): void {
+    this.debugMode = debug
     this.stage = new Stage(this.stages[this.stageIndex], this.stageIndex)
     this.setPlayerFirst(this.stage.getPlayerTank())
-    
+
     this.stage.on('gameOver', () => {
       const playerFirst = this.getPlayerFirst()
       if (!playerFirst) {
@@ -46,13 +68,13 @@ export default class GameEngine {
       }
       this.isGameOver = true
       resolve({
-        gameOverData: [{ scores: playerFirst.getScore() }]
+        gameOverData: [{ scores: playerFirst.getScore() }],
       })
     })
-    
+
     requestAnimationFrame(this.loop)
   }
-  
+
   private loop(currentFrame: number): void {
     const frameDelta: number = currentFrame - this.lastFrame
     if (this.stage instanceof Stage) {
@@ -64,27 +86,27 @@ export default class GameEngine {
     this.frames = 0
     this.lastFrame = currentFrame
     if (!this.isGameOver) {
-      setTimeout(() => {
-        requestAnimationFrame(this.loop)
-      }, 1000 / 60)
+      if (!this.debugMode) {
+        setTimeout(() => {
+          requestAnimationFrame(this.loop)
+        }, 1000 / 60)
+      }
     }
-    
   }
 
   getPlayerFirst(): PlayerTank | null {
     return this.player1
   }
-  
+
   setPlayerFirst(player: PlayerTank) {
     this.player1 = player
   }
-  
+
   getPlayerSecond(): PlayerTank | null {
     return this.player2
   }
-  
+
   setPlayerSecond(player: PlayerTank) {
     this.player2 = player
   }
-  
 }

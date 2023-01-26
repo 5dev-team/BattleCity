@@ -21,6 +21,7 @@ export default class GameObject extends EventBus {
   protected frames: number
   protected isDestroyed: boolean
   public name: string
+  public objectType: string
   
   public id: number
   protected speed: number
@@ -40,6 +41,7 @@ export default class GameObject extends EventBus {
     this.eventBus = () => eventBusInstance
     this.name = 'Root object'
     this.id = Math.floor(Math.random() * (100001) + 1)
+    this.objectType = 'rootObject'
   }
   
   public get top(): number {

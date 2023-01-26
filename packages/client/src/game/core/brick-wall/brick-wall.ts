@@ -8,6 +8,7 @@ export default class BrickWall extends Wall {
   constructor(x: number, y: number) {
     super({ x, y, sprites: BRICK_WALL_SPRITES } as WallArgs)
     this.name = 'brick-wall'
+    this.objectType = 'brickWall'
   }
   
   update({ world }: Record<string, Stage>) {

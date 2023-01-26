@@ -4,6 +4,7 @@ import {
   ILeaderboardRequest,
   IUserScoreRequest
 } from '@/api/leaderboard/leaderboard.models'
+import { AxiosResponse } from 'axios'
 
 export default {
   addScore(data: ILeaderboardNewLeaderRequest) {
@@ -13,7 +14,7 @@ export default {
       data
     })
   },
-  getAll(data: ILeaderboardRequest): Promise<Array<IUserScoreRequest>> {
+  getAll(data: ILeaderboardRequest): Promise<AxiosResponse<Array<IUserScoreRequest>>> {
     return request({
       url: __YANDEX_API__ + '/leaderboard/all',
       method: 'POST',

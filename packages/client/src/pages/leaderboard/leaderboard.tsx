@@ -45,7 +45,6 @@ const Leaderboard: React.FC = () => {
   ]
   
   useEffect(() => {
-    console.log('asd')
     dispatch(fetchLeaderboardAll(leaderboardDataRequest))
   }, [])
   

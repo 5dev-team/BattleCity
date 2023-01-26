@@ -120,8 +120,7 @@ const Game: React.FC = () => {
         })
         .catch(error => console.log(error))
         
-        
-        game.init().then(() => game.start(resolve))
+        game.init(true).then(() => game.start(resolve))
         
       }
     }
