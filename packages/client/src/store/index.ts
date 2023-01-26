@@ -12,7 +12,10 @@ const rootReducer = combineReducers({
 export const setupStore = (initialState = {}) => configureStore({
   reducer: rootReducer,
   preloadedState: initialState,
-
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 })
 
 export type RootState = ReturnType<typeof rootReducer>

@@ -1,29 +1,29 @@
-import type { AxiosRequestConfig } from 'axios'
-import { RoutePaths } from '@/router'
-import useBrowserHistory from '@/utils/history'
+import axios from 'axios'
+import { fetchUser } from '@/store/slices/auth'
+import { AppDispatch } from '@/store'
+import yandexOauth from '@/api/yandex-oauth'
 
-export const request = async <T>(config: AxiosRequestConfig) => {
-  // ssr hack
-  const { default: axios } = await import('axios')
-  const history = useBrowserHistory()
-
+export const interceptor = (dispatch: AppDispatch) => {
   axios.interceptors.response.use(
     response => {
-      if (!response) return {}
-      return response.data
+      return Promise.resolve(response)
     },
     error => {
-      if (error.response.status === 401) {
-        if (
-          RoutePaths.SIGNIN.valueOf() !== window.location.pathname &&
-          RoutePaths.SIGNUP.valueOf() !== window.location.pathname
-        ) {
-          history.push(RoutePaths.SIGNIN)
+      if (error?.response?.status === 401) {
+        const yandexCodeParam = /code=([^&]+)/.exec(window.location.search)
+
+        if (yandexCodeParam) {
+          const code = yandexCodeParam[1]
+          yandexOauth
+            .signIn({ code, redirect_uri: window.location.origin })
+            .then(() => dispatch(fetchUser()))
         }
       }
-      return Promise.reject(error.response.data.reason || 'Server error')
+
+      return Promise.reject(error?.response.data.reason || 'Server Error')
     }
   )
-
-  return axios.request<never, T>({ ...config, withCredentials: true })
 }
+
+export const request = <T>(config: AxiosRequestConfig) =>
+  axios.request<never, T>({ ...config, withCredentials: true })

@@ -1,6 +1,7 @@
 import { request } from '@/api/request'
 import { ILoginRequest, IRegisterRequest } from '@/api/auth/auth.models'
 import { IUserDTO } from '@/store/slices/auth/auth.models'
+import { AxiosResponse } from 'axios'
 
 export default {
   login(data: ILoginRequest) {
@@ -18,7 +19,7 @@ export default {
     })
   },
   user() {
-    return request<IUserDTO>({
+    return request<AxiosResponse<IUserDTO>>({
       url: __YANDEX_API__ + '/auth/user',
       method: 'GET'
     })
