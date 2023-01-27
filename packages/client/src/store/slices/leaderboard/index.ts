@@ -4,6 +4,11 @@ import api from '@/api'
 import { ILeaderboardNewLeaderRequest, ILeaderboardRequest, IUserScore } from '@/api/leaderboard/leaderboard.models'
 import { ILeaderboardScoreTransferred } from '@/store/slices/leaderboard/leaderboard.models'
 import { transformScore, transformUser } from '@/utils/transformers'
+import { leaderboardDataRequest } from '@/constants/configs/leaderboard'
+import { RootState } from '@/store'
+import { findBestScore } from '@/utils/totalScore'
+import { gameSlice } from '@/store/slices/game'
+import { AxiosResponse } from 'axios'
 
 interface IInitialState {
   scores: Array<ILeaderboardScoreTransferred>
@@ -13,21 +18,31 @@ interface IInitialState {
   tableData: Array<IUserScore>
 }
 
-export const addScoreToLeaderboard = createAsyncThunk('leaderboard/addScore', async (data: ILeaderboardNewLeaderRequest, {dispatch}) => {
-  const response = await api.leaderboard.addScore(data)
-  console.log(response)
+export const addScoreToLeaderboard = createAsyncThunk('leaderboard/addScore', async (data: ILeaderboardNewLeaderRequest) => {
+  api.leaderboard.addScore(data).catch(error => console.log(error) )
+})
+
+export const fetchUserHighScore = createAsyncThunk('leaderboard/fetchHighScore', async (data: ILeaderboardRequest = leaderboardDataRequest, {dispatch, getState}) => {
+  const responseScore = await api.leaderboard.getAll(data)
+  const responseScoreTransformed = responseScore.data.map(item => {
+    return transformScore(item)
+  })
+  
+  const bestScore = findBestScore(responseScoreTransformed, (getState() as RootState).auth.user?.id)
+  console.log(bestScore)
+  dispatch(gameSlice.actions.setBestScore(bestScore))
 })
 
 export const fetchLeaderboardAll = createAsyncThunk(
   'leaderboard/fetchAll',
-  async (data: ILeaderboardRequest, { dispatch }) => {
+  async (data: ILeaderboardRequest = leaderboardDataRequest, { dispatch }) => {
     
     dispatch(leaderboardSlice.actions.setLoading(true))
     
     const responseScore = await api.leaderboard.getAll(data)
     console.log(responseScore)
     const responseUsers: Array<IUser> = []
-    const promises: Array<Promise<IUserDTO>> = []
+    const promises: Array<Promise<AxiosResponse<IUserDTO>>> = []
     
     const responseScoreTransformed = responseScore.data.map(item => {
       return transformScore(item)
@@ -40,18 +55,15 @@ export const fetchLeaderboardAll = createAsyncThunk(
     Promise.all(promises)
     .then((results) => {
       results.forEach((result) => {
-        console.log(result)
         responseUsers.push(transformUser(result.data))
       })
       dispatch(leaderboardSlice.actions.clearError())
       dispatch(leaderboardSlice.actions.fillTableData(responseUsers))
-      console.log('finnaly')
     })
     .catch(error => {
       dispatch(leaderboardSlice.actions.serError(error))
     })
     .finally(() => {
-      console.log('finnaly')
       dispatch(leaderboardSlice.actions.setLoading(false))
     })
     

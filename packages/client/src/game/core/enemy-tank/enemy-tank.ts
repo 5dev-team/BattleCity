@@ -15,7 +15,7 @@ export default class EnemyTank extends Tank {
   public direction: number
   public type: number
   
-  constructor(args: EnemyGameObjectArgs) {
+  constructor(args:   Pick<EnemyGameObjectArgs, 'type'>) {
     super({ ...args, sprites: ENEMY_TANK_SPRITES})
     this.direction = Tank.Direction.DOWN
     this.x = 0

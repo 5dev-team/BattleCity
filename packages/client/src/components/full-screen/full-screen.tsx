@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react'
+import React, { useState } from 'react'
 import styles from './full-screen.module.scss'
 import fullScreenIconButton from '@/assets/svg/fullScreenIconButton.svg'
 import { Outlet } from 'react-router-dom'

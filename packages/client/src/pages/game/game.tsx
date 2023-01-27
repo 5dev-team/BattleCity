@@ -20,6 +20,8 @@ import styles from './game.module.scss'
 import { useAppDispatch } from '@/hooks/redux'
 import { saveGameScores } from '@/store/slices/game'
 import { IGameOverData } from '@/game/core/game-engine/types'
+import { fetchUserHighScore } from '@/store/slices/leaderboard'
+import { leaderboardDataRequest } from '@/constants/configs/leaderboard'
 
 enum GameView {
   Menu,
@@ -100,6 +102,7 @@ const Game: React.FC = () => {
   
   useEffect(() => {
     if (gameView === GameView.Game) {
+      dispatch(fetchUserHighScore(leaderboardDataRequest))
       const canvas = canvasRef.current
       
       if (canvas) {

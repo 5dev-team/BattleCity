@@ -1,5 +1,10 @@
-import React, { useEffect } from 'react'
-import { unstable_HistoryRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
+import React from 'react'
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  Navigate,
+} from 'react-router-dom'
 import FullScreen from '@/components/full-screen/full-screen'
 import Leaderboard from '@/pages/leaderboard'
 import SignIn from '@/pages/sign-in'
@@ -9,10 +14,15 @@ import Error500 from '@/pages/error500'
 import Forum from '@/pages/forum'
 import SignUp from '@/pages/sign-up/sign-up'
 import Profile from '@/pages/profile'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import ProtectRoute from '@/components/protect-route'
+import { useAppDispatch } from '@/hooks/redux'
 import { fetchUser } from '@/store/slices/auth'
-import history from '@/utils/history'
 import Offline from '@/pages/offline'
+import ProtectRouteForSignIn from '@/components/protect-route-for-sign-in'
+import { interceptor } from '@/api/request'
+import useEffectOnce from './utils/useEffectOnce'
+import Comments from '@/pages/comments'
+
 
 export enum RoutePaths {
   SIGNIN = '/sign-in',
@@ -22,36 +32,44 @@ export enum RoutePaths {
   ERROR404 = '/404',
   ERROR500 = '/500',
   FORUM = '/forum',
-  PROFILE = '/profile'
+  PROFILE = '/profile',
+  COMMENTS = '/forum/:title',
 }
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch()
-  
-  const user = useAppSelector((state) => state.auth.user)
-  useEffect(() => {
-    if (!user) {
-      dispatch(fetchUser())
-    }
-  }, [])
-  
+  useEffectOnce(() => {
+    dispatch(interceptor)
+    dispatch(fetchUser())
+  })
+
   return (
-    <Router history={history}>
+    <BrowserRouter>
       <Routes>
-        <Route path='/offline' element={<Offline />} />
-        <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
-        <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
-        <Route element={<FullScreen/>}>
-          <Route path={RoutePaths.GAME} element={<Game />} />
+        <Route element={<ProtectRouteForSignIn redirectTo={RoutePaths.GAME}/>} loader={async () => Promise.resolve(true)}>
+          <Route path={RoutePaths.SIGNIN} element={<SignIn />} />
+          <Route path={RoutePaths.SIGNUP} element={<SignUp />} />
         </Route>
-        <Route path={RoutePaths.LEADERBOARD} element={<Leaderboard />} />
+        <Route element={<ProtectRoute redirectTo={RoutePaths.SIGNIN} />}>
+          <Route element={<Leaderboard />} path={RoutePaths.LEADERBOARD} />
+          <Route element={<FullScreen />}>
+            <Route path={RoutePaths.GAME} element={<Game />} />
+          </Route>
+          <Route path={RoutePaths.FORUM} element={<Forum />} />
+          <Route element={<Forum />} path={RoutePaths.FORUM} />
+          <Route path={RoutePaths.COMMENTS} element={<Comments />} />
+          <Route element={<Profile />} path={RoutePaths.PROFILE} />
+          <Route path={RoutePaths.PROFILE} element={<Profile />} />
+        </Route>
+        <Route path='/offline' element={<Offline />} />
         <Route path={RoutePaths.ERROR404} element={<Error404 />} />
         <Route path={RoutePaths.ERROR500} element={<Error500 />} />
-        <Route path={RoutePaths.FORUM} element={<Forum />} />
-        <Route path={RoutePaths.PROFILE} element={<Profile />} />
-        <Route path='*' element={<Navigate to={RoutePaths.ERROR404} replace />} />
+        <Route
+          path='*'
+          element={<Navigate to={RoutePaths.ERROR404} replace />}
+        />
       </Routes>
-    </Router>
+    </BrowserRouter>
   )
 }
 

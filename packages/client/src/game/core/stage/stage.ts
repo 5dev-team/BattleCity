@@ -9,6 +9,7 @@ import { IStageConstructor, TObjects } from '@/game/core/stage/types'
 import { STAGE_SIZE, TILE_SIZE } from '@/game/helpers/constants'
 import EnemyTank from '@/game/core/enemy-tank/enemy-tank'
 import EventBus from '@/game/core/event-bus/event-bus'
+import Explosion from '@/game/core/explosion/explosion'
 
 export default class Stage extends EventBus {
   static TerrainType = {
@@ -70,13 +71,15 @@ export default class Stage extends EventBus {
     this.respawn = (190 - stageIndex * 4 - (1 - 1) * 20) * 60
     this.enemies = Stage.createEnemies(data.enemies)
     this.playerTank = new PlayerTank({})
-    this.base = new Base({})
+    this.base = new Base()
     this.terrain = Stage.createTerrain(data.stage)
     this.enemyTankCount = 0
     this.enemyTankTimer = 0
     this.enemyTankStartPosition = 0
     this.enemyTankPositionIndex = 0
     
+    //TODO: fix it
+    // @ts-ignore
     this.objects = new Set([
       this.base,
       this.playerTank,
@@ -100,9 +103,9 @@ export default class Stage extends EventBus {
     })
     
     this.enemies.map(enemyTank => {
-      enemyTank.on('fire', bullet => {
+      enemyTank.on('fire', (bullet: Bullet) => {
         this.objects.add(bullet)
-        bullet.on('explode', explosion => {
+        bullet.on('explode', (explosion: Explosion) => {
           this.objects.add(explosion)
 
           explosion.on('destroyed', () => {
@@ -136,7 +139,7 @@ export default class Stage extends EventBus {
       this.playerTank.on('fire', bullet => {
         this.objects.add(bullet)
         
-        bullet.on('explode', explosion => {
+        bullet.on('explode', (explosion: Explosion) => {
           this.objects.add(explosion)
 
           explosion.on('destroyed', () => {

@@ -9,7 +9,7 @@ export type GameObjectArgs = {
   width: number
   height: number
   sprites: Sprites
-  type: number
+  type?: number
 }
 
 export type UpdateState = { input: Input; frameDelta: number; world: Stage }

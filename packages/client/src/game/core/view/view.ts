@@ -55,14 +55,14 @@ export default class View {
           // Включение дебага НЕ УДАЛЯТЬ! stage.getCollision
           // if (object.debug) {
           //debug border object
-          this.context.strokeStyle = '#fafafa'
-          this.context.lineWidth = 2
-          this.context.strokeRect(
-            object.left + 1,
-            object.top + 1,
-            width - 2,
-            height - 2
-          )
+          // this.context.strokeStyle = '#fafafa'
+          // this.context.lineWidth = 2
+          // this.context.strokeRect(
+          //   object.left + 1,
+          //   object.top + 1,
+          //   width - 2,
+          //   height - 2
+          // )
 
           //debug object info
           // if (object.objectType === 'enemyTank') {

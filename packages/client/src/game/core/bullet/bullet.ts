@@ -17,7 +17,6 @@ import Tank from '@/game/core/tank/tank'
 import BulletExplosion from '@/game/core/bullet-explosion/bullet-explosion'
 
 export default class Bullet extends GameObject {
-  private type: string
   public readonly direction: number
   private tank: Tank | null
   private explosion: null | Explosion
