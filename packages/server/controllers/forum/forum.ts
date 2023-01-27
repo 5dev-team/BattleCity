@@ -37,7 +37,7 @@ export async function getForums(_req: Request, res: Response, next: NextFunction
         val.dataValues.countMessage = count
         const lastItem = await ForumPosts.findOne({ where: { forumId }, order: [['createdAt', 'DESC']] })
         if (lastItem) {
-          val.dataValues.lastMessageDate = Math.floor(lastItem.dataValues.createdAt / 1000)
+          val.dataValues.lastMessageDate = getUnixTime(lastItem.dataValues.createdAt)
           val.dataValues.lastMessageId = lastItem.dataValues.id
         } else {
           val.dataValues.lastMessageDate = null

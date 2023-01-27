@@ -20,16 +20,24 @@
     "noUnusedLocals": true,
     "forceConsistentCasingInFileNames": true,
     "importsNotUsedAsValues": "error",
-    "lib": ["es2019", "esnext.asynciterable"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "lib": [
+      "es2019",
+      "esnext.asynciterable"
+    ],
     "baseUrl": "./",
     "paths": {
-      "*": ["types/*"]
+      "const/*": [
+        "./utils/constants/*"
+      ]
     },
     "typeRoots": [
       "@types",
       "./node_modules/@types"
     ],
     "outDir": "dist"
-  }
+  },
+  "exclude": ["**/dist/**/*.d.ts", "dist", "node_modules"]
 }
 

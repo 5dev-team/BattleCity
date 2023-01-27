@@ -101,15 +101,17 @@ export function pathForumPost(req: Request, res: Response, next: NextFunction) {
             if (data) {
               res.send(data)
             } else {
-              res.send({ message: 'Не найдено' })
+              res.send([])
             }
           })
         }).catch(() => {
           next(new ServerError('Произошла ошибка'))
         })
       }
+    } else {
+      next(new ValidationError('Такого id не существует'))
     }
   }).catch(() => {
-    next(new ValidationError('Невалидный id'))
+    next(new ValidationError('Такого id не существует'))
   })
 }

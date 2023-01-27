@@ -4,17 +4,13 @@ import { getUsers, GetUsersResponse } from '../utils/helpers/getUsers'
 import { Forbidden } from '../errors'
 import type { AxiosResponse } from 'axios'
 
-export async function isAuthorized(req: Request, res: Response, next: NextFunction) {
+export async function isAuthorized(req: Request, _res: Response, next: NextFunction) {
   const cookie = getCookie(req)
   if (cookie.defaultCookie) {
-    await getUsers(cookie.defaultCookie).then((data: AxiosResponse<GetUsersResponse>) => {
-      req.userId = data.data.id
-      res.cookie('id', Number(req.userId))
+    await getUsers(cookie.defaultCookie).then((response: AxiosResponse<GetUsersResponse>) => {
+      req.userId = response.data.id
       next()
     }).catch(() => {
-      res.clearCookie('id')
-      res.clearCookie('authCookie')
-      res.clearCookie('uuid')
       next(new Forbidden('Доступ к ресурсу ограничен'))
     })
   } else {
