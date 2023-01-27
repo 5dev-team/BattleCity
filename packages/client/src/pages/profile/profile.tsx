@@ -8,7 +8,7 @@ import NesInput from '@/components/UI/nes-input'
 import NesFileInput from '@/components/UI/nes-file-input'
 import { fetchLogout, fetchUser } from '@/store/slices/auth'
 import { IUserDTO, IUser } from '@/store/slices/auth/auth.models'
-import { fetchProfileUpdate } from '@/store/slices/profile'
+import { fetchProfileUpdate, profileSlice } from '@/store/slices/profile'
 import styles from './profile.module.scss'
 import ErrorBoundary from '@/components/error-boundary'
 import { selectProfile } from '@/store/slices/profile/select-profile'
@@ -34,8 +34,7 @@ enum ProfileMode {
 }
 
 const Profile: React.FC = () => {
-  const user =
-    useAppSelector(selectProfile) ?? ({} as Partial<IUser>)
+  const user = useAppSelector(selectProfile) ?? ({} as Partial<IUser>)
   const responseError = useAppSelector(state => state.profile.fetchError)
 
   const defaultValues = {
@@ -75,6 +74,12 @@ const Profile: React.FC = () => {
       reset(defaultValues)
     }
   }, [user])
+
+  useEffect(() => {
+    return () => {
+      dispatch(profileSlice.actions.clearError())
+    }
+  }, [])
 
   const [avatarSrc, setAvatarSrc] = useState<string>()
   const [isDragOver, setIsDragOver] = useState(false)
@@ -166,8 +171,7 @@ const Profile: React.FC = () => {
       onClick={e => {
         e.preventDefault()
         setMode(ProfileMode.Edit)
-      }}
-    >
+      }}>
       edit profile
     </NesButton>
   )
@@ -178,8 +182,7 @@ const Profile: React.FC = () => {
     <NesButton
       type='submit'
       variant={isValid && isFormDirty ? 'success' : 'disabled'}
-      disabled={!isValid || !isFormDirty}
-    >
+      disabled={!isValid || !isFormDirty}>
       save
     </NesButton>
   )
@@ -192,8 +195,7 @@ const Profile: React.FC = () => {
         reset(defaultValues)
         setAvatarSrc(user.avatar)
         setMode(ProfileMode.View)
-      }}
-    >
+      }}>
       cancel
     </NesButton>
   )
@@ -206,14 +208,12 @@ const Profile: React.FC = () => {
             Profile <span className='error-text'>{responseError}</span>
           </h3>
           <ErrorBoundary
-            FallbackComponent={() => <div>Something went wrong :(</div>}
-          >
+            FallbackComponent={() => <div>Something went wrong :(</div>}>
             <div className='nes-table-responsive'>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <table
                   className={`nes-table is-bordered is-centered is-dark`}
-                  style={{ backgroundColor: '#000' }}
-                >
+                  style={{ backgroundColor: '#000' }}>
                   <thead>
                     <tr>
                       <th colSpan={2} rowSpan={6}>
@@ -375,16 +375,14 @@ const Profile: React.FC = () => {
           fullWidth
           variant='primary'
           onClick={() => navigate('/')}
-          type='button'
-        >
+          type='button'>
           menu
         </NesButton>
         <NesButton
           fullWidth
           variant='warning'
           onClick={() => dispatch(fetchLogout())}
-          type='button'
-        >
+          type='button'>
           logout
         </NesButton>
       </div>

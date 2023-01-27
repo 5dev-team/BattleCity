@@ -42,7 +42,7 @@ const SignIn: React.FC = () => {
 
   useEffect(() => {
     return () => {
-      authSlice.actions.clearError()
+      dispatch(authSlice.actions.clearError())
     }
   }, [])
 
