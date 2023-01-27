@@ -16,6 +16,7 @@ export default defineConfig({
     __YANDEX_API__: JSON.stringify(process.env.YANDEX_API.trim())
   },
   build: {
+    minify: false,
     lib: {
       entry: path.resolve(__dirname, "./src/entry-server.tsx"),
       name: 'Client',
