@@ -1,28 +1,19 @@
 ARG NODE_VERSION=18
 ARG SERVER_PORT=3001
+FROM node:$NODE_VERSION-buster-slim
 
-FROM node:$NODE_VERSION-buster as base
+WORKDIR ./var/app
 
-WORKDIR /app
+COPY ./packages/server .
 
-FROM base as builder
-
-COPY package.json .
 RUN yarn install
 
-COPY . .
+RUN yarn build
 
-RUN yarn lerna bootstrap
+RUN ls | grep -v dist | grep -v node_modules | xargs rm -rfv
 
-RUN rm -rf /app/packages/server/dist/ && yarn build --scope server
-
-
-FROM node:$NODE_VERSION-buster-slim as production
-WORKDIR /app
-
-COPY --from=builder /app/packages/server/dist/ /app/
-COPY --from=builder /app/packages/server/package.json /app/package.json
-RUN yarn install
+WORKDIR ./dist
 
 EXPOSE $SERVER_PORT
-CMD [ "yarn", "/app/index.js" ]
+
+CMD [ "node", "index.js" ]

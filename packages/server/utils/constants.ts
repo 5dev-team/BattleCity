@@ -4,33 +4,37 @@ import { createProxyMiddleware } from 'http-proxy-middleware'
 dotenv.config({ path: __dirname + '../../.env' })
 
 export const {
-  SERVER_PORT = 3001,
-  NODE_ENV = 'development',
-  POSTGRES_USER = 'defaultUSER',
-  POSTGRES_PASSWORD = 'defaultPassword',
-  POSTGRES_DB = 'defaultDb',
-  POSTGRES_PORT = 5432,
-  YANDEX_API
+  SERVER_PORT,
+  NODE_ENV,
+  POSTGRES_USER,
+  POSTGRES_PASSWORD,
+  POSTGRES_DB,
+  POSTGRES_PORT,
+  DOMAIN,
 } = process.env
 
-export const origin: string  = NODE_ENV === 'production'
-  ? 'http://localhost:3000'
-  : 'http://localhost:3001'
+export const origin: string[]  = NODE_ENV === 'production'
+  ? [`http://${DOMAIN}`, `https://${DOMAIN}`]
+  : ['http://localhost:3001', 'http://localhost:3000']
+
+export const corsOptions = {
+  origin: origin,
+  credentials: true,  //access-control-allow-credentials:true
+  optionSuccessStatus: 200
+}
+
+export const dataBaseUrl = NODE_ENV === 'production' ? 'postgres' : 'localhost'
 
 export const yandexRouter = createProxyMiddleware({
   target: 'https://ya-praktikum.tech',
   changeOrigin: true,
-  cookieDomainRewrite: { 'ya-praktikum.tech': 'localhost', '*': '' },
+  cookieDomainRewrite: { 'ya-praktikum.tech': `${DOMAIN}`, '*': '' },
   headers: {
     'Connection': 'keep-alive'
   }
 })
 
-export const corsOptions = {
-  origin: ['http://localhost:3000', 'https://nashDomain.com'],
-  credentials: true,  //access-control-allow-credentials:true
-  optionSuccessStatus: 200
-}
+
 
 
 

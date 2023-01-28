@@ -1,17 +1,16 @@
 import { Sequelize, SequelizeOptions } from 'sequelize-typescript'
 import { forumModel, forumPostsModel } from '../models'
-import { POSTGRES_DB, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_USER } from '../utils/constants'
+import { POSTGRES_DB, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_USER, dataBaseUrl } from '../utils/constants'
 
-
-
+console.log(dataBaseUrl)
 const sequelizeOptions: SequelizeOptions = {
-  host: 'localhost',
+  host: dataBaseUrl,
   port: Number(POSTGRES_PORT),
   username: POSTGRES_USER,
   password: POSTGRES_PASSWORD,
   database: POSTGRES_DB,
-  dialect: 'postgres' // 'mysql', 'sqlite', 'mariadb', 'mssql'
-  //logging: false // отключаем логирование в консоле!
+  dialect: 'postgres', // 'mysql', 'sqlite', 'mariadb', 'mssql'
+  logging: false // отключаем логирование в консоле!
 }
 
 // Создаем инстанс Sequelize

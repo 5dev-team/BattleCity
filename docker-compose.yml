@@ -1,23 +1,24 @@
 version: "3.9"
-
 services:
-#  client:
-#    container_name: prakticum-client
-#    image: prakticum-client
-#    build:
-#      context: .
-#      dockerfile: Dockerfile.client
-#      args:
-#        CLIENT_PORT: ${CLIENT_PORT}
-#    restart: always
-#    ports:
-#      - "${CLIENT_PORT}:80"
-#    environment:
-#      - CLIENT_PORT=${CLIENT_PORT}
-#      - SERVER_PORT=${SERVER_PORT}
-
+  client:
+    container_name: server1
+    image: server1
+    build:
+      context: .
+      dockerfile: ./DockerFile
+      args:
+        CLIENT_PORT: ${SERVER_PORT}
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    depends_on:
+      - postgres
+    networks:
+      - awesome
   postgres:
-    container_name: postgresBattleCity
+    container_name: postgres
     image: postgres:14
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"

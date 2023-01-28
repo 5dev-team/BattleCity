@@ -1,5 +1,10 @@
 import type { Request } from 'express'
 
+enum nameCookie {
+  AUTH_COOKIE = 'authCookie',
+  UUID4 = 'uuid'
+}
+
 type StateResponse = {
   state: boolean,
   value: null | string
@@ -8,7 +13,6 @@ type StateResponse = {
 interface IResponseCookie {
   authCookie: StateResponse,
   uuid: StateResponse,
-  id: StateResponse,
   defaultCookie: null | string | undefined
   generalState: boolean
 }
@@ -19,7 +23,6 @@ export function getCookie(req: Request): IResponseCookie {
   const defaultState: IResponseCookie = {
     'authCookie': { state: false, value: null },
     'uuid': { state: false, value: null },
-    'id': { state: false, value: null },
     'defaultCookie': undefined,
     'generalState': false
   }
@@ -27,14 +30,11 @@ export function getCookie(req: Request): IResponseCookie {
     defaultState.defaultCookie = cookie
     cookie.split('; ').map((value) => {
       const parser: string[] = value.split('=')
-      if (parser[0] === 'authCookie') {
+      if (parser[0] === nameCookie.AUTH_COOKIE) {
         parser[1].length === 53 && (defaultState.authCookie.state = true, defaultState.authCookie.value = parser[1])
       }
-      if (parser[0] === 'uuid') {
+      if (parser[0] === nameCookie.UUID4) {
         parser[1].length === 36 && (defaultState.uuid.state = true, defaultState.uuid.value = parser[1])
-      }
-      if (parser[0] === 'id') {
-        parser[1].length > 0 && (defaultState.id.state = true, defaultState.id.value = parser[1])
       }
     })
     return defaultState
