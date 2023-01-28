@@ -38,3 +38,22 @@ body,
   font-size: .8rem;
   color: #E76E55
 }
+
+.comments-content-inner {
+  width: 100%;
+  margin: 5px;
+  border: 1px solid #fff;
+  color: #fff;
+  font-size: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nes-textarea {
+  .comments-content-inner {
+    border: 1px solid #000;
+    color: #000;
+    font-size: 8px;
+  }
+}

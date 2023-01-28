@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from 'react'
+import React, { useMemo, useEffect } from 'react'
 
 import { useForm } from 'react-hook-form'
 import { getPattern } from '@/utils/validation'
@@ -7,38 +7,38 @@ import styles from './sign-in.module.scss'
 import NesInput from '@/components/UI/nes-input'
 import NesLink from '@/components/UI/nes-link'
 import NesButton from '@/components/UI/nes-button'
-
-import { useNavigate } from 'react-router-dom'
-
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { authSlice, fetchLogin, fetchUser } from '@/store/slices/auth'
-import { RoutePaths } from '@/App'
+import { authSlice, fetchLogin, fetchUser, fetchYandexOauth } from '@/store/slices/auth'
 
 type LoginInputs = {
-  login: string,
+  login: string
   password: string
 }
 
 const SignIn: React.FC = () => {
   const dispatch = useAppDispatch()
-  const authError = useAppSelector((state) => state.auth.authError)
-  const { register, handleSubmit, formState: { errors, submitCount } } = useForm<LoginInputs>()
+  const authError = useAppSelector(state => state.auth.authError)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, submitCount },
+  } = useForm<LoginInputs>()
 
-  const navigate = useNavigate()
   const onSubmit = (data: LoginInputs): void => {
-     dispatch(fetchLogin(data)).then((val) => {
+    dispatch(fetchLogin(data)).then(val => {
       if (val.meta.requestStatus !== 'rejected') {
-        dispatch(fetchUser()).then(() => {
-          navigate(RoutePaths.GAME)
-        })
+        dispatch(fetchUser())
       }
     })
-
   }
 
-
-  const formErrorsString = useMemo(() => Object.values(errors).map(el => el.ref?.name).join(', '),
-    [submitCount])
+  const formErrorsString = useMemo(
+    () =>
+      Object.values(errors)
+        .map(el => el.ref?.name)
+        .join(', '),
+    [submitCount]
+  )
 
   useEffect(() => {
     return () => {
@@ -50,30 +50,49 @@ const SignIn: React.FC = () => {
     <div className={styles['sign-in']}>
       <div className={styles['sign-in__card']}>
         <span className={'page-title'}>Sign In</span>
-        <form className={styles['sign-in__form']} onSubmit={handleSubmit(onSubmit)}>
+        <div className={styles['sign-in__auth']}>
+          <NesButton
+            type='button'
+            variant='warning'
+            fullWidth
+            onClick={() => dispatch(fetchYandexOauth())}
+          >
+            Use Yandex ID
+          </NesButton>
+        </div>
+        <span className={styles['sign-in__separator']}>OR</span>
+        <form
+          className={styles['sign-in__form']}
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <NesInput
             label='Login'
             fullWidth
-            {...register('login', { pattern: getPattern('login'), required: true })}
+            {...register('login', {
+              pattern: getPattern('login'),
+              required: true,
+            })}
           />
           <NesInput
             label='Password'
             type='password'
             fullWidth
-            {...register('password', { pattern: getPattern('password'), required: true })}
+            {...register('password', {
+              pattern: getPattern('password'),
+              required: true,
+            })}
           />
-          {formErrorsString || authError ?
-            <span className={'error-text'}>{formErrorsString ? 'Wrong ' + formErrorsString : authError}</span> :
+          {formErrorsString || authError ? (
+            <span className={'error-text'}>
+              {formErrorsString ? 'Wrong ' + formErrorsString : authError}
+            </span>
+          ) : (
             ''
-          }
+          )}
           <NesButton type='submit' variant='primary'>
             Sign In
           </NesButton>
-          <NesLink
-            to='/sign-up'
-          >
-            Not registered yet?
-          </NesLink>
+          <NesLink to='/sign-up'>Not registered yet?</NesLink>
         </form>
       </div>
     </div>
