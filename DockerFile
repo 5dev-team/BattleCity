@@ -1,6 +1,4 @@
-ARG NODE_VERSION=18
-ARG SERVER_PORT=3001
-FROM node:$NODE_VERSION-buster-slim
+FROM node:18-alpine as build
 
 WORKDIR ./var/app
 

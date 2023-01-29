@@ -2,7 +2,6 @@ import { Sequelize, SequelizeOptions } from 'sequelize-typescript'
 import { forumModel, forumPostsModel } from '../models'
 import { dataBaseUrl, POSTGRES_DB, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_USER } from '../utils/constants'
 
-console.log(dataBaseUrl)
 const sequelizeOptions: SequelizeOptions = {
   host: dataBaseUrl,
   port: Number(POSTGRES_PORT),
