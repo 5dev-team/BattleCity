@@ -15,6 +15,7 @@ services:
       - "${SERVER_PORT}:${SERVER_PORT}"
     depends_on:
       - postgres
+      - pgadmin
     networks:
       - awesome
   postgres:
