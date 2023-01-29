@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import styles from './comments.module.scss'
-import {RoutePaths} from '@/App'
+import {RoutePaths} from '@/router'
 import {useParams} from 'react-router-dom'
 import NesLink from '@/components/UI/nes-link'
 import NesButton from '@/components/UI/nes-button'
@@ -83,13 +83,15 @@ const Comments: React.FC = () => {
         </ul>
         <NesTextarea
           value={templateComment.content}
+          //@ts-ignore
           onInput={(evt: Event) => {
-            return new Promise(resolve => resolve(evt))
+            Promise.resolve(evt)
               .then(() => setTemplateComment({...templateComment, content: (evt.target as Element).innerHTML}))
               .then(() => placeCursor(evt.target as HTMLElement))
           }}
         ></NesTextarea>
         <SmilesBlock
+          //@ts-ignore
           onClick = {(evt: Event) => {
             if ((evt.target as HTMLImageElement).src) {
               const img = (evt.target as Element).outerHTML

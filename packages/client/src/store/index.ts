@@ -9,8 +9,9 @@ const rootReducer = combineReducers({
   profile: profileSlice.reducer,
 })
 
-export const setupStore = () => configureStore({
+export const setupStore = (initialState = {}) => configureStore({
   reducer: rootReducer,
+  preloadedState: initialState,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
