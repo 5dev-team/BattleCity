@@ -4,7 +4,6 @@ import { Forbidden, ServerError, ValidationError } from '../../errors'
 import { getUnixTime } from '../../utils/helpers/getUnixTime'
 import type { Model } from 'sequelize-typescript'
 import type { IForum } from '../../models/forum'
-import type { IForumPosts } from '../../models/forumPosts'
 
 export function createForum(req: Request, res: Response, next: NextFunction) {
   const authorId = req.userId
@@ -26,11 +25,11 @@ export function createForum(req: Request, res: Response, next: NextFunction) {
 
 export async function getForums(_req: Request, res: Response, next: NextFunction) {
   try {
-    const forum: Model<IForum>[] = await Forum.findAll({
+    const forums: Model<IForum>[] = await Forum.findAll({
       order: [['id', 'ASC']],
       attributes: { exclude: ['updatedAt', 'createdAt'] }
     })
-    const forumMessage = forum.map(async (val: Model<IForum>) => {
+    const forumMessage = forums.map(async (val: Model<IForum>) => {
       if (val) {
         const forumId = val.dataValues.id
         const count: number = await ForumPosts.count({ where: { forumId } })
@@ -60,24 +59,18 @@ export function deleteForum(req: Request, res: Response, next: NextFunction) {
       if (data.dataValues.authorId !== req.userId) {
         next(new Forbidden('Доступ запрещен'))
       } else {
-        const forumPosts: Model<IForumPosts>[] | [] = await ForumPosts.findAll({ where: { 'forumId': id } })
-        forumPosts.map(async (val: Model<IForumPosts>) => {
-          if (val) {
-            const id = val.dataValues.id
-            await ForumPosts.destroy({ where: { id } })
-          }
-        })
-        await Forum.destroy({ where: { id } }).then(async () => {
+        await Forum.destroy({ where: { id } }).then(() => {
           res.send({ message: 'Форум удален успешно' })
         })
       }
     } else {
-      next(new ServerError('Произошла ошибка'))
+      next(new ValidationError('Невалидный id'))
     }
   }).catch(() => {
-    next(new ValidationError('Невалидный id'))
+    next(new ServerError('Невалидный id'))
   })
 }
+
 
 export function pathForum(req: Request, res: Response, next: NextFunction) {
   const { id, title }: { id: number, title: string } = req.body

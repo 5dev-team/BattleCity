@@ -1,22 +1,22 @@
 version: "3.9"
 services:
-  client:
-    container_name: server1
-    image: server1
-    build:
-      context: .
-      dockerfile: ./DockerFile
-      args:
-        CLIENT_PORT: ${SERVER_PORT}
-    restart: always
-    env_file:
-      - .env
-    ports:
-      - "${SERVER_PORT}:${SERVER_PORT}"
-    depends_on:
-      - postgres
-    networks:
-      - awesome
+#  client:
+#    container_name: server1
+#    image: server1
+#    build:
+#      context: .
+#      dockerfile: ./DockerFile
+#      args:
+#        CLIENT_PORT: ${SERVER_PORT}
+#    restart: always
+#    env_file:
+#      - .env
+#    ports:
+#      - "${SERVER_PORT}:${SERVER_PORT}"
+#    depends_on:
+#      - postgres
+#    networks:
+#      - awesome
   postgres:
     container_name: postgres
     image: postgres:14

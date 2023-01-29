@@ -2,3 +2,5 @@
 node_modules
 npm-debug
 dist
+error.log
+request.log

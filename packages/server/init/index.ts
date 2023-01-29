@@ -1,6 +1,6 @@
 import { Sequelize, SequelizeOptions } from 'sequelize-typescript'
 import { forumModel, forumPostsModel } from '../models'
-import { POSTGRES_DB, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_USER, dataBaseUrl } from '../utils/constants'
+import { dataBaseUrl, POSTGRES_DB, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_USER } from '../utils/constants'
 
 console.log(dataBaseUrl)
 const sequelizeOptions: SequelizeOptions = {
@@ -23,7 +23,7 @@ export const Forum = sequelize.define('forum', forumModel, { timestamps: true })
 export const ForumPosts = sequelize.define('forumPosts', forumPostsModel, {})
 
 // Связки
-Forum.hasMany(ForumPosts)
+Forum.hasMany(ForumPosts, { onDelete: 'cascade', hooks: true })
 ForumPosts.belongsTo(Forum)
 
 export async function dbConnect() {
