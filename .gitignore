@@ -8,3 +8,5 @@ lerna-debug.log
 .DS_Store
 postgresdata
 src
+error.log
+request.log
