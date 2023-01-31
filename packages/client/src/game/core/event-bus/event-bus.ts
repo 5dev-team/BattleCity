@@ -1,7 +1,3 @@
-interface NormalObject<T> {
-  [key: string]: T
-}
-
 type IFn = (params?: any) => unknown
 
 class EventBus {

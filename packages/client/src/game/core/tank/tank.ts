@@ -1,14 +1,22 @@
 import GameObject from '@/game/core/game-object/game-object'
 import { GameObjectArgs } from '@/game/core/types'
 import Bullet from '@/game/core/bullet/bullet'
-import { TANK_HEIGHT, TANK_SPEED, TANK_TURN_THRESHOLD, TANK_WIDTH, TILE_SIZE } from '@/game/helpers/constants'
+import {
+  Direction, TANK_EXPLOSION_HEIGHT, TANK_EXPLOSION_WIDTH,
+  TANK_HEIGHT,
+  TANK_SPEED,
+  TANK_TURN_THRESHOLD,
+  TANK_WIDTH,
+  TILE_SIZE
+} from '@/game/helpers/constants'
+import TankExplosion from '@/game/core/tank-explosion/tank-explosion'
 
 export default class Tank extends GameObject {
   protected speed: number
   private readonly bulletSpeed: number
   protected bullet: null | Bullet
   protected direction: number
-  protected explosion: boolean | null
+  protected explosion:  TankExplosion | null
   public name: string
   
   constructor(args: Partial<GameObjectArgs>) {
@@ -23,6 +31,10 @@ export default class Tank extends GameObject {
   
   public get sprite() {
     return this.sprites[this.direction * 2 + this.animationFrame]
+  }
+  
+  public get isExploding() {
+    return Boolean(this.explosion?.isExploding)
   }
   
   public turn(direction: number) {
@@ -94,24 +106,22 @@ export default class Tank extends GameObject {
     }
   }
   
-  public getBulletStartingPosition(): number[] {
-    switch (this.direction) {
-      case Tank.Direction.UP:
-        return [this.left + 10, this.top - 6]
-      case Tank.Direction.RIGHT:
-        return [this.right - 1, this.top + 12]
-      case Tank.Direction.DOWN:
-        return [this.left + 10, this.bottom - 1]
-      case Tank.Direction.LEFT:
-        return [this.left - 6, this.top + 12]
-      default:
-        return [this.left + 10, this.top]
-    }
+  hit() {
+    this.explode()
+    this.destroy()
   }
   
-  hit() {
-    // this.explode();
-    this.destroy()
+  explode() {
+    if (this.isExploding) return
+    
+    const [x, y] = this.getExplosionStartingPosition()
+    
+    this.explosion = new TankExplosion({
+      x,
+      y
+    })
+    
+    this.emit('explode', this.explosion)
   }
   
   destroy() {
@@ -120,5 +130,27 @@ export default class Tank extends GameObject {
     this.explosion = null
     
     this.emit('destroyed', this)
+  }
+  
+  getBulletStartingPosition() {
+    switch (this.direction) {
+      case Direction.UP:
+        return [this.left + 12, this.top - 4]
+      case Direction.RIGHT:
+        return [this.right - 8, this.top + 12]
+      case Direction.DOWN:
+        return [this.left + 12, this.bottom - 8]
+      case Direction.LEFT:
+        return [this.left, this.top + 12]
+      default:
+        return [this.left, this.top]
+    }
+  }
+  
+  getExplosionStartingPosition() {
+    return [
+      this.left - TANK_EXPLOSION_WIDTH * 0.25,
+      this.top - TANK_EXPLOSION_HEIGHT* 0.25
+    ]
   }
 }

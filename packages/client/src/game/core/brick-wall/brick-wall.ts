@@ -1,7 +1,7 @@
 import { WallArgs } from '@/game/core/wall/types'
 import Wall from '@/game/core/wall/Wall'
 import Bullet from '@/game/core/bullet/bullet'
-import { BRICK_WALL_SPRITES, Direction } from '@/game/helpers/constants'
+import { BRICK_WALL_SPRITE_MAP, BRICK_WALL_SPRITES, Direction } from '@/game/helpers/constants'
 import Stage from '@/game/core/stage/stage'
 
 export default class BrickWall extends Wall {
@@ -17,6 +17,10 @@ export default class BrickWall extends Wall {
     }
   }
   
+  get sprite() {
+    return this.sprites[BRICK_WALL_SPRITE_MAP[this.state]]
+  }
+  
   public hit(bullet: Bullet) {
     if (this.isDestroyed) return
     
@@ -28,16 +32,16 @@ export default class BrickWall extends Wall {
     
     switch (bullet.direction) {
       case Direction.UP:
-        this.state = this.state | 0b0001
+        this.state = this.state | 0b1000
         break
       case Direction.RIGHT:
-        this.state = this.state | 0b0010
+        this.state = this.state | 0b0001
         break
       case Direction.DOWN:
-        this.state = this.state | 0b0100
+        this.state = this.state | 0b0010
         break
       case Direction.LEFT:
-        this.state = this.state | 0b1000
+        this.state = this.state | 0b0100
         break
     }
   }

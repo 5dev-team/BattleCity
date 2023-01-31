@@ -1,5 +1,4 @@
 import Wall from '@/game/core/wall/Wall'
-import Bullet from '@/game/core/bullet/bullet'
 import { WallArgs } from '@/game/core/wall/types'
 import { STEEL_WALL_SPRITES } from '@/game/helpers/constants'
 
@@ -9,8 +8,8 @@ export default class SteelWall extends Wall {
     this.name = 'steel-wall'
     this.objectType = 'steelWall'
   }
-
-  public hit(): void {
-    // console.log('BOOM', this, bullet)
+  
+  public hit() {
+    if (this.isDestroyed) return
   }
 }

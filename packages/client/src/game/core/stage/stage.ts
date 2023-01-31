@@ -10,6 +10,7 @@ import { STAGE_SIZE, TILE_SIZE } from '@/game/helpers/constants'
 import EnemyTank from '@/game/core/enemy-tank/enemy-tank'
 import EventBus from '@/game/core/event-bus/event-bus'
 import Explosion from '@/game/core/explosion/explosion'
+import { controllerModeType } from '@/game/helpers/types'
 
 export default class Stage extends EventBus {
   static TerrainType = {
@@ -20,6 +21,7 @@ export default class Stage extends EventBus {
     ICE: 5
   }
   private respawn: number
+  public stageIndex: number
   private enemies: EnemyTank[]
   private readonly playerTank: PlayerTank
   private readonly base: Base
@@ -65,9 +67,10 @@ export default class Stage extends EventBus {
   
   public readonly objects: Set<TObjects>
   
-  constructor(data: IStageConstructor, stageIndex: number) {
+  constructor(data: IStageConstructor, stageIndex: number, controllerMode: controllerModeType) {
     super()
     //TODO add 2 players: (1 - 1) and (2 - 1)
+    this.stageIndex = stageIndex
     this.respawn = (190 - stageIndex * 4 - (1 - 1) * 20) * 60
     this.enemies = Stage.createEnemies(data.enemies)
     this.playerTank = new PlayerTank({})
@@ -89,9 +92,11 @@ export default class Stage extends EventBus {
     this.initListeners()
     
   }
+  
   public getPlayerTank() {
     return this.playerTank
   }
+  
   private initListeners() {
     
     this.on('killAll', () => {
@@ -107,7 +112,7 @@ export default class Stage extends EventBus {
         this.objects.add(bullet)
         bullet.on('explode', (explosion: Explosion) => {
           this.objects.add(explosion)
-
+          
           explosion.on('destroyed', () => {
             this.objects.delete(explosion)
           })
@@ -115,7 +120,7 @@ export default class Stage extends EventBus {
         
         bullet.on('destroyed', () => {
           this.objects.delete(bullet)
-
+          
         })
       })
       
@@ -130,26 +135,31 @@ export default class Stage extends EventBus {
       enemyTank.on('destroyed', () => {
         this.playerTank.getScore()[enemyTank.type] += 1
         this.removeEnemyTank(enemyTank)
-
+        
         if (this.enemyTankCount < 1) {
           this.emit('killAll')
         }
       })
+    })
+    
+    this.playerTank.on('destroyed', (tank: PlayerTank) => {
+      this.objects.delete(tank)
+    })
+    
+    this.playerTank.on('fire', bullet => {
+      this.objects.add(bullet)
       
-      this.playerTank.on('fire', bullet => {
-        this.objects.add(bullet)
+      bullet.on('explode', (explosion: Explosion) => {
+        this.objects.add(explosion)
         
-        bullet.on('explode', (explosion: Explosion) => {
-          this.objects.add(explosion)
-
-          explosion.on('destroyed', () => {
-            this.objects.delete(explosion)
-          })
+        explosion.on('destroyed', () => {
+          this.objects.delete(explosion)
         })
-        
-        bullet.on('destroyed', () => {
-          this.objects.delete(bullet)
-        })
+      })
+      
+      bullet.on('destroyed', () => {
+        console.log('desctoy player bullet')
+        this.objects.delete(bullet)
       })
     })
     
@@ -177,6 +187,10 @@ export default class Stage extends EventBus {
   
   public get left(): number {
     return 0
+  }
+  
+  public get getEnemies(): EnemyTank[]  {
+    return this.enemies
   }
   
   public update(stage: Omit<UpdateState, 'world'>): void {
@@ -241,23 +255,23 @@ export default class Stage extends EventBus {
   private haveCollision(a: TObjects, b: Wall) {
     if (a) {
       if (a.objectType === 'enemyTank' && b.objectType === 'playerTank') {
-        if (        a.left < b.right &&
+        if (a.left < b.right &&
           a.right > b.left &&
           a.top < b.bottom &&
           a.bottom > b.top) {
-           if (
-             Math.abs(b.left - a.left) < 30 ||
-             Math.abs(b.right - a.right) < 30 ||
-             Math.abs(b.top - a.top) < 30 ||
-             Math.abs(b.bottom - a.bottom) < 30
-           ) {
-             return false
-           } else {
-             return true
-           }
-
+          if (
+            Math.abs(b.left - a.left) < 30 ||
+            Math.abs(b.right - a.right) < 30 ||
+            Math.abs(b.top - a.top) < 30 ||
+            Math.abs(b.bottom - a.bottom) < 30
+          ) {
+            return false
+          } else {
+            return true
+          }
+          
         }
-
+        
       }
       return (
         a.left < b.right &&

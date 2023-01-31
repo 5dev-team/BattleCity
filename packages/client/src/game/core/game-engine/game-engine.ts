@@ -4,6 +4,7 @@ import Stage from '@/game/core/stage/stage'
 import { IGameConstructor, IGameOverData } from '@/game/core/game-engine/types'
 import { Level } from '@/game/helpers/levels'
 import PlayerTank from '@/game/core/player-tank/player-tank'
+import { controllerModeType } from '@/game/helpers/types'
 
 export default class GameEngine {
   private readonly input: Input
@@ -14,11 +15,12 @@ export default class GameEngine {
   private stage: Stage | null
   private lastFrame: number
   private frames: number
+  public controllerMode: controllerModeType
   private isGameOver: boolean
   private debugMode: boolean
   private pause: boolean
   private readonly stageIndex: number
-
+  
   constructor({ input, view, levels }: IGameConstructor) {
     this.input = input
     this.view = view
@@ -26,6 +28,7 @@ export default class GameEngine {
     this.player1 = null
     this.player2 = null
     this.stage = null
+    this.controllerMode = 'KEYBOARD'
     this.stageIndex = 0
     this.frames = 0
     this.lastFrame = 0
@@ -50,17 +53,20 @@ export default class GameEngine {
         }
       })
     }
-
+    
     await this.view.init()
   }
-
+  
   public start(
-    resolve: (value: IGameOverData | PromiseLike<IGameOverData>) => void, debug = false
+    resolve: (value: IGameOverData | PromiseLike<IGameOverData>) => void, controllerMode: controllerModeType = 'KEYBOARD'
   ): void {
-    this.debugMode = debug
-    this.stage = new Stage(this.stages[this.stageIndex], this.stageIndex)
+    if (controllerMode !== 'KEYBOARD') {
+      this.controllerMode = controllerMode
+    }
+    
+    this.stage = new Stage(this.stages[this.stageIndex], this.stageIndex, this.controllerMode)
     this.setPlayerFirst(this.stage.getPlayerTank())
-
+    
     this.stage.on('gameOver', () => {
       const playerFirst = this.getPlayerFirst()
       if (!playerFirst) {
@@ -68,20 +74,25 @@ export default class GameEngine {
       }
       this.isGameOver = true
       resolve({
-        gameOverData: [{ scores: playerFirst.getScore() }],
+        gameOverData: [{ scores: playerFirst.getScore() }]
       })
     })
-
+    
     requestAnimationFrame(this.loop)
   }
-
+  
   private loop(currentFrame: number): void {
+    
+    if (this.controllerMode === 'GAMEPAD') {
+      this.input.controllerInput()
+    }
+    
     const frameDelta: number = currentFrame - this.lastFrame
     if (this.stage instanceof Stage) {
       this.stage.update({ input: this.input, frameDelta })
     }
     if (this.stage) {
-      this.view.update(this.stage)
+      this.view.update(this.stage, this.player1, this.player2)
     }
     this.frames = 0
     this.lastFrame = currentFrame
@@ -93,20 +104,13 @@ export default class GameEngine {
       }
     }
   }
-
+  
   getPlayerFirst(): PlayerTank | null {
     return this.player1
   }
-
+  
   setPlayerFirst(player: PlayerTank) {
     this.player1 = player
   }
-
-  getPlayerSecond(): PlayerTank | null {
-    return this.player2
-  }
-
-  setPlayerSecond(player: PlayerTank) {
-    this.player2 = player
-  }
+  
 }

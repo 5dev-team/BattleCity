@@ -1,4 +1,3 @@
-import Input from '@/game/core/input/input'
 import Stage from '@/game/core/stage/stage'
 import Tank from '@/game/core/tank/tank'
 import { ENEMY_TANK_SPRITES, ENEMY_TANK_START_POSITIONS, TANK_SPEED } from '@/game/helpers/constants'
@@ -92,11 +91,9 @@ export default class EnemyTank extends Tank {
   
   update({
            world,
-           input,
            frameDelta
          }: {
     world: Stage
-    input: Input
     frameDelta: number
   }): void {
     if (this.isDestroyed) {

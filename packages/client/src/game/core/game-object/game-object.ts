@@ -11,8 +11,8 @@ export default class GameObject extends EventBus {
     LEFT: 3
   }
   public debug: boolean
-  protected x: number
-  protected y: number
+  public x: number
+  public y: number
   public readonly width: number
   public readonly height: number
   public readonly sprites: Sprites
@@ -25,6 +25,7 @@ export default class GameObject extends EventBus {
   
   public id: number
   protected speed: number
+  protected animationSpeed: number
   
   constructor({ x, y, width, height, sprites }: GameObjectArgs) {
     super()
@@ -34,6 +35,7 @@ export default class GameObject extends EventBus {
     this.width = width
     this.height = height
     this.speed = 0
+    this.animationSpeed = 0
     this.sprites = sprites
     this.animationFrame = 0
     this.frames = 0
