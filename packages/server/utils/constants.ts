@@ -11,17 +11,21 @@ export const {
   POSTGRES_DB,
   POSTGRES_PORT,
   DOMAIN,
+  YANDEX_API
 } = process.env
 
+//TODO если будет 1 домен для апи и для фронта, удалить
 export const origin: string[]  = NODE_ENV === 'production'
   ? [`http://${DOMAIN}`, `https://${DOMAIN}`]
-  : ['http://localhost:3001', 'http://localhost:3000']
+  : ['http://localhost:3000', 'http://localhost:3000']
 
 export const corsOptions = {
   origin: origin,
   credentials: true,  //access-control-allow-credentials:true
   optionSuccessStatus: 200
 }
+
+export const isDev = () => NODE_ENV === 'development'
 
 export const dataBaseUrl = NODE_ENV === 'production' ? 'postgres' : 'localhost'
 

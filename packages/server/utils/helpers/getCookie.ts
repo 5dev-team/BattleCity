@@ -31,10 +31,15 @@ export function getCookie(req: Request): IResponseCookie {
     cookie.split('; ').map((value) => {
       const parser: string[] = value.split('=')
       if (parser[0] === nameCookie.AUTH_COOKIE) {
-        parser[1].length === 53 && (defaultState.authCookie.state = true, defaultState.authCookie.value = parser[1])
+        defaultState.authCookie.value = parser[1]
+        defaultState.authCookie.state = true
       }
       if (parser[0] === nameCookie.UUID4) {
-        parser[1].length === 36 && (defaultState.uuid.state = true, defaultState.uuid.value = parser[1])
+        defaultState.uuid.value = parser[1]
+        defaultState.uuid.state = true
+      }
+      if (defaultState.uuid.state && defaultState.authCookie.state) {
+        defaultState.generalState = true
       }
     })
     return defaultState

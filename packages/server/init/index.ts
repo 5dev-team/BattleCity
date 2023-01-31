@@ -9,7 +9,7 @@ const sequelizeOptions: SequelizeOptions = {
   password: POSTGRES_PASSWORD,
   database: POSTGRES_DB,
   dialect: 'postgres', // 'mysql', 'sqlite', 'mariadb', 'mssql'
-  logging: false // отключаем логирование в консоле!
+  logging: false // отключаем логирование в console!
 }
 
 // Создаем инстанс Sequelize

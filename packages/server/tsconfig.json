@@ -20,17 +20,12 @@
     "noUnusedLocals": true,
     "forceConsistentCasingInFileNames": true,
     "importsNotUsedAsValues": "error",
+    "lib": ["es2021", "dom"],
+    "baseUrl": ".",
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "lib": [
-      "es2019",
-      "esnext.asynciterable"
-    ],
-    "baseUrl": "./",
     "paths": {
-      "const/*": [
-        "./utils/constants/*"
-      ]
+      "*": ["types/*"]
     },
     "typeRoots": [
       "@types/jest",
@@ -47,4 +42,3 @@
     "**/tests/*.test.ts"
   ]
 }
-

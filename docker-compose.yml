@@ -1,23 +1,23 @@
 version: "3.9"
 services:
-  client:
-    container_name: server
-    image: server
-    depends_on:
-      - postgres
-      - pgadmin
-    build:
-      context: .
-      dockerfile: ./DockerFile
-      args:
-        CLIENT_PORT: ${SERVER_PORT}
-    restart: always
-    env_file:
-      - .env
-    ports:
-      - "${SERVER_PORT}:${SERVER_PORT}"
-    networks:
-      - awesome
+#  client:
+  #    container_name: server
+  #    image: server
+  #    depends_on:
+  #      - postgres
+  #      - pgadmin
+  #    build:
+  #      context: .
+  #      dockerfile: ./DockerFile
+  #      args:
+  #        CLIENT_PORT: ${SERVER_PORT}
+  #    restart: always
+  #    env_file:
+  #      - .env
+  #    ports:
+  #      - "${SERVER_PORT}:${SERVER_PORT}"
+  #    networks:
+  #      - awesome
   postgres:
     container_name: postgres
     image: postgres:14
@@ -25,7 +25,7 @@ services:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     volumes:
       - ./postgresdata:/var/lib/postgresql/data
-      - ./src/migrations/dbinit.sql:/docker-entrypoint-initdb.d/dbinit.sql
+      - ./sql/migrations/dbinit.sql:/docker-entrypoint-initdb.d/dbinit.sql
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}

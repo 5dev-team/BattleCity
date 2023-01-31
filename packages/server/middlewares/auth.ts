@@ -6,6 +6,7 @@ import type { AxiosResponse } from 'axios'
 
 export async function isAuthorized(req: Request, _res: Response, next: NextFunction) {
   const cookie = getCookie(req)
+
   if (cookie.defaultCookie) {
     await getUsers(cookie.defaultCookie).then((response: AxiosResponse<GetUsersResponse>) => {
       req.userId = response.data.id
