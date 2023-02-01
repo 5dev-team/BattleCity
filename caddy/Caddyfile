@@ -1,0 +1,3 @@
+battlecity.event-tracker.online {
+	reverse_proxy client:3000
+}
