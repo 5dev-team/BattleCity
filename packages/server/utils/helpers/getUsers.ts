@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { YANDEX_API } from '../constants'
 
 export type GetUsersResponse = {
   id: number
@@ -7,7 +6,7 @@ export type GetUsersResponse = {
 }
 
 export async function getUsers(cookie: string) {
-  return axios.get<GetUsersResponse>(`${YANDEX_API}/auth/user`, {
+  return axios.get<GetUsersResponse>(`http://localhost:3000/api/v2/auth/user`, {
     headers: {
       Cookie: cookie
     }

@@ -5,7 +5,6 @@ services:
     image: server
     depends_on:
       - postgres
-      - pgadmin
     build:
       context: .
       dockerfile: ./DockerFile
@@ -39,6 +38,8 @@ services:
       - './caddy/config:/config'
     ports:
       - 443:443
+    networks:
+      - awesome
 
 networks:
   awesome:
