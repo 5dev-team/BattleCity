@@ -27,8 +27,10 @@
     "paths": {
       "*": ["types/*"]
     },
+    "types": [
+      "@types/jest"
+    ],
     "typeRoots": [
-      "@types/jest",
       "@types",
       "./node_modules/@types"
     ],
@@ -39,6 +41,7 @@
     "**/dist/**/*.d.ts",
     "dist",
     "node_modules",
-    "**/tests/*.test.ts"
+    "**/tests/*.test.ts",
+    "**/*.test.ts"
   ]
 }

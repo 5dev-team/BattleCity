@@ -2,17 +2,11 @@ FROM node:18-alpine as build
 
 WORKDIR ./var/app
 
-COPY ./packages/server .
+COPY . .
 
-
-RUN yarn install && yarn rimraf dist
-
+RUN yarn install
 RUN yarn build
-
-RUN ls | grep -v dist | grep -v node_modules | xargs rm -rfv
-
-WORKDIR ./dist
 
 EXPOSE $SERVER_PORT
 
-CMD [ "node", "index.js" ]
+CMD [ "yarn", "preview", "--scope=server" ]

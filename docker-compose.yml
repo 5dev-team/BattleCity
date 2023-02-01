@@ -1,23 +1,23 @@
 version: "3.9"
 services:
-#  client:
-  #    container_name: server
-  #    image: server
-  #    depends_on:
-  #      - postgres
-  #      - pgadmin
-  #    build:
-  #      context: .
-  #      dockerfile: ./DockerFile
-  #      args:
-  #        CLIENT_PORT: ${SERVER_PORT}
-  #    restart: always
-  #    env_file:
-  #      - .env
-  #    ports:
-  #      - "${SERVER_PORT}:${SERVER_PORT}"
-  #    networks:
-  #      - awesome
+  client:
+    container_name: server
+    image: server
+    depends_on:
+      - postgres
+      - pgadmin
+    build:
+      context: .
+      dockerfile: ./DockerFile
+      args:
+        CLIENT_PORT: ${SERVER_PORT}
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    networks:
+      - awesome
   postgres:
     container_name: postgres
     image: postgres:14
@@ -36,6 +36,8 @@ services:
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4:4.18
+    depends_on:
+      - postgres
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
@@ -45,8 +47,6 @@ services:
       - "8080:80"
     volumes:
       - pgadmin-data:/var/lib/pgadmin
-    depends_on:
-      - postgres
     networks:
       - awesome
 
