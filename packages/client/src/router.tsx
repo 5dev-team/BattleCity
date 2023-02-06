@@ -22,7 +22,7 @@ export enum RoutePaths {
   ERROR500 = '/500',
   FORUM = '/forum',
   PROFILE = '/profile',
-  COMMENTS = '/forum/:title',
+  COMMENTS = '/forum/:forumId',
 }
 
 export const Router = () => {

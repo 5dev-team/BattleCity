@@ -35,6 +35,7 @@ export default defineConfig(({ command, mode }) => {
     define: {
       __SERVER_PORT__: process.env.SERVER_PORT,
       __YANDEX_API__: JSON.stringify(process.env.YANDEX_API.trim()),
+      __OWN_BACKEND_API__: JSON.stringify(process.env.OWN_BACKEND_API.trim()),
       __YANDEX_OAUTH_URL__: JSON.stringify(process.env.YANDEX_OAUTH_URL.trim()),
       __YANDEX_REDIRECT_URI__: JSON.stringify(process.env.YANDEX_REDIRECT_URI.trim()),
     },
