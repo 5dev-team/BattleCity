@@ -1,0 +1,42 @@
+.leaderboard {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  &__container {
+    max-width: 800px;
+  }
+
+}
+
+.table {
+  display: grid;
+  grid-template-columns: 100px repeat(4, minmax(150px, 1fr));
+
+  &__col {
+    padding: 20px;
+    word-break: break-all
+  }
+
+  &__row {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 100px repeat(4, minmax(150px, 1fr));
+    margin: 4px;
+    padding: 0;
+    border: none;
+  }
+}
+
+.control-wrapper {
+  width: 100%;
+  margin: 30px 0 0;
+  display: flex;
+  justify-content: center;
+}
+
+.control-page-buttons {
+  justify-content: space-between;
+}

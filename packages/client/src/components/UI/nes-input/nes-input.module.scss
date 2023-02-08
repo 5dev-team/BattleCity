@@ -1,0 +1,25 @@
+.plaintext {
+  background-color: transparent;
+  border: 4px solid transparent;
+  display: block;
+  padding: 6px 8px;
+  line-height: 1.5;
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.plaintext:focus {
+  outline: 0;
+}
+
+.nes-input {
+  &__input {
+    margin: 0;
+    box-sizing: border-box;
+    text-align: left;
+  }
+}
+
+input[plain='true'] {
+  pointer-events: none;
+} 

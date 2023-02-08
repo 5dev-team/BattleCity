@@ -1,0 +1,33 @@
+.sign-up {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &__card {
+    width: 500px;
+    @media (max-width: 550px) {
+      width: 100%;
+      padding: 20px;
+    }
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 20px;
+    @media (max-height: 800px) {
+      flex-flow: row wrap;
+
+      & > * {
+        width: 45%;
+      }
+    }
+  }
+}
