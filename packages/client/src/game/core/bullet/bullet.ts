@@ -1,86 +1,75 @@
-import { GameObjectArgs, IHitable } from '@/game/core/types'
+import { GameObjectArgs } from '@/game/core/types'
 import Explosion from '@/game/core/explosion/explosion'
 import GameObject from '@/game/core/game-object/game-object'
 import Stage from '@/game/core/stage/stage'
 import { TObjects } from '@/game/core/stage/types'
-import {
-  PROJECTILE_HEIGHT,
-  PROJECTILE_SPEED,
-  PROJECTILE_SPRITES,
-  PROJECTILE_WIDTH,
-} from '@/game/helpers/constants'
-import {
-  getAxisForDirection,
-  getValueForDirection,
-} from '@/game/helpers/helpers'
+import { BULLET_HEIGHT, BULLET_SPEED, BULLET_SPRITES, BULLET_WIDTH } from '@/game/helpers/constants'
+import { getAxisForDirection, getValueForDirection } from '@/game/helpers/helpers'
+import Tank from '@/game/core/tank/tank'
+import BulletExplosion from '@/game/core/bullet-explosion/bullet-explosion'
+import { singleSprite } from '@/game/helpers/types'
 
 export default class Bullet extends GameObject {
-  private type: string
-  private readonly direction: number
-  private speed: number
+  public readonly direction: number
+  private tank: Tank | null
   private explosion: null | Explosion
   private readonly onCollide?: () => void
-
+  
   constructor(
     direction: number,
     x = 0,
     y = 0,
-    speed = PROJECTILE_SPEED,
+    speed = BULLET_SPEED,
+    tank: Tank,
     onCollide?: () => void
   ) {
     super({
       x,
       y,
-      width: PROJECTILE_WIDTH,
-      height: PROJECTILE_HEIGHT,
-      sprites: PROJECTILE_SPRITES,
+      width: BULLET_WIDTH,
+      height: BULLET_HEIGHT,
+      sprites: BULLET_SPRITES
     } as GameObjectArgs)
-    this.type = 'bullet'
     this.direction = direction
     this.explosion = null
     this.speed = speed
     this.onCollide = onCollide
+    this.tank = tank
+    this.name = 'bullet'
+    this.objectType = 'bullet'
   }
-
-  get sprite(): number[] {
+  
+  get sprite(): singleSprite {
     return this.sprites[this.direction]
   }
-
+  
+  get isFromPlayerTank() {
+    return this.tank?.objectType === 'playerTank'
+  }
+  
+  get isFromEnemyTank() {
+    return this.tank?.objectType === 'enemyTank'
+  }
+  
   public update({ world }: { world: Stage }): void {
     const axis = getAxisForDirection(this.direction)
     const value = getValueForDirection(this.direction)
-
+    
     this.move(axis, value)
-
+    
     const isOutOfBounds = world.isOutOfBounds(this)
     const collision = world.getCollision(this)
-
     if (isOutOfBounds) {
-      this.destroy(world)
+      this.destroy()
     } else if (collision) {
       if (collision && this.collide([...collision.objects])) {
-        this.destroy(world)
+        this.stop()
+        this.explode()
       }
     }
   }
-
-  private destroy(stage: Stage) {
-    this.speed = 0
-
-    if (!this.explosion) {
-      const [x, y]: number[] = this.getExplosionStartingPosition()
-
-      this.explosion = new Explosion(x, y)
-
-      stage.objects.add(this.explosion)
-    } else if (this.explosion.exploded) {
-      stage.objects.delete(this.explosion) // удаляем взрыв из мира
-      stage.objects.delete(this) // удаляем projectile из мира
-      if (this.onCollide) this.onCollide()
-      this.explosion = null
-    }
-  }
-
+  
+  
   private move(axis: string, value: number): void {
     if (axis === 'y') {
       this.y += value * this.speed
@@ -89,17 +78,58 @@ export default class Bullet extends GameObject {
       this.x += value * this.speed
     }
   }
-
-  private collide(objects: TObjects[]): boolean {
-    const hitableObjs = objects
-      .filter(obj => obj !== undefined && 'hit' in obj)
-      .map(obj => obj as IHitable)
-    const hit = hitableObjs.length
-    hitableObjs.forEach(hitable => hitable.hit(this))
-
-    return !!hit
+  
+  shouldCollide(object: TObjects) {
+    if (object && object.objectType) {
+      switch (object.objectType) {
+        case 'base':
+        case 'brickWall':
+        case 'steelWall':
+          return true
+        case 'bullet':
+          return (
+            (this.isFromEnemyTank && (object as Bullet).isFromPlayerTank) ||
+            (this.isFromPlayerTank && (object as Bullet).isFromEnemyTank)
+          )
+        case 'playerTank':
+          return this.isFromEnemyTank
+        case 'enemyTank':
+          return this.isFromPlayerTank
+        default:
+          return false
+      }
+    }
   }
-
+  
+  
+  shouldExplode(object: TObjects) {
+    return object.objectType !== 'bullet'
+  }
+  
+  private collide(objects: TObjects[]): boolean {
+    let shouldExplode = false
+    
+    for (const object of objects) {
+      if (!this.shouldCollide(object)) continue
+      
+      object?.hit(this)
+      shouldExplode = this.shouldExplode(object)
+    }
+    
+    return shouldExplode
+  }
+  
+  hit() {
+    this.stop()
+    this.destroy()
+  }
+  
+  private destroy() {
+    this.tank = null
+    this.explosion = null
+    this.emit('destroyed', this)
+  }
+  
   private getExplosionStartingPosition(): number[] {
     switch (this.direction) {
       case GameObject.Direction.UP:
@@ -114,4 +144,13 @@ export default class Bullet extends GameObject {
         return [this.left - 10, this.top - 12]
     }
   }
+  
+  explode() {
+    const [x, y] = this.getExplosionStartingPosition()
+    this.explosion = new BulletExplosion({ x, y })
+    this.explosion.on('destroyed', () => this.destroy())
+    this.emit('explode', this.explosion)
+  }
+  
+  
 }
