@@ -4,5 +4,3 @@ node_modules/
 .vscode
 dist
 tmp
-lerna-debug.log
-.DS_Store
