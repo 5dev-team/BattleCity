@@ -2,10 +2,11 @@ import Wall from '@/game/core/wall/Wall'
 import Bullet from '@/game/core/bullet/bullet'
 import { WallArgs } from '@/game/core/wall/types'
 import { STEEL_WALL_SPRITES } from '@/game/helpers/constants'
+import { Vec2 } from '../types';
 
 export default class SteelWall extends Wall {
-  constructor(x: number, y: number) {
-    super({ x, y, sprites: STEEL_WALL_SPRITES } as WallArgs)
+  constructor(pos: Vec2) {
+    super(pos, STEEL_WALL_SPRITES)
   }
 
   public hit(bullet: Bullet): void {

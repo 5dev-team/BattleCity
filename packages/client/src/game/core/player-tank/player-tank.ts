@@ -10,16 +10,15 @@ import {
   getValueForDirection,
 } from '@/game/helpers/helpers'
 import Tank from '@/game/core/tank/tank'
-import { GameObjectArgs, IUpdatable, UpdateState } from '@/game/core/types'
+import { IUpdatable, UpdateState, Vec2 } from '@/game/core/types'
 
 export default class PlayerTank extends Tank implements IUpdatable {
   //TODO create uniq Tanks
-  constructor(args: Partial<GameObjectArgs>) {
-    super({ ...args, sprites: PLAYER1_TANK_SPRITES })
-    this.x = args.x ? args.x : PLAYER1_TANK_POSITION[0]
-    this.y = args.y ? args.y : PLAYER1_TANK_POSITION[1]
-    this.direction = Tank.Direction.UP
-    this.speed = TANK_SPEED
+  constructor(pos?: Vec2) {
+    super(
+      pos ? pos : new Vec2(PLAYER1_TANK_POSITION[0], PLAYER1_TANK_POSITION[1]),
+      PLAYER1_TANK_SPRITES
+    )
   }
 
   update(state: UpdateState): void {

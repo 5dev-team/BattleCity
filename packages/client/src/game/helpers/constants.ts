@@ -13,20 +13,20 @@ export const Keys = {
   SPACE: 'Space',
 }
 
-export const Direction = {
-  UP: 0,
-  RIGHT: 1,
-  DOWN: 2,
-  LEFT: 3,
+export enum Direction {
+  UP,
+  RIGHT,
+  DOWN,
+  LEFT
 }
 
-export const ObjectType = {
-  BASE: 0,
-  BRICK_WALL: 1,
-  STEEL_WALL: 2,
-  TREE: 3,
-  WATER: 4,
-  ICE: 5,
+export enum ObjectType {
+  BASE,
+  BRICK_WALL,
+  STEEL_WALL,
+  TREE,
+  WATER,
+  ICE
 }
 
 export const PROJECTILE_WIDTH = 8

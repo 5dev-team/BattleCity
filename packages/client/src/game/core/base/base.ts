@@ -1,5 +1,5 @@
 import GameObject from '@/game/core/game-object/game-object'
-import { GameObjectArgs } from '@/game/core/types'
+import { GameObjectArgs, Rect, Vec2 } from '@/game/core/types'
 import {
   BASE_HEIGHT,
   BASE_POSITION,
@@ -11,14 +11,14 @@ export default class Base extends GameObject {
   private readonly destroyed: boolean
 
   constructor(args: Partial<GameObjectArgs>) {
-    super({
-      ...args,
-      x: BASE_POSITION[0],
-      y: BASE_POSITION[1],
-      width: BASE_WIDTH,
-      height: BASE_HEIGHT,
-      sprites: BASE_SPRITES,
-    })
+    super(
+      new Rect(
+        new Vec2(BASE_POSITION[0], BASE_POSITION[1]),
+        BASE_WIDTH,
+        BASE_HEIGHT
+      ),
+      BASE_SPRITES
+    )
     this.destroyed = false // isDestroyed? целая ли база?
   }
 

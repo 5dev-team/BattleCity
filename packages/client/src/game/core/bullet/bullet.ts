@@ -1,9 +1,10 @@
-import { GameObjectArgs, IHitable } from '@/game/core/types'
+import { GameObjectArgs, IHitable, Rect, Vec2 } from '@/game/core/types'
 import Explosion from '@/game/core/explosion/explosion'
 import GameObject from '@/game/core/game-object/game-object'
 import Stage from '@/game/core/stage/stage'
 import { TObjects } from '@/game/core/stage/types'
 import {
+  Direction,
   PROJECTILE_HEIGHT,
   PROJECTILE_SPEED,
   PROJECTILE_SPRITES,
@@ -16,25 +17,18 @@ import {
 
 export default class Bullet extends GameObject {
   private type: string
-  private readonly direction: number
+  private readonly direction: Direction
   private speed: number
   private explosion: null | Explosion
   private readonly onCollide?: () => void
 
   constructor(
-    direction: number,
-    x = 0,
-    y = 0,
+    pos = Vec2.zero,
+    direction: Direction,
     speed = PROJECTILE_SPEED,
     onCollide?: () => void
   ) {
-    super({
-      x,
-      y,
-      width: PROJECTILE_WIDTH,
-      height: PROJECTILE_HEIGHT,
-      sprites: PROJECTILE_SPRITES,
-    } as GameObjectArgs)
+    super(new Rect(pos,PROJECTILE_WIDTH, PROJECTILE_HEIGHT), PROJECTILE_SPRITES)
     this.type = 'bullet'
     this.direction = direction
     this.explosion = null
@@ -83,10 +77,10 @@ export default class Bullet extends GameObject {
 
   private move(axis: string, value: number): void {
     if (axis === 'y') {
-      this.y += value * this.speed
+      this.rect.pos.y += value * this.speed
     }
     if (axis === 'x') {
-      this.x += value * this.speed
+      this.rect.pos.x += value * this.speed
     }
   }
 
@@ -102,16 +96,16 @@ export default class Bullet extends GameObject {
 
   private getExplosionStartingPosition(): number[] {
     switch (this.direction) {
-      case GameObject.Direction.UP:
-        return [this.left - 10, this.top - 12]
-      case GameObject.Direction.RIGHT:
-        return [this.right - 16, this.top - 12]
-      case GameObject.Direction.DOWN:
-        return [this.left - 10, this.bottom - 16]
-      case GameObject.Direction.LEFT:
-        return [this.left - 16, this.top - 12]
+      case Direction.UP:
+        return [this.rect.left - 10, this.rect.top - 12]
+      case Direction.RIGHT:
+        return [this.rect.right - 16, this.rect.top - 12]
+      case Direction.DOWN:
+        return [this.rect.left - 10, this.rect.bottom - 16]
+      case Direction.LEFT:
+        return [this.rect.left - 16, this.rect.top - 12]
       default:
-        return [this.left - 10, this.top - 12]
+        return [this.rect.left - 10, this.rect.top - 12]
     }
   }
 }

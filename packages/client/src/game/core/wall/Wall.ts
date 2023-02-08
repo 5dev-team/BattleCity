@@ -1,17 +1,16 @@
 import GameObject from '@/game/core/game-object/game-object'
-import { IHitable } from '@/game/core/types'
+import { IHitable, Rect, Vec2 } from '@/game/core/types'
 import Bullet from '@/game/core/bullet/bullet'
 import { WallArgs } from '@/game/core/wall/types'
 import { TILE_SIZE } from '@/game/helpers/constants'
+import { Sprites } from '@/game/helpers/types';
 
 export default abstract class Wall extends GameObject implements IHitable{
   public damage: number
-  private type: string | undefined
 
-  protected constructor({ sprites, ...args }: WallArgs) {
-    super({...args, width: TILE_SIZE, height: TILE_SIZE, sprites})
+  protected constructor(pos: Vec2, sprites: Sprites) {
+    super(new Rect(pos, TILE_SIZE, TILE_SIZE), sprites)
     this.damage = 0
-    this.type = args.type
   }
 
   get sprite() {

@@ -37,19 +37,18 @@ export default class View {
     if (objects) {
       for (const object of objects.objects) {
         if (object) {
-          const { width, height, sprite }: IObjectOfWorld = object
-          if (!sprite) return
-          const [sp1, sp2, sp3, sp4]: number[] = sprite
+          if (!object.sprite) return
+          const [sp1, sp2, sp3, sp4]: number[] = object.sprite
           this.context.drawImage(
             this.sprite.image,
             sp1,
             sp2,
             sp3,
             sp4,
-            object.left,
-            object.top,
-            width,
-            height
+            object.rect.left,
+            object.rect.top,
+            object.rect.width,
+            object.rect.height
           )
         }
         // Включение дебага НЕ УДАЛЯТЬ! stage.getCollision

@@ -4,7 +4,7 @@ import Base from '@/game/core/base/base'
 import PlayerTank from '@/game/core/player-tank/player-tank'
 import Wall from '@/game/core/wall/Wall'
 import Bullet from '@/game/core/bullet/bullet'
-import { IUpdatable, UpdateState } from '@/game/core/types'
+import { IUpdatable, UpdateState, Vec2 } from '@/game/core/types'
 import { IStageConstructor, TObjects } from '@/game/core/stage/types'
 import { STAGE_SIZE, TILE_SIZE } from '@/game/helpers/constants'
 
@@ -17,14 +17,24 @@ export default class Stage implements IUpdatable {
     ICE: 5,
   }
 
-  static createObject(type: number, x: number, y: number): Wall | null {
+  public readonly objects: Set<TObjects>
+
+  constructor(data: IStageConstructor) {
+    this.objects = new Set([
+      new Base({}),
+      new PlayerTank(),
+      ...Stage.createTerrain(data.stage),
+    ])
+  }
+
+  static createObject(type: number, pos: Vec2): Wall | null {
     let wall: Wall | null = null
     switch (type) {
       case Stage.TerrainType.BRICK_WALL:
-        wall = new BrickWall(x, y) as Wall
+        wall = new BrickWall(pos)
         break
       case Stage.TerrainType.STEEL_WALL:
-        wall = new SteelWall(x, y) as Wall
+        wall = new SteelWall(pos)
         break
     }
     return wall
@@ -37,7 +47,10 @@ export default class Stage implements IUpdatable {
         const value = level[j][i]
 
         if (value) {
-          const object = Stage.createObject(value, i * TILE_SIZE, j * TILE_SIZE)
+          const object = Stage.createObject(
+            value,
+            new Vec2(i * TILE_SIZE, j * TILE_SIZE)
+          )
 
           objects.push(object ? object : undefined)
         }
@@ -50,16 +63,6 @@ export default class Stage implements IUpdatable {
   // static createEnemies(types) {
   //   return types.map(type => new EnemyTank({ type }));
   // }
-
-  public readonly objects: Set<TObjects>
-
-  constructor(data: IStageConstructor) {
-    this.objects = new Set([
-      new Base({}),
-      new PlayerTank({}),
-      ...Stage.createTerrain(data.stage),
-    ])
-  }
 
   public get width(): number {
     return STAGE_SIZE
@@ -104,10 +107,10 @@ export default class Stage implements IUpdatable {
 
   public isOutOfBounds(object: PlayerTank | Bullet): boolean {
     return (
-      object.top < this.top ||
-      object.right > this.right ||
-      object.bottom > this.bottom ||
-      object.left < this.left
+      object.rect.top < this.top ||
+      object.rect.right > this.right ||
+      object.rect.bottom > this.bottom ||
+      object.rect.left < this.left
     )
   }
 
@@ -144,10 +147,10 @@ export default class Stage implements IUpdatable {
   private haveCollision(a: TObjects, b: Wall) {
     if (a) {
       return (
-        a.left < b.right &&
-        a.right > b.left &&
-        a.top < b.bottom &&
-        a.bottom > b.top
+        a.rect.left < b.rect.right &&
+        a.rect.right > b.rect.left &&
+        a.rect.top < b.rect.bottom &&
+        a.rect.bottom > b.rect.top
       )
     } else {
       return false

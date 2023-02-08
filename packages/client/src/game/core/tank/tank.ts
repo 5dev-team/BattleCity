@@ -1,26 +1,28 @@
 import GameObject from '@/game/core/game-object/game-object'
-import { GameObjectArgs } from '@/game/core/types'
+import { IMovable, IUpdatable, Rect, Vec2 } from '@/game/core/types'
 import Bullet from '@/game/core/bullet/bullet'
 import {
+  Direction,
   TANK_HEIGHT,
   TANK_SPEED,
   TANK_TURN_THRESHOLD,
   TANK_WIDTH,
   TILE_SIZE,
 } from '@/game/helpers/constants'
+import { Sprites } from '@/game/helpers/types';
 
-export default class Tank extends GameObject {
+export default class Tank extends GameObject implements IMovable  {
   protected speed: number
-  private readonly bulletSpeed: number
   protected bullet: null | Bullet
-  protected direction: number
+  protected direction: Direction
+  private readonly bulletSpeed: number
 
-  constructor(args: Partial<GameObjectArgs>) {
-    super({ ...args, width: TANK_WIDTH, height: TANK_HEIGHT } as GameObjectArgs)
+  constructor(pos: Vec2, sprites: Sprites) {
+    super(new Rect(pos, TANK_WIDTH, TANK_HEIGHT), sprites)
     this.speed = TANK_SPEED
     this.bulletSpeed = 2
     this.bullet = null
-    this.direction = 0
+    this.direction = Direction.UP
   }
 
   public get sprite() {
@@ -33,34 +35,34 @@ export default class Tank extends GameObject {
     this.direction = direction
 
     if (
-      direction === GameObject.Direction.UP ||
-      direction === GameObject.Direction.DOWN
+      direction === Direction.UP ||
+      direction === Direction.DOWN
     ) {
-      if (prevDirection === GameObject.Direction.RIGHT) {
-        const value = TILE_SIZE - (this.x % TILE_SIZE)
+      if (prevDirection === Direction.RIGHT) {
+        const value = TILE_SIZE - (this.rect.pos.x % TILE_SIZE)
 
         if (value <= TANK_TURN_THRESHOLD) {
-          this.x += value
+          this.rect.pos.x += value
         }
-      } else if (prevDirection === GameObject.Direction.LEFT) {
-        const value = this.x % TILE_SIZE
+      } else if (prevDirection === Direction.LEFT) {
+        const value = this.rect.pos.x % TILE_SIZE
 
         if (value <= TANK_TURN_THRESHOLD) {
-          this.x -= value
+          this.rect.pos.x -= value
         }
       }
     } else {
-      if (prevDirection === GameObject.Direction.UP) {
-        const value = this.y % TILE_SIZE
+      if (prevDirection === Direction.UP) {
+        const value = this.rect.pos.y % TILE_SIZE
 
         if (value <= TANK_TURN_THRESHOLD) {
-          this.y -= value
+          this.rect.pos.y -= value
         }
-      } else if (prevDirection === GameObject.Direction.DOWN) {
-        const value = TILE_SIZE - (this.y % TILE_SIZE)
+      } else if (prevDirection === Direction.DOWN) {
+        const value = TILE_SIZE - (this.rect.pos.y % TILE_SIZE)
 
         if (value <= TANK_TURN_THRESHOLD) {
-          this.y += value
+          this.rect.pos.y += value
         }
       }
     }
@@ -68,10 +70,10 @@ export default class Tank extends GameObject {
 
   public move(axis: string, value: number): void {
     if (axis === 'y') {
-      this.y += value * this.speed
+      this.rect.pos.y += value * this.speed
     }
     if (axis === 'x') {
-      this.x += value * this.speed
+      this.rect.pos.x += value * this.speed
     }
   }
 
@@ -79,7 +81,7 @@ export default class Tank extends GameObject {
     if (!this.bullet) {
       const [x, y] = this.getBulletStartingPosition()
 
-      this.bullet = new Bullet(this.direction, x, y, this.bulletSpeed, () => {
+      this.bullet = new Bullet(new Vec2(x, y), this.direction, this.bulletSpeed, () => {
         this.bullet = null
       })
     }
@@ -96,16 +98,16 @@ export default class Tank extends GameObject {
 
   public getBulletStartingPosition(): number[] {
     switch (this.direction) {
-      case Tank.Direction.UP:
-        return [this.left + 10, this.top]
-      case Tank.Direction.RIGHT:
-        return [this.right - 8, this.top + 12]
-      case Tank.Direction.DOWN:
-        return [this.left + 10, this.bottom - 8]
-      case Tank.Direction.LEFT:
-        return [this.left, this.top + 12]
+      case Direction.UP:
+        return [this.rect.left + 10, this.rect.top]
+      case Direction.RIGHT:
+        return [this.rect.right - 8, this.rect.top + 12]
+      case Direction.DOWN:
+        return [this.rect.left + 10, this.rect.bottom - 8]
+      case Direction.LEFT:
+        return [this.rect.left, this.rect.top + 12]
       default:
-        return [this.left + 10, this.top]
+        return [this.rect.left + 10, this.rect.top]
     }
   }
 }

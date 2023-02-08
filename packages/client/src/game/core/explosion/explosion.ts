@@ -1,5 +1,11 @@
 import GameObject from '@/game/core/game-object/game-object'
-import { GameObjectArgs, IUpdatable, UpdateState } from '@/game/core/types'
+import {
+  GameObjectArgs,
+  IUpdatable,
+  Rect,
+  UpdateState,
+  Vec2,
+} from '@/game/core/types'
 import {
   PROJECTILE_EXPLOSION_HEIGHT,
   PROJECTILE_EXPLOSION_SPEED,
@@ -12,13 +18,14 @@ export default class Explosion extends GameObject implements IUpdatable {
   private _exploded: boolean
 
   constructor(x: number, y: number) {
-    super({
-      width: PROJECTILE_EXPLOSION_WIDTH,
-      height: PROJECTILE_EXPLOSION_HEIGHT,
-      sprites: PROJECTILE_EXPLOSION_SPRITES,
-      x,
-      y,
-    } as GameObjectArgs)
+    super(
+      new Rect(
+        new Vec2(x, y),
+        PROJECTILE_EXPLOSION_WIDTH,
+        PROJECTILE_EXPLOSION_HEIGHT
+      ),
+      PROJECTILE_EXPLOSION_SPRITES
+    )
 
     this.speed = PROJECTILE_EXPLOSION_SPEED
 
