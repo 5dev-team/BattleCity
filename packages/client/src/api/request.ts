@@ -1,30 +1,17 @@
-import type { AxiosRequestConfig } from 'axios'
-import axios from 'axios'
-import { fetchUser } from '@/store/slices/auth'
-import { AppDispatch } from '@/store'
-import yandexOauth from '@/api/yandex-oauth'
+import { AxiosStatic, AxiosRequestConfig } from 'axios'
 
-export const interceptor = (dispatch: AppDispatch) => {
-  axios.interceptors.response.use(
-    response => {
-      return Promise.resolve(response)
-    },
-    error => {
-      if (error?.response?.status === 401) {
-        const yandexCodeParam = /code=([^&]+)/.exec(window.location.search)
+let axios: AxiosStatic | null = null
 
-        if (yandexCodeParam) {
-          const code = yandexCodeParam[1]
-          yandexOauth
-            .signIn({ code, redirect_uri: window.location.origin })
-            .then(() => dispatch(fetchUser()))
-        }
-      }
+export const request = async <T>(config: AxiosRequestConfig) => {
+  // ssr hack
+  if (axios === null) {
+    axios = await (await import('axios')).default
 
-      return Promise.reject(error?.response.data.reason || 'Server Error')
-    }
-  )
+    axios.interceptors.response.use(
+      response => Promise.resolve(response),
+      error => Promise.reject(error.response.data?.reason ?? 'Server error')
+    )
+  }
+
+  return axios.request<never, T>({ ...config, withCredentials: true })
 }
-
-export const request = <T>(config: AxiosRequestConfig) =>
-  axios.request<never, T>({ ...config, withCredentials: true })

@@ -30,20 +30,24 @@ export const fetchRegister = createAsyncThunk(
   (data: IRegisterRequest) => api.auth.register(data)
 )
 
-export const fetchYandexOauth = createAsyncThunk(
-  'oauth/fetchYandexOauth',
-  () =>
-    api.yandexOauth
-      .redirect(__YANDEX_REDIRECT_URI__)
-      .then(response => {
-        const data: IYandexAuthQueryParams = {
-          response_type: 'code',
-          client_id: response.data.service_id,
-          redirect_uri: __YANDEX_REDIRECT_URI__,
-        }
-        window.open(__YANDEX_OAUTH_URL__ + queryStringify(data), '_self')
-      })
-      .catch(reason => console.log('ERROR: Yandex oauth failed', reason))
+export const fetchYandexOauth = createAsyncThunk('oauth/fetchYandexOauth', () =>
+  api.yandexOauth
+    .redirect(__YANDEX_REDIRECT_URI__)
+    .then(response => {
+      const data: IYandexAuthQueryParams = {
+        response_type: 'code',
+        client_id: response.data.service_id,
+        redirect_uri: __YANDEX_REDIRECT_URI__,
+      }
+      window.open(__YANDEX_OAUTH_URL__ + queryStringify(data), '_self')
+    })
+    .catch(reason => console.log('ERROR: Yandex oauth failed', reason))
+)
+
+export const fetchYandexSignIn = createAsyncThunk(
+  'oauth/fetchYandexSignIn',
+  (code: string) =>
+    api.yandexOauth.signIn({ code, redirect_uri: window.location.origin })
 )
 
 export const fetchUser = createAsyncThunk('auth/fetchUser', () =>
@@ -101,6 +105,19 @@ export const authSlice = createSlice({
       state.isAuthLoading = false
       state.authError = error.message as string
     })
+
+    builder.addCase(fetchYandexSignIn.fulfilled, state => {
+      state.isAuthLoading = false
+      state.authError = ''
+    })
+    builder.addCase(fetchYandexSignIn.pending, state => {
+      state.isAuthLoading = true
+    })
+    builder.addCase(fetchYandexSignIn.rejected, (state, { error }) => {
+      state.isAuthLoading = false
+      state.authError = error.message as string
+    })
+
     // user
     builder.addCase(fetchUser.fulfilled, (state, { payload }) => {
       state.user = payload

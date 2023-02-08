@@ -1,0 +1,12 @@
+FROM --platform=linux/x86_64 node:18-alpine as build
+
+WORKDIR ./var/app
+
+COPY . .
+
+RUN yarn install
+RUN yarn build
+
+EXPOSE $SERVER_PORT
+
+CMD [ "yarn", "preview", "--scope=server" ]

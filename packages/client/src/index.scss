@@ -4,15 +4,14 @@ body {
   overflow: hidden;
 }
 
-.app-wrapper {
-  background-color: #000;
-}
-
 html,
 body,
-#root,
-.app-wrapper {
+#root {
   height: 100%;
+}
+
+#root {
+  background-color: #000
 }
 
 .visually-hidden {
