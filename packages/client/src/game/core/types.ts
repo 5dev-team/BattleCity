@@ -65,11 +65,11 @@ export class Vec2 {
   }
 
   dotProduct(vector: Vec2) {
-    return Vec2.dotProduct(this, vector);
+    return Vec2.dotProduct(this, vector)
   }
 
   angleBetween(vector: Vec2) {
-    return Vec2.angleBetween(this, vector);
+    return Vec2.angleBetween(this, vector)
   }
 
   get normalized() {

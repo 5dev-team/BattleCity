@@ -6,7 +6,7 @@ import {
   BASE_WIDTH,
 } from '@/game/helpers/constants'
 import { Sprite } from '@/game/helpers/types'
-import { Vec2 } from '@/game/core/types';
+import { Vec2 } from '@/game/core/types'
 
 export default class Base extends GameObject {
   private readonly destroyed: boolean

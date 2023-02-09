@@ -3,7 +3,7 @@ import Wall from '@/game/core/wall/Wall'
 import Bullet from '@/game/core/bullet/bullet'
 import { BRICK_WALL_SPRITE_MAP, BRICK_WALL_SPRITES } from '@/game/helpers/constants'
 import Stage from '@/game/core/stage/stage'
-import { Direction } from '@/game/core/types';
+import { Direction } from '@/game/core/types'
 
 export default class BrickWall extends Wall {
   constructor(args: Pick<WallArgs, 'pos'>) {

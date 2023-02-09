@@ -1,4 +1,4 @@
-import { Keys } from '@/game/helpers/constants';
+import { Keys } from '@/game/helpers/constants'
 import { ControllerType } from '@/game/helpers/types'
 
 export default class Input {

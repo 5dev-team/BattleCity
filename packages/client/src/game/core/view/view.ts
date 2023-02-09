@@ -11,9 +11,9 @@ import {
   TILE_SIZE,
   UNIT_SIZE
 } from '@/game/helpers/constants'
-import ImageLoader from '@/game/core/sprite';
-import PlayerTank from '@/game/core/player-tank/player-tank';
-import EnemyTank from '@/game/core/enemy-tank/enemy-tank';
+import ImageLoader from '@/game/core/sprite'
+import PlayerTank from '@/game/core/player-tank/player-tank'
+import EnemyTank from '@/game/core/enemy-tank/enemy-tank'
 
 export default class View {
   private canvas: HTMLCanvasElement

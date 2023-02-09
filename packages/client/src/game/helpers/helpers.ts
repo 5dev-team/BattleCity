@@ -1,4 +1,4 @@
-import { Direction } from '@/game/core/types';
+import { Direction } from '@/game/core/types'
 
 export function getDirectionForKeys(keys: {
   has(value: string): boolean

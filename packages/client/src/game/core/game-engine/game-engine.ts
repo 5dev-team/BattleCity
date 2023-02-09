@@ -4,7 +4,7 @@ import Stage from '@/game/core/stage/stage'
 import { IGameConstructor, IGameOverData } from '@/game/core/game-engine/types'
 import { Level } from '@/game/helpers/levels'
 import { ControllerType } from '@/game/helpers/types'
-import PlayerTank from '@/game/core/player-tank/player-tank';
+import PlayerTank from '@/game/core/player-tank/player-tank'
 
 export default class GameEngine {
   private readonly input: Input

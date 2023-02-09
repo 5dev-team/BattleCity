@@ -17,7 +17,7 @@ import BulletExplosion from '@/game/core/bullet-explosion/bullet-explosion'
 import { Sprite } from '@/game/helpers/types'
 import Base from '@/game/core/base/base'
 import Wall from '@/game/core/wall/Wall'
-import PlayerTank from '@/game/core/player-tank/player-tank';
+import PlayerTank from '@/game/core/player-tank/player-tank'
 
 export default class Bullet extends GameObject implements IUpdatable {
   public readonly direction: Direction
