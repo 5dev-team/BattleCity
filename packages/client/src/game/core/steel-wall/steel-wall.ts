@@ -3,8 +3,8 @@ import { WallArgs } from '@/game/core/wall/types'
 import { STEEL_WALL_SPRITES } from '@/game/helpers/constants'
 
 export default class SteelWall extends Wall {
-  constructor(x: number, y: number) {
-    super({ x, y, sprites: STEEL_WALL_SPRITES } as WallArgs)
+  constructor(args: Pick<WallArgs, 'pos'>) {
+    super({ pos: args.pos, sprites: STEEL_WALL_SPRITES } as WallArgs)
     this.name = 'steel-wall'
     this.objectType = 'steelWall'
   }

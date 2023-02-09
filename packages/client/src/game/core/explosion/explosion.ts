@@ -6,12 +6,10 @@ export default class Explosion extends GameObject implements IUpdatable {
   protected speed: number
   
   constructor(args: GameObjectArgs) {
-    super({
-      ...args
-    })
+    super(args)
+    
     this.speed = PROJECTILE_EXPLOSION_SPEED
     this.objectType = 'explosion'
-    
   }
   
   public get sprite() {
@@ -47,5 +45,4 @@ export default class Explosion extends GameObject implements IUpdatable {
       this.frames = 0
     }
   }
-  
 }

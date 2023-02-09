@@ -1,17 +1,13 @@
 import Base from '@/game/core/base/base'
-import PlayerTank from '@/game/core/player-tank/player-tank'
-import BrickWall from '@/game/core/brick-wall/brick-wall'
-import SteelWall from '@/game/core/steel-wall/steel-wall'
 import Explosion from '@/game/core/explosion/explosion'
 import Bullet from '@/game/core/bullet/bullet'
-import EnemyTank from '@/game/core/enemy-tank/enemy-tank'
+import Tank from '@/game/core/tank/tank';
+import Wall from '@/game/core/wall/Wall';
 
-export type TObjects =
+export type UnknownGameObject =
   | Base
-  | PlayerTank
-  | EnemyTank
-  | BrickWall
-  | SteelWall
+  | Tank
+  | Wall
   | Explosion
   | Bullet
 

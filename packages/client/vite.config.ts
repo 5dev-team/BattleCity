@@ -37,6 +37,7 @@ export default defineConfig(({ command, mode }) => {
       __YANDEX_API__: JSON.stringify(process.env.YANDEX_API.trim()),
       __YANDEX_OAUTH_URL__: JSON.stringify(process.env.YANDEX_OAUTH_URL.trim()),
       __YANDEX_REDIRECT_URI__: JSON.stringify(process.env.YANDEX_REDIRECT_URI.trim()),
+      __NODE_ENV__: JSON.stringify(process.env.NODE_ENV.trim()),
     },
     resolve: {
       alias: {

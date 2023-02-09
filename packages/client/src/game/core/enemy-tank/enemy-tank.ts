@@ -1,73 +1,67 @@
-import Stage from '@/game/core/stage/stage'
 import Tank from '@/game/core/tank/tank'
-import { ENEMY_TANK_SPRITES, ENEMY_TANK_START_POSITIONS, TANK_SPEED } from '@/game/helpers/constants'
-import { getAxisForDirection, getValueForDirection } from '@/game/helpers/helpers'
-import { GameObjectArgs } from '@/game/core/types'
-
-type EnemyGameObjectArgs = GameObjectArgs & {
-  type: number
-}
+import {
+  ENEMY_TANK_SPRITES,
+  ENEMY_TANK_START_POSITIONS,
+} from '@/game/helpers/constants'
+import {
+  getAxisForDirection,
+  getValueForDirection,
+} from '@/game/helpers/helpers'
+import { Direction, UpdateState, Vec2 } from '@/game/core/types'
 
 export default class EnemyTank extends Tank {
-  
-  protected speed: number
-  public direction: number
   public type: number
-  
-  constructor(args:   Pick<EnemyGameObjectArgs, 'type'>) {
-    super({ ...args, sprites: ENEMY_TANK_SPRITES})
-    this.direction = Tank.Direction.DOWN
-    this.x = 0
-    this.y = 0
-    this.speed = TANK_SPEED
-    this.name = 'enemy-tank'
-    this.type = args.type
+
+  constructor(type: number) {
+    super({ pos: Vec2.zero, sprites: ENEMY_TANK_SPRITES })
+    this.direction = Direction.Down
+    this.type = type
     this.objectType = 'enemyTank'
+    this.name = 'enemy-tank'
   }
-  
-  hit() {
+
+  public hit() {
     if (!this.isDestroyed) {
       this.isDestroyed = true
     }
-      super.hit()
+    super.hit()
   }
-  
+
   private invertDirection() {
     let newDirection = 0
     switch (this.direction) {
-      case Tank.Direction.DOWN:
-        newDirection = Tank.Direction.UP
+      case Direction.Down:
+        newDirection = Direction.Up
         break
-      case Tank.Direction.RIGHT:
-        newDirection = Tank.Direction.LEFT
+      case Direction.Right:
+        newDirection = Direction.Left
         break
-      case Tank.Direction.UP:
-        newDirection = Tank.Direction.DOWN
+      case Direction.Up:
+        newDirection = Direction.Down
         break
-      case Tank.Direction.LEFT:
-        newDirection = Tank.Direction.RIGHT
+      case Direction.Left:
+        newDirection = Direction.Right
         break
-      
     }
     this.direction = newDirection
   }
-  
-  rotateClockwise() {
-    if (this.direction !== Tank.Direction.LEFT) {
+
+  public rotateClockwise() {
+    if (this.direction !== Direction.Left) {
       this.turn(this.direction + 1)
     } else {
-      this.turn(Tank.Direction.UP)
+      this.turn(Direction.Up)
     }
   }
-  
-  rotateAntiClockwise() {
-    if (this.direction !== Tank.Direction.UP) {
+
+  public rotateAntiClockwise() {
+    if (this.direction !== Direction.Up) {
       this.turn(this.direction - 1)
     } else {
-      this.turn(Tank.Direction.LEFT)
+      this.turn(Direction.Left)
     }
   }
-  
+
   private changeDirectionWhenTileReach() {
     if (Math.round(Math.random()) === 0) {
       this.changeDirection()
@@ -77,54 +71,48 @@ export default class EnemyTank extends Tank {
     } else {
       this.rotateAntiClockwise()
     }
-    
   }
-  
+
   private changeDirection() {
     // const periodDuration = this.respawn / 8
   }
-  
+
   public setPosition(positionIndex: number) {
-    this.x = ENEMY_TANK_START_POSITIONS[positionIndex][0]
-    this.y = ENEMY_TANK_START_POSITIONS[positionIndex][1]
+    this.pos = new Vec2(
+      ENEMY_TANK_START_POSITIONS[positionIndex][0],
+      ENEMY_TANK_START_POSITIONS[positionIndex][1]
+    )
   }
-  
-  update({
-           world,
-           frameDelta
-         }: {
-    world: Stage
-    frameDelta: number
-  }): void {
+
+  public update({ world, frameDelta }: Omit<UpdateState, 'input'>): void {
     if (this.isDestroyed) {
-      world.objects.delete(this)
+      world.gameObjects.delete(this)
     }
-    
+
     const direction = this.direction
     const axis = getAxisForDirection(direction)
     const value = getValueForDirection(direction)
-    
+
     this.turn(direction)
     this.move(axis, value)
     if (Math.floor(Math.random() * 31) === 1) {
       this.fire()
       if (this.bullet) {
-        world.objects.add(this.bullet)
+        world.gameObjects.add(this.bullet)
       }
     }
-    
+
     this.animate(frameDelta)
-    
+
     const isOutOfBounds = world.isOutOfBounds(this)
     const hasCollision = world.hasCollision(this)
-    
+
     if (isOutOfBounds || hasCollision) {
       this.move(axis, -value)
       const rand = Math.round(Math.random() * 4)
-      
+
       if (rand % 4 == 0) {
-        
-        if (this.x % 8 !== 0 || this.y % 8 !== 0) {
+        if (this.pos.x % 8 !== 0 || this.pos.y % 8 !== 0) {
           this.invertDirection()
         } else {
           this.changeDirectionWhenTileReach()

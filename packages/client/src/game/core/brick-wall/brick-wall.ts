@@ -1,19 +1,20 @@
 import { WallArgs } from '@/game/core/wall/types'
 import Wall from '@/game/core/wall/Wall'
 import Bullet from '@/game/core/bullet/bullet'
-import { BRICK_WALL_SPRITE_MAP, BRICK_WALL_SPRITES, Direction } from '@/game/helpers/constants'
+import { BRICK_WALL_SPRITE_MAP, BRICK_WALL_SPRITES } from '@/game/helpers/constants'
 import Stage from '@/game/core/stage/stage'
+import { Direction } from '@/game/core/types';
 
 export default class BrickWall extends Wall {
-  constructor(x: number, y: number) {
-    super({ x, y, sprites: BRICK_WALL_SPRITES } as WallArgs)
+  constructor(args: Pick<WallArgs, 'pos'>) {
+    super({ pos: args.pos, sprites: BRICK_WALL_SPRITES } as WallArgs)
     this.name = 'brick-wall'
     this.objectType = 'brickWall'
   }
   
   update({ world }: Record<string, Stage>) {
     if (this.isDestroyed) {
-      world.objects.delete(this)
+      world.gameObjects.delete(this)
     }
   }
   
@@ -31,16 +32,16 @@ export default class BrickWall extends Wall {
     }
     
     switch (bullet.direction) {
-      case Direction.UP:
+      case Direction.Up:
         this.state = this.state | 0b1000
         break
-      case Direction.RIGHT:
+      case Direction.Right:
         this.state = this.state | 0b0001
         break
-      case Direction.DOWN:
+      case Direction.Down:
         this.state = this.state | 0b0010
         break
-      case Direction.LEFT:
+      case Direction.Left:
         this.state = this.state | 0b0100
         break
     }

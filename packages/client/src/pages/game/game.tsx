@@ -10,7 +10,7 @@ import GameEngine from '@/game/core/game-engine'
 import { InputHandler } from '@/game/core/input'
 import View from '@/game/core/view'
 import SpriteAtlas from '@/game/sprites/sprite2.png'
-import Sprite from '@/game/core/sprite'
+import ImageLoader from '@/game/core/sprite'
 import { levels as Levels } from '@/game/helpers/levels'
 import T1 from '@/assets/tanks/T1.png'
 import T2 from '@/assets/tanks/T2.png'
@@ -22,7 +22,7 @@ import { saveGameScores } from '@/store/slices/game'
 import { IGameOverData } from '@/game/core/game-engine/types'
 import { fetchUserHighScore } from '@/store/slices/leaderboard'
 import { leaderboardDataRequest } from '@/constants/configs/leaderboard'
-import { controllerModeType } from '@/game/helpers/types'
+import { ControllerType } from '@/game/helpers/types'
 import gamepadSimulator from '@/utils/gamepadEmulator'
 
 enum GameView {
@@ -42,7 +42,7 @@ const Game: React.FC = () => {
   const navigate = useNavigate()
   const [gameView, setView] = useState(GameView.Menu)
   const [controllerMode, setControllerMode] =
-    useState<controllerModeType>('KEYBOARD')
+    useState<ControllerType>('KEYBOARD')
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [online, setOnline] = useState(true)
   useEffect(() => {
@@ -108,12 +108,12 @@ const Game: React.FC = () => {
     setControllerMode('GAMEPAD')
   }
 
-  useEffect(() => {
-    window.addEventListener('gamepadconnected', setGamepadMode)
-    return () => {
-      window.removeEventListener('gamepadconnected', setGamepadMode)
-    }
-  }, [])
+  // useEffect(() => {
+  //   window.addEventListener('gamepadconnected', setGamepadMode)
+  //   return () => {
+  //     window.removeEventListener('gamepadconnected', setGamepadMode)
+  //   }
+  // }, [])
   
   useEffect(() => {
     gamepadSimulator.create()
@@ -127,10 +127,10 @@ const Game: React.FC = () => {
       const canvas = canvasRef.current
 
       if (canvas) {
-        const viewSprite = new Sprite(SpriteAtlas)
+        const spriteAtlasLoader = new ImageLoader(SpriteAtlas)
         const game = new GameEngine({
           input: new InputHandler(controllerMode),
-          view: new View(canvas, viewSprite),
+          view: new View(canvas, spriteAtlasLoader),
           levels: Levels,
         })
 

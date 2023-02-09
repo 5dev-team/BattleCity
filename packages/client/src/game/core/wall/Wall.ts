@@ -9,10 +9,10 @@ export default abstract class Wall extends GameObject implements IHitable {
   public state: number
   private type: string | undefined
   
-  protected constructor({ sprites, ...args }: WallArgs) {
-    super({ ...args, width: TILE_SIZE, height: TILE_SIZE, sprites })
+  protected constructor({ pos, sprites, type }: WallArgs) {
+    super({ pos, width: TILE_SIZE, height: TILE_SIZE, sprites })
     this.damage = 0
-    this.type = args.type
+    this.type = type
     this.name = 'wall'
     this.objectType = 'wallObject'
     this.state = 0b0000
