@@ -3,7 +3,7 @@ import { GameObjectArgs, GameObjectType, IUpdatable, UpdateState } from '@/game/
 import { PROJECTILE_EXPLOSION_SPEED } from '@/game/helpers/constants'
 
 export default class Explosion extends GameObject implements IUpdatable {
-  public gameObjectType: GameObjectType = GameObjectType.Explosion;
+  public gameObjectType: GameObjectType = GameObjectType.Explosion
   protected speed: number
   
   constructor(args: GameObjectArgs) {

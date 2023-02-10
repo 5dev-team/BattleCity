@@ -9,7 +9,7 @@ import { Sprite } from '@/game/helpers/types'
 import { GameObjectType, Vec2 } from '@/game/core/types'
 
 export default class Base extends GameObject {
-  public gameObjectType: GameObjectType = GameObjectType.Base;
+  public gameObjectType: GameObjectType = GameObjectType.Base
   private readonly destroyed: boolean
 
   constructor() {

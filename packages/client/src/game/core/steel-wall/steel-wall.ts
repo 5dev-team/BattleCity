@@ -1,7 +1,7 @@
-import Wall from '@/game/core/wall/Wall'
+import Wall from '@/game/core/wall/wall'
 import { WallArgs } from '@/game/core/wall/types'
 import { STEEL_WALL_SPRITES } from '@/game/helpers/constants'
-import { IHitable } from '../types';
+import { IHitable } from '../types'
 
 export default class SteelWall extends Wall implements IHitable {
   constructor(args: Pick<WallArgs, 'pos'>) {

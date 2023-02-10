@@ -11,10 +11,10 @@ import {
   TILE_SIZE,
 } from '@/game/helpers/constants'
 import TankExplosion from '@/game/core/tank-explosion/tank-explosion'
-import MobileGameObject from '@/game/core/mobile-game-object/mobile-game-object';
+import MobileGameObject from '@/game/core/mobile-game-object/mobile-game-object'
 
 export default class Tank extends MobileGameObject {
-  public gameObjectType: GameObjectType = GameObjectType.Tank;
+  public gameObjectType: GameObjectType = GameObjectType.Tank
   protected direction: Direction
   protected speed: number
   private readonly bulletSpeed: number
