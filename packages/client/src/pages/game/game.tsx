@@ -9,21 +9,10 @@ import ErrorFallback from '@/components/UI/error-fallback'
 import GameEngine from '@/game/core/game-engine'
 import { InputHandler } from '@/game/core/input'
 import View from '@/game/core/view'
-import SpriteAtlas from '@/game/sprites/sprite2.png'
+import SpriteAtlas from '@/game/sprites/sprite_1.png'
 import Sprite from '@/game/core/sprite'
 import { levels as Levels } from '@/game/helpers/levels'
-import T1 from '@/assets/tanks/T1.png'
-import T2 from '@/assets/tanks/T2.png'
-import T3 from '@/assets/tanks/T3.png'
-import T4 from '@/assets/tanks/T4.png'
 import styles from './game.module.scss'
-import { useAppDispatch } from '@/hooks/redux'
-import { saveGameScores } from '@/store/slices/game'
-import { IGameOverData } from '@/game/core/game-engine/types'
-import { fetchUserHighScore } from '@/store/slices/leaderboard'
-import { leaderboardDataRequest } from '@/constants/configs/leaderboard'
-import { controllerModeType } from '@/game/helpers/types'
-import gamepadSimulator from '@/utils/gamepadEmulator'
 
 enum GameView {
   Menu,
@@ -38,11 +27,8 @@ enum GameMode {
 }
 
 const Game: React.FC = () => {
-  const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const [gameView, setView] = useState(GameView.Menu)
-  const [controllerMode, setControllerMode] =
-    useState<controllerModeType>('KEYBOARD')
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [online, setOnline] = useState(true)
   useEffect(() => {
@@ -62,39 +48,35 @@ const Game: React.FC = () => {
       window.removeEventListener('online', () => {
         setOnline(true)
       })
+
     }
-  }, [])
-  const gameOverProps = {
-    nextGame: true,
-    hiScore: 20000,
+  },[])
+
+  const initialState = {
+    nextGame: false,
     stage: 1,
-    players: { count: 2, totalPts: { P1: 1000, P2: 1000 } },
-    playersStats: [
-      {
-        P1: { count: 1, total: 100 },
-        P2: { count: 1, total: 100 },
-        key: 0,
-        T: T1,
+    playersCount: 2,
+    bestScore: 0,
+    player1: {
+      user: 3213213,
+      scores: {
+        1: { count: 2, points: 200 },
+        2: { count: 3, points: 600 },
+        3: { count: 4, points: 1200 },
+        4: { count: 5, points: 2000 }
       },
-      {
-        P1: { count: 1, total: 200 },
-        P2: { count: 1, total: 200 },
-        key: 1,
-        T: T2,
+      total: 7000
+    },
+    player2: {
+      user: 3213123,
+      scores: {
+        1: { count: 2, points: 200 },
+        2: { count: 3, points: 600 },
+        3: { count: 4, points: 1200 },
+        4: { count: 5, points: 2000 }
       },
-      {
-        P1: { count: 1, total: 300 },
-        P2: { count: 1, total: 400 },
-        key: 2,
-        T: T3,
-      },
-      {
-        P1: { count: 1, total: 400 },
-        P2: { count: 1, total: 400 },
-        key: 3,
-        T: T4,
-      },
-    ],
+      total: 7000
+    }
   }
 
   const initGame = (gameMode: GameMode) => {
@@ -103,49 +85,25 @@ const Game: React.FC = () => {
     setView(GameView.Game)
   }
 
-
-  const setGamepadMode = () => {
-    setControllerMode('GAMEPAD')
-  }
-
-  useEffect(() => {
-    window.addEventListener('gamepadconnected', setGamepadMode)
-    return () => {
-      window.removeEventListener('gamepadconnected', setGamepadMode)
-    }
-  }, [])
-  
-  useEffect(() => {
-    gamepadSimulator.create()
-    gamepadSimulator.connect()
-  }, [])
-  
-  
   useEffect(() => {
     if (gameView === GameView.Game) {
-      dispatch(fetchUserHighScore(leaderboardDataRequest))
       const canvas = canvasRef.current
 
       if (canvas) {
         const viewSprite = new Sprite(SpriteAtlas)
         const game = new GameEngine({
-          input: new InputHandler(controllerMode),
+          input: new InputHandler(),
           view: new View(canvas, viewSprite),
           levels: Levels,
         })
 
-        let resolve: (value: IGameOverData | PromiseLike<IGameOverData>) => void
+        game.init().then(() => game.start())
 
-        new Promise<IGameOverData>((res, _) => {
-          resolve = res
-        })
-          .then(response => {
-            dispatch(saveGameScores(response))
-            setView(GameView.GameOver)
-          })
-          .catch(error => console.log(error))
+        setTimeout(() => {
+          game.end()
 
-        game.init(false).then(() => game.start(resolve, controllerMode))
+          setView(GameView.GameOver)
+        }, 5000)
       }
     }
   }, [gameView])
@@ -161,18 +119,14 @@ const Game: React.FC = () => {
               alt={'Battle City'}
               style={{ imageRendering: 'pixelated' }}
             />
-            {!online && (
-              <div
-                className={`nes-container is-centered ${styles['offline-warning']} ${styles['flashing']}`}>
-                <span className='nes-text is-error' style={{ color: '#f00' }}>
-                  OFFLINE
-                </span>
-              </div>
-            )}
+            {!online && <div className={`nes-container is-centered ${styles['offline-warning']} ${styles['flashing']}`}>
+              <span className='nes-text is-error' style={{ color: '#f00' }}>OFFLINE</span>
+            </div>}
             <ErrorBoundary FallbackComponent={ErrorFallback}>
               <GameMenu
                 selectItemId={0}
-                className={`${styles['control-wrapper']} ${styles['control-page-buttons']}`}>
+                className={`${styles['control-wrapper']} ${styles['control-page-buttons']}`}
+              >
                 <GameButton onClick={() => initGame(GameMode.Singleplayer)}>
                   1 PLAYER
                 </GameButton>
@@ -197,15 +151,17 @@ const Game: React.FC = () => {
           <canvas
             className={styles['game__canvas']}
             ref={canvasRef}
-            width={512}
-            height={480}></canvas>
+            width={640}
+            height={640}
+          ></canvas>
         )}
         {gameView === GameView.GameOver && (
-          <GameOver {...gameOverProps}>
+          <GameOver {...initialState}>
             <GameMenu
               selectItemId={0}
-              className={styles['game-over-page-buttons']}>
-              {gameOverProps.nextGame ? (
+              className={styles['game-over-page-buttons']}
+            >
+              {initialState.nextGame ? (
                 <GameButton onClick={() => console.log('load next level')}>
                   NEXT LEVEL
                 </GameButton>
