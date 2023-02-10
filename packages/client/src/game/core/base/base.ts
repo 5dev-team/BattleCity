@@ -6,9 +6,10 @@ import {
   BASE_WIDTH,
 } from '@/game/helpers/constants'
 import { Sprite } from '@/game/helpers/types'
-import { Vec2 } from '@/game/core/types'
+import { GameObjectType, Vec2 } from '@/game/core/types'
 
 export default class Base extends GameObject {
+  public gameObjectType: GameObjectType = GameObjectType.Base;
   private readonly destroyed: boolean
 
   constructor() {
@@ -20,7 +21,6 @@ export default class Base extends GameObject {
     })
     this.destroyed = false // isDestroyed? целая ли база?
     this.name = 'base'
-    this.objectType = 'base'
   }
 
   get sprite(): Sprite {

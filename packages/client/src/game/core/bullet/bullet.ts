@@ -1,4 +1,10 @@
-import { Direction, IUpdatable, UpdateState, Vec2 } from '@/game/core/types'
+import {
+  Direction,
+  GameObjectType,
+  IUpdatable,
+  UpdateState,
+  Vec2,
+} from '@/game/core/types'
 import Explosion from '@/game/core/explosion/explosion'
 import GameObject from '@/game/core/game-object/game-object'
 import { UnknownGameObject } from '@/game/core/stage/types'
@@ -15,15 +21,16 @@ import {
 import Tank from '@/game/core/tank/tank'
 import BulletExplosion from '@/game/core/bullet-explosion/bullet-explosion'
 import { Sprite } from '@/game/helpers/types'
-import Base from '@/game/core/base/base'
-import Wall from '@/game/core/wall/Wall'
 import PlayerTank from '@/game/core/player-tank/player-tank'
+import MobileGameObject from '@/game/core/mobile-game-object/mobile-game-object'
 
-export default class Bullet extends GameObject implements IUpdatable {
+export default class Bullet extends MobileGameObject implements IUpdatable {
+  public gameObjectType: GameObjectType = GameObjectType.Bullet
   public readonly direction: Direction
   private tank: Tank | null
   private tankId: number
   private explosion: Explosion | null
+  protected speed: number
 
   constructor(
     direction: Direction,
@@ -43,7 +50,6 @@ export default class Bullet extends GameObject implements IUpdatable {
     this.tankId = tank.id
     this.explosion = null
     this.name = 'bullet'
-    this.objectType = 'bullet'
   }
 
   public update(state: Pick<UpdateState, 'world'>): void {
@@ -69,36 +75,34 @@ export default class Bullet extends GameObject implements IUpdatable {
   }
 
   get isFromPlayerTank() {
-    return this.tank?.objectType === 'playerTank'
+    return this.tank instanceof PlayerTank
   }
 
   get isFromEnemyTank() {
-    return this.tank?.objectType === 'enemyTank'
+    return !this.isFromPlayerTank
   }
 
   shouldCollideWith(obj: GameObject) {
-    if (obj && obj.objectType) {
-      switch (true) {
-        case obj instanceof Base:
-        case obj instanceof Wall:
-          return true
-        case obj instanceof Bullet:
-          return (
-            (this.isFromEnemyTank && (obj as Bullet).isFromPlayerTank) ||
-            (this.isFromPlayerTank && (obj as Bullet).isFromEnemyTank)
-          )
-        case obj instanceof PlayerTank:
-          return this.tankId !== obj.id
-        case obj instanceof Tank:
-          return this.tank! instanceof PlayerTank
-        default:
-          return false
-      }
+    switch (obj.gameObjectType) {
+      case GameObjectType.Base:
+      case GameObjectType.Wall:
+        return true
+      case GameObjectType.Bullet:
+        return (
+          (this.isFromEnemyTank && (obj as Bullet).isFromPlayerTank) ||
+          (this.isFromPlayerTank && (obj as Bullet).isFromEnemyTank)
+        )
+      case GameObjectType.Tank:
+        return obj instanceof PlayerTank
+          ? this.tankId !== obj.id
+          : this.tank instanceof PlayerTank
+      default:
+        return false
     }
   }
 
   private shouldExplode(gameObject: GameObject) {
-    return gameObject.objectType !== 'bullet'
+    return gameObject.gameObjectType !== GameObjectType.Bullet
   }
 
   private collide(objects: UnknownGameObject[]): boolean {

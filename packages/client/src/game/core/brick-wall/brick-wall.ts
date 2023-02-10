@@ -3,13 +3,12 @@ import Wall from '@/game/core/wall/Wall'
 import Bullet from '@/game/core/bullet/bullet'
 import { BRICK_WALL_SPRITE_MAP, BRICK_WALL_SPRITES } from '@/game/helpers/constants'
 import Stage from '@/game/core/stage/stage'
-import { Direction } from '@/game/core/types'
+import { Direction, IHitable } from '@/game/core/types'
 
-export default class BrickWall extends Wall {
+export default class BrickWall extends Wall implements IHitable {
   constructor(args: Pick<WallArgs, 'pos'>) {
     super({ pos: args.pos, sprites: BRICK_WALL_SPRITES } as WallArgs)
     this.name = 'brick-wall'
-    this.objectType = 'brickWall'
   }
   
   update({ world }: Record<string, Stage>) {

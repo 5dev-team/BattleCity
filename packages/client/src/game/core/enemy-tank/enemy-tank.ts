@@ -7,16 +7,15 @@ import {
   getAxisForDirection,
   getValueForDirection,
 } from '@/game/helpers/helpers'
-import { Direction, UpdateState, Vec2 } from '@/game/core/types'
+import { Direction, GameObjectType, IUpdatable, UpdateState, Vec2 } from '@/game/core/types'
 
-export default class EnemyTank extends Tank {
+export default class EnemyTank extends Tank implements IUpdatable {
   public type: number
 
   constructor(type: number) {
     super({ pos: Vec2.zero, sprites: ENEMY_TANK_SPRITES })
     this.direction = Direction.Down
     this.type = type
-    this.objectType = 'enemyTank'
     this.name = 'enemy-tank'
   }
 
@@ -85,6 +84,41 @@ export default class EnemyTank extends Tank {
   }
 
   public update({ world, frameDelta }: Omit<UpdateState, 'input'>): void {
+    // if (this.isDestroyed) {
+    //   world.gameObjects.delete(this)
+    // }
+
+    // const direction = this.direction
+    // const axis = getAxisForDirection(direction)
+    // const value = getValueForDirection(direction)
+    
+    // this.turn(direction)
+    // this.move(axis, value)
+    // if (Math.floor(Math.random() * 31) === 1) {
+    //   this.fire()
+    //   if (this.bullet) {
+    //     world.gameObjects.add(this.bullet)
+    //   }
+    // }
+
+    // this.animate(frameDelta)
+
+    // const isOutOfBounds = world.isOutOfBounds(this)
+    // const hasCollision = world.hasCollision(this)
+
+    // if (isOutOfBounds || hasCollision) {
+    //   this.move(axis, -value)
+    //   const rand = Math.round(Math.random() * 4)
+
+    //   if (rand % 4 == 0) {
+    //     if (this.pos.x % 8 !== 0 || this.pos.y % 8 !== 0) {
+    //       this.invertDirection()
+    //     } else {
+    //       this.changeDirectionWhenTileReach()
+    //     }
+    //   }
+    // }
+
     if (this.isDestroyed) {
       world.gameObjects.delete(this)
     }
@@ -92,9 +126,13 @@ export default class EnemyTank extends Tank {
     const direction = this.direction
     const axis = getAxisForDirection(direction)
     const value = getValueForDirection(direction)
-
+    
     this.turn(direction)
-    this.move(axis, value)
+
+    const hasCollision = this.getCollisions(Array.from(world.gameObjects), GameObjectType.Wall, GameObjectType.Tank)
+    if (hasCollision.length === 0)
+      this.move(axis, value)
+    
     if (Math.floor(Math.random() * 31) === 1) {
       this.fire()
       if (this.bullet) {
@@ -103,12 +141,14 @@ export default class EnemyTank extends Tank {
     }
 
     this.animate(frameDelta)
+    
+    const isOutOfBounds = world.isOutOfBounds(this) 
 
-    const isOutOfBounds = world.isOutOfBounds(this)
-    const hasCollision = world.hasCollision(this)
-
-    if (isOutOfBounds || hasCollision) {
+    if (isOutOfBounds) {
       this.move(axis, -value)
+    }
+
+    if (isOutOfBounds || hasCollision.length > 0) {
       const rand = Math.round(Math.random() * 4)
 
       if (rand % 4 == 0) {
@@ -119,6 +159,5 @@ export default class EnemyTank extends Tank {
         }
       }
     }
-    return
   }
 }

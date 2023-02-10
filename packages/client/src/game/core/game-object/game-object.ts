@@ -1,9 +1,10 @@
 import { Sprite } from '@/game/helpers/types'
-import { GameObjectArgs, IRect, Vec2 } from '@/game/core/types'
+import { GameObjectArgs, GameObjectType, IRect, Vec2 } from '@/game/core/types'
 import EventBus from '@/game/core/event-bus/event-bus'
 import eventBusInstance from '@/game/core/event-bus/event-bus'
 
 export default abstract class GameObject extends EventBus implements IRect {
+  public abstract gameObjectType: GameObjectType
   public readonly eventBus: () => typeof EventBus
   public readonly width: number
   public readonly height: number
@@ -11,7 +12,6 @@ export default abstract class GameObject extends EventBus implements IRect {
   public id: number
   public pos: Vec2
   public name = 'Root object'
-  public objectType = 'rootObject'
   public debug = false
   protected speed = 0
   protected frames = 0
@@ -48,17 +48,18 @@ export default abstract class GameObject extends EventBus implements IRect {
     return this.pos.x
   }
 
-  protected move(axis: string, value: number): void {
-    if (axis === 'y') {
-      this.pos.y += value * this.speed
-    }
-    if (axis === 'x') {
-      this.pos.x += value * this.speed
-    }
-  }
+  public isInsideOf(other: GameObject) {
+    const sourceVector = other.center.add(this.center.opposite)
+    const radians = sourceVector.angleBetween(Vec2.up)
+    const angle = radians * (180 / Math.PI)
+    
+    const divider =
+      angle > 45 && angle < 135 ? Math.sin(radians) : Math.cos(radians)
 
-  public stop() {
-    this.speed = 0
+    const distance = Number(sourceVector.length().toFixed(10))
+    const minDistance = Number(((this.width + other.width) / 2 / divider).toFixed(10))
+
+    return distance < minDistance
   }
 }
 

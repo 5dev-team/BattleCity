@@ -11,8 +11,8 @@ import EventBus from '@/game/core/event-bus/event-bus'
 import Explosion from '@/game/core/explosion/explosion'
 import { ControllerType } from '@/game/helpers/types'
 import GameObject from '@/game/core/game-object/game-object'
-import EnemyTank from '@/game/core/enemy-tank/enemy-tank'
 import PlayerTank from '@/game/core/player-tank/player-tank'
+import EnemyTank from '@/game/core/enemy-tank/enemy-tank'
 
 export default class Stage extends EventBus {
   static TerrainType = {
@@ -144,7 +144,6 @@ export default class Stage extends EventBus {
 
     this.playerTank.on('destroyed', (tank: PlayerTank) => {
       this.gameObjects.delete(tank)
-      //if (player.health === 0)
       this.emit('gameOver')
     })
 
@@ -219,19 +218,19 @@ export default class Stage extends EventBus {
     )
   }
 
-  public hasCollision(gameObject: GameObject) {
+  public hasCollision(gameObject: UnknownGameObject) {
     const collision = this.getCollision(gameObject)
     return Boolean(collision)
   }
 
-  public getCollision(gameObject: GameObject) {
+  public getCollision(gameObject: UnknownGameObject) {
     const collisionObjects = this.getCollisionObjects(gameObject)
     if (collisionObjects.size > 0) {
       return { objects: collisionObjects }
     }
   }
 
-  private getCollisionObjects(gameObject: GameObject) {
+  private getCollisionObjects(gameObject: UnknownGameObject) {
     const objects = new Set<UnknownGameObject>()
 
     this.gameObjects.forEach(other => {
@@ -242,39 +241,13 @@ export default class Stage extends EventBus {
     return objects
   }
 
-  private haveCollision(gameObject: GameObject, other: GameObject) {
-    if (gameObject) {
-      if (
-        gameObject.objectType === 'enemyTank' &&
-        other.objectType === 'playerTank'
-      ) {
-        if (
-          gameObject.left < other.right &&
-          gameObject.right > other.left &&
-          gameObject.top < other.bottom &&
-          gameObject.bottom > other.top
-        ) {
-          if (
-            Math.abs(other.left - gameObject.left) < 30 ||
-            Math.abs(other.right - gameObject.right) < 30 ||
-            Math.abs(other.top - gameObject.top) < 30 ||
-            Math.abs(other.bottom - gameObject.bottom) < 30
-          ) {
-            return false
-          } else {
-            return true
-          }
-        }
-      }
-      return (
-        gameObject.left < other.right &&
-        gameObject.right > other.left &&
-        gameObject.top < other.bottom &&
-        gameObject.bottom > other.top
-      )
-    } else {
-      return false
-    }
+  private haveCollision(gameObject: UnknownGameObject, other: UnknownGameObject) {
+    return (
+      gameObject.left < other.right &&
+      gameObject.right > other.left &&
+      gameObject.top < other.bottom &&
+      gameObject.bottom > other.top
+    )
   }
 
   private removeTank(enemyTank: Tank) {

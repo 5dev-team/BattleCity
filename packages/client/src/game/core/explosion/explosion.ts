@@ -1,15 +1,15 @@
 import GameObject from '@/game/core/game-object/game-object'
-import { GameObjectArgs, IUpdatable, UpdateState } from '@/game/core/types'
+import { GameObjectArgs, GameObjectType, IUpdatable, UpdateState } from '@/game/core/types'
 import { PROJECTILE_EXPLOSION_SPEED } from '@/game/helpers/constants'
 
 export default class Explosion extends GameObject implements IUpdatable {
+  public gameObjectType: GameObjectType = GameObjectType.Explosion;
   protected speed: number
   
   constructor(args: GameObjectArgs) {
     super(args)
     
     this.speed = PROJECTILE_EXPLOSION_SPEED
-    this.objectType = 'explosion'
   }
   
   public get sprite() {

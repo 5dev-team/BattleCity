@@ -10,6 +10,14 @@ export enum Direction {
   Left
 }
 
+export enum GameObjectType {
+  Base,
+  Wall,
+  Tank,
+  Bullet,
+  Explosion,
+}
+
 export type GameObjectArgs = {
   pos: Vec2,
   width: number,

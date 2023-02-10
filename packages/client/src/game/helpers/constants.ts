@@ -109,7 +109,7 @@ export const TANK_EXPLOSION_SPRITES: Sprite[] = [
 ]
 
 export const PLAYER1_TANK_POSITION: DefaultPosition = [
-  4 * UNIT_SIZE,
+  3 * UNIT_SIZE,
   12 * UNIT_SIZE
 ]
 export const PLAYER1_TANK_SPRITES: Sprite[] = [

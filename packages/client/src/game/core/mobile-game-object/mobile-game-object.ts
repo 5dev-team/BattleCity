@@ -1,5 +1,6 @@
 import GameObject from '@/game/core/game-object/game-object'
-import { Direction, UpdateState, Vec2 } from '@/game/core/types'
+import { Direction, GameObjectType, Vec2 } from '@/game/core/types'
+import Stage from '@/game/core/stage/stage'
 
 export default abstract class MobileGameObject extends GameObject {
   protected abstract speed: number
@@ -14,36 +15,61 @@ export default abstract class MobileGameObject extends GameObject {
     }
   }
 
-  public checkCollisions(state: UpdateState): boolean {
-    let colliders = [...state.world.gameObjects]
+  public stop() {
+    this.speed = 0
+  }
 
-    switch (this.direction) {
-      case Direction.Up:
-        colliders = colliders.filter(collider => collider.pos.y < this.pos.y)
-        break
-      case Direction.Down:
-        colliders = colliders.filter(collider => collider.pos.y > this.pos.y)
-        break
-      case Direction.Left:
-        colliders = colliders.filter(collider => collider.pos.x < this.pos.x)
-        break
-      case Direction.Right:
-        colliders = colliders.filter(collider => collider.pos.x > this.pos.x)
-        break
-    }
-
-    const collisions = colliders.map(collider => ({
-      collider,
-      range: this.distanceBetween(this.direction, this, collider),
-    }))
-
-    return (
-      collisions.find(
-        collision =>
-          collision.range === 0 &&
-          this.isTowardsDirection(this.direction, this, collision.collider)
-      ) === undefined
+  public getCollisions(
+    gameObjects: GameObject[],
+    ...withTypes: GameObjectType[]
+  ) {
+    const colliders = gameObjects.filter(
+      obj =>
+        obj.id !== this.id &&
+        withTypes.some(type => obj.gameObjectType === type) &&
+        obj.pos.distance(this.pos) < this.width + obj.width &&
+        !this.isInsideOf(obj)
     )
+
+    // switch (this.direction) {
+    //   case Direction.Up:
+    //     colliders = colliders.filter(collider => collider.pos.y < this.pos.y)
+    //     break
+    //   case Direction.Down:
+    //     colliders = colliders.filter(collider => collider.pos.y > this.pos.y)
+    //     break
+    //   case Direction.Left:
+    //     colliders = colliders.filter(collider => collider.pos.x < this.pos.x)
+    //     break
+    //   case Direction.Right:
+    //     colliders = colliders.filter(collider => collider.pos.x > this.pos.x)
+    //     break
+    // }
+
+    const collisions = colliders.filter(
+      collider =>
+        this.signedDistanceBetween(this.direction, this, collider) === 0 &&
+        this.isTowardsDirection(this.direction, this, collider)
+    )
+
+    return collisions
+
+    // const collisions = colliders.map(collider => ({
+    //   collider,
+    //   range: this.signedDistanceBetween(this.direction, this, collider),
+    // }))
+
+    // return (
+    //   collisions.find(collision => {
+    //     // if (collision.range < 0) {
+    //     //   console.log('collision.distance < 0', collision.range)
+    //     // }
+    //     return (
+    //       collision.range === 0 &&
+    //       this.isTowardsDirection(this.direction, this, collision.collider)
+    //     )
+    //   }) === undefined
+    // )
   }
 
   public isTowardsDirection(
@@ -61,7 +87,7 @@ export default abstract class MobileGameObject extends GameObject {
     }
     const sourceVector = dest.center.add(origin.center.opposite)
     const angle = sourceVector.angleBetween(vector) * (180 / Math.PI)
-    console.log(dest.center, origin.center, sourceVector, vector, angle)
+    // console.log(dest.center, origin.center, sourceVector, vector, angle)
 
     return angle < 45
   }
@@ -73,11 +99,11 @@ export default abstract class MobileGameObject extends GameObject {
   ): number {
     switch (direction) {
       case Direction.Up:
-        return other.bottom - obj.top
+        return obj.top - other.bottom
       case Direction.Down:
         return other.top - obj.bottom
       case Direction.Left:
-        return other.right - obj.left
+        return obj.left - other.right
       case Direction.Right:
         return other.left - obj.right
     }

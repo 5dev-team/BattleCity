@@ -1,5 +1,5 @@
 import GameObject from '@/game/core/game-object/game-object'
-import { Direction, GameObjectArgs, IUpdatable, UpdateState, Vec2 } from '@/game/core/types'
+import { Direction, GameObjectArgs, GameObjectType, IUpdatable, UpdateState, Vec2 } from '@/game/core/types'
 import Bullet from '@/game/core/bullet/bullet'
 import {
   TANK_EXPLOSION_HEIGHT,
@@ -11,26 +11,26 @@ import {
   TILE_SIZE,
 } from '@/game/helpers/constants'
 import TankExplosion from '@/game/core/tank-explosion/tank-explosion'
+import MobileGameObject from '@/game/core/mobile-game-object/mobile-game-object';
 
-export default abstract class Tank extends GameObject implements IUpdatable {
+export default class Tank extends MobileGameObject {
+  public gameObjectType: GameObjectType = GameObjectType.Tank;
+  protected direction: Direction
   protected speed: number
   private readonly bulletSpeed: number
   protected bullet: Bullet | null
-  protected direction: number
   protected explosion: TankExplosion | null
   public name: string
 
   constructor(args: Partial<GameObjectArgs>) {
     super({ ...args, width: TANK_WIDTH, height: TANK_HEIGHT } as GameObjectArgs)
+    this.direction = Direction.Up
     this.speed = TANK_SPEED
     this.bulletSpeed = 4
     this.bullet = null
-    this.direction = 0
     this.explosion = null
     this.name = 'tank'
   }
-
-  public abstract update(state: Partial<UpdateState>): void
 
   public get sprite() {
     return this.sprites[this.direction * 2 + this.animationFrame]
@@ -40,7 +40,7 @@ export default abstract class Tank extends GameObject implements IUpdatable {
     return Boolean(this.explosion?.isExploding)
   }
 
-  public turn(direction: number) {
+  public turn(direction: Direction) {
     const prevDirection = this.direction
 
     this.direction = direction
