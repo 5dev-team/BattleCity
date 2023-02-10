@@ -9,13 +9,15 @@ export type GameObjectArgs = {
   width: number
   height: number
   sprites: Sprites
+  type?: number
+  animationSpeed?: number
 }
 
 export type UpdateState = { input: Input; frameDelta: number; world: Stage }
 
-export interface IUpdatable {
-  update(state: Partial<UpdateState>): void
-}
+ export interface IUpdatable {
+   update(state: Partial<UpdateState>): void
+ }
 
 export interface IHitable {
   hit(bullet: Bullet): void

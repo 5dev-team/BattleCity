@@ -27,6 +27,7 @@
     "typeRoots": ["src/global.d.ts", "node_modules/@types"],
   },
   "include": ["./src","./src/client.d.ts"],
+  "exclude": ["./src/utils/gamepadEmulator.ts"],
   "references": [
     {
       "path": "./tsconfig.node.json"

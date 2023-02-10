@@ -1,4 +1,4 @@
-export type Level = { stage: number[][], tanks: number[] };
+export type Level = { stage: number[][], enemies: number[] };
 
 export const levels: Level[] = [
   {
@@ -31,6 +31,6 @@ export const levels: Level[] = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       ],
-    tanks: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1]
+    enemies: [1, 1, 1, 1, 2, 2, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
   }
 ]
