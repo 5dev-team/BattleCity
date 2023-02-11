@@ -22,8 +22,7 @@ import { saveGameScores } from '@/store/slices/game'
 import { IGameOverData } from '@/game/core/game-engine/types'
 import { fetchUserHighScore } from '@/store/slices/leaderboard'
 import { leaderboardDataRequest } from '@/constants/configs/leaderboard'
-import { controllerModeType } from '@/game/helpers/types'
-import gamepadSimulator from '@/utils/gamepadEmulator'
+import { ControllerType  } from '@/game/helpers/types'
 
 enum GameView {
   Menu,
@@ -42,7 +41,7 @@ const Game: React.FC = () => {
   const navigate = useNavigate()
   const [gameView, setView] = useState(GameView.Menu)
   const [controllerMode, setControllerMode] =
-    useState<controllerModeType>('KEYBOARD')
+    useState<ControllerType >('KEYBOARD')
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [online, setOnline] = useState(true)
   useEffect(() => {
@@ -115,11 +114,6 @@ const Game: React.FC = () => {
     }
   }, [])
   
-  useEffect(() => {
-    gamepadSimulator.create()
-    gamepadSimulator.connect()
-  }, [])
-  
   
   useEffect(() => {
     if (gameView === GameView.Game) {
@@ -136,7 +130,7 @@ const Game: React.FC = () => {
 
         let resolve: (value: IGameOverData | PromiseLike<IGameOverData>) => void
 
-        new Promise<IGameOverData>((res, _) => {
+        new Promise<IGameOverData>((res) => {
           resolve = res
         })
           .then(response => {

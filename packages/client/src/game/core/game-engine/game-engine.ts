@@ -4,7 +4,7 @@ import Stage from '@/game/core/stage/stage'
 import { IGameConstructor, IGameOverData } from '@/game/core/game-engine/types'
 import { Level } from '@/game/helpers/levels'
 import PlayerTank from '@/game/core/player-tank/player-tank'
-import { controllerModeType } from '@/game/helpers/types'
+import { ControllerType  } from '@/game/helpers/types'
 
 export default class GameEngine {
   private readonly input: Input
@@ -15,7 +15,7 @@ export default class GameEngine {
   private stage: Stage | null
   private lastFrame: number
   private frames: number
-  public controllerMode: controllerModeType
+  public controllerMode: ControllerType
   private isGameOver: boolean
   private debugMode: boolean
   private pause: boolean
@@ -58,7 +58,7 @@ export default class GameEngine {
   }
   
   public start(
-    resolve: (value: IGameOverData | PromiseLike<IGameOverData>) => void, controllerMode: controllerModeType = 'KEYBOARD'
+    resolve: (value: IGameOverData | PromiseLike<IGameOverData>) => void, controllerMode: ControllerType  = 'KEYBOARD'
   ): void {
     if (controllerMode !== 'KEYBOARD') {
       this.controllerMode = controllerMode
@@ -92,7 +92,7 @@ export default class GameEngine {
       this.stage.update({ input: this.input, frameDelta })
     }
     if (this.stage) {
-      this.view.update(this.stage, this.player1, this.player2)
+      this.view.update(this.stage, this.player1)
     }
     this.frames = 0
     this.lastFrame = currentFrame

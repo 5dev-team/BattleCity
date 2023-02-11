@@ -65,7 +65,7 @@ export default class PlayerTank extends Tank implements IUpdatable {
       this.fire()
 
       if (this.bullet) {
-        world.objects.add(this.bullet)
+        world.gameObjects.add(this.bullet)
       }
     }
   }

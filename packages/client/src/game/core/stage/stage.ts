@@ -5,12 +5,12 @@ import PlayerTank from '@/game/core/player-tank/player-tank'
 import Wall from '@/game/core/wall/Wall'
 import Bullet from '@/game/core/bullet/bullet'
 import { IUpdatable, UpdateState } from '@/game/core/types'
-import { IStageConstructor, TObjects } from '@/game/core/stage/types'
+import { IStageConstructor, UnknownGameObject } from '@/game/core/stage/types'
 import { STAGE_SIZE, TILE_SIZE } from '@/game/helpers/constants'
 import EnemyTank from '@/game/core/enemy-tank/enemy-tank'
 import EventBus from '@/game/core/event-bus/event-bus'
 import Explosion from '@/game/core/explosion/explosion'
-import { controllerModeType } from '@/game/helpers/types'
+import { ControllerType  } from '@/game/helpers/types'
 
 export default class Stage extends EventBus {
   static TerrainType = {
@@ -30,6 +30,7 @@ export default class Stage extends EventBus {
   private enemyTankTimer: number
   private enemyTankStartPosition: number
   private enemyTankPositionIndex: number
+  public readonly gameObjects: Set<UnknownGameObject>
   
   
   static createObject(type: number, x: number, y: number): Wall | undefined {
@@ -64,10 +65,7 @@ export default class Stage extends EventBus {
   static createEnemies(types: number[]): EnemyTank[] {
     return types.map(type => new EnemyTank({ type }))
   }
-  
-  public readonly objects: Set<TObjects>
-  
-  constructor(data: IStageConstructor, stageIndex: number, controllerMode: controllerModeType) {
+  constructor(data: IStageConstructor, stageIndex: number, controllerMode: ControllerType ) {
     super()
     //TODO add 2 players: (1 - 1) and (2 - 1)
     this.stageIndex = stageIndex
@@ -83,7 +81,7 @@ export default class Stage extends EventBus {
     
     //TODO: fix it
     // @ts-ignore
-    this.objects = new Set([
+    this.gameObjects  = new Set([
       this.base,
       this.playerTank,
       ...this.terrain
@@ -109,26 +107,26 @@ export default class Stage extends EventBus {
     
     this.enemies.map(enemyTank => {
       enemyTank.on('fire', (bullet: Bullet) => {
-        this.objects.add(bullet)
+        this.gameObjects.add(bullet)
         bullet.on('explode', (explosion: Explosion) => {
-          this.objects.add(explosion)
+          this.gameObjects.add(explosion)
           
           explosion.on('destroyed', () => {
-            this.objects.delete(explosion)
+            this.gameObjects.delete(explosion)
           })
         })
         
         bullet.on('destroyed', () => {
-          this.objects.delete(bullet)
+          this.gameObjects.delete(bullet)
           
         })
       })
       
       enemyTank.on('explode', explosion => {
-        this.objects.add(explosion)
+        this.gameObjects.add(explosion)
         
         explosion.on('destroyed', () => {
-          this.objects.delete(explosion)
+          this.gameObjects.delete(explosion)
         })
       })
       
@@ -143,23 +141,23 @@ export default class Stage extends EventBus {
     })
     
     this.playerTank.on('destroyed', (tank: PlayerTank) => {
-      this.objects.delete(tank)
+      this.gameObjects.delete(tank)
     })
     
     this.playerTank.on('fire', bullet => {
-      this.objects.add(bullet)
+      this.gameObjects.add(bullet)
       
       bullet.on('explode', (explosion: Explosion) => {
-        this.objects.add(explosion)
+        this.gameObjects.add(explosion)
         
         explosion.on('destroyed', () => {
-          this.objects.delete(explosion)
+          this.gameObjects.delete(explosion)
         })
       })
       
       bullet.on('destroyed', () => {
         console.log('desctoy player bullet')
-        this.objects.delete(bullet)
+        this.gameObjects.delete(bullet)
       })
     })
     
@@ -194,7 +192,7 @@ export default class Stage extends EventBus {
   }
   
   public update(stage: Omit<UpdateState, 'world'>): void {
-    const objectsArr: TObjects[] = [...this.objects]
+    const objectsArr: UnknownGameObject[] = [...this.gameObjects]
     const { input, frameDelta } = stage
     
     if (this.enemyTankCount < 4) {
@@ -225,12 +223,12 @@ export default class Stage extends EventBus {
     )
   }
   
-  public hasCollision(object: TObjects) {
+  public hasCollision(object: UnknownGameObject) {
     const collision = this.getCollision(object)
     return Boolean(collision)
   }
   
-  getCollision(object: TObjects) {
+  getCollision(object: UnknownGameObject) {
     const collisionObjects = this.getCollisionObjects(object)
     if (collisionObjects.size > 0) {
       
@@ -238,10 +236,10 @@ export default class Stage extends EventBus {
     }
   }
   
-  private getCollisionObjects(object: TObjects) {
-    const objects = new Set<TObjects>()
+  private getCollisionObjects(object: UnknownGameObject) {
+    const objects = new Set<UnknownGameObject>()
     
-    this.objects.forEach(other => {
+    this.gameObjects.forEach(other => {
       if (
         other !== object &&
         this.haveCollision(object, other as Wall)
@@ -252,7 +250,7 @@ export default class Stage extends EventBus {
     return objects
   }
   
-  private haveCollision(a: TObjects, b: Wall) {
+  private haveCollision(a: UnknownGameObject, b: Wall) {
     if (a) {
       if (a.objectType === 'enemyTank' && b.objectType === 'playerTank') {
         if (a.left < b.right &&
@@ -285,7 +283,7 @@ export default class Stage extends EventBus {
   }
   
   private removeEnemyTank(enemyTank: EnemyTank) {
-    this.objects.delete(enemyTank)
+    this.gameObjects.delete(enemyTank)
     this.enemyTankCount -= 1
   }
   
@@ -301,7 +299,7 @@ export default class Stage extends EventBus {
       this.enemyTankPositionIndex = (this.enemyTankPositionIndex + 1) % 3
       this.enemyTankCount += 1
       this.enemyTankTimer = 0
-      this.objects.add(enemyTank)
+      this.gameObjects.add(enemyTank)
     }
   }
 }

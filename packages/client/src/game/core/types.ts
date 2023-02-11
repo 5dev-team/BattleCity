@@ -1,14 +1,14 @@
 import Input from '@/game/core/input/input'
 import Stage from '@/game/core/stage/stage'
 import Bullet from '@/game/core/bullet/bullet'
-import { Sprites } from '@/game/helpers/types'
+import { Sprite } from '@/game/helpers/types'
 
 export type GameObjectArgs = {
   x: number
   y: number
   width: number
   height: number
-  sprites: Sprites
+  sprites: Sprite[]
   type?: number
   animationSpeed?: number
 }

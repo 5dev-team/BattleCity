@@ -1,3 +1,3 @@
-import Sprite from './sprite'
+import ImageLoader from './sprite'
 
-export default Sprite
+export default ImageLoader

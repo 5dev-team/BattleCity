@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import * as path from 'path'
 import { rollup, InputOptions, OutputOptions } from 'rollup'
 import rollupPluginTypescript from '@rollup/plugin-typescript'
+import { VitePWA } from 'vite-plugin-pwa'
 
 dotenv.config()
 
@@ -13,11 +14,12 @@ const CompileTsServiceWorker = () => ({
   async writeBundle() {
     const inputOptions: InputOptions = {
       input: 'src/sw.ts',
-      plugins: [rollupPluginTypescript()],
+      //TODO: fix type
+      plugins: [rollupPluginTypescript() as Plugin]
     }
     const outputOptions: OutputOptions = {
       file: 'dist/sw.js',
-      format: 'es',
+      format: 'es'
     }
     const bundle = await rollup(inputOptions)
     await bundle.write(outputOptions)
@@ -30,20 +32,34 @@ export default defineConfig(({ command, mode }) => {
   return {
     assetsInclude: ['**/*.png'],
     server: {
-      port: Number(process.env.CLIENT_PORT) || 3000,
+      port: Number(process.env.CLIENT_PORT) || 3000
     },
     define: {
       __SERVER_PORT__: process.env.SERVER_PORT,
       __YANDEX_API__: JSON.stringify(process.env.YANDEX_API.trim()),
       __YANDEX_OAUTH_URL__: JSON.stringify(process.env.YANDEX_OAUTH_URL.trim()),
-      __YANDEX_REDIRECT_URI__: JSON.stringify(process.env.YANDEX_REDIRECT_URI.trim()),
+      __YANDEX_REDIRECT_URI__: JSON.stringify(process.env.YANDEX_REDIRECT_URI.trim())
     },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src')
       }
     },
-    plugins: [react(),CompileTsServiceWorker()],
+    plugins: [
+      react(), CompileTsServiceWorker(),
+      VitePWA({
+        registerType: 'autoUpdate',
+        injectRegister: 'auto',
+        workbox: {
+          clientsClaim: true,
+          skipWaiting: true,
+          globPatterns: ['**/*.{js,css,html,ico,png,svg}']
+        },
+        devOptions: {
+          enabled: true
+        }
+      })
+    ],
     build: {
       manifest: false,
       minify: mode === 'development' ? false : 'terser',

@@ -97,7 +97,7 @@ export default class EnemyTank extends Tank {
     frameDelta: number
   }): void {
     if (this.isDestroyed) {
-      world.objects.delete(this)
+      world.gameObjects.delete(this)
     }
     
     const direction = this.direction
@@ -109,7 +109,7 @@ export default class EnemyTank extends Tank {
     if (Math.floor(Math.random() * 31) === 1) {
       this.fire()
       if (this.bullet) {
-        world.objects.add(this.bullet)
+        world.gameObjects.add(this.bullet)
       }
     }
     

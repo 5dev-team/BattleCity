@@ -1,4 +1,4 @@
-import { Sprites } from '@/game/helpers/types'
+import { Sprite } from '@/game/helpers/types'
 import { GameObjectArgs } from '@/game/core/types'
 import EventBus from '@/game/core/event-bus/event-bus'
 import eventBusInstance from '@/game/core/event-bus/event-bus'
@@ -15,7 +15,7 @@ export default class GameObject extends EventBus {
   public y: number
   public readonly width: number
   public readonly height: number
-  public readonly sprites: Sprites
+  public readonly sprites: Sprite[]
   public readonly eventBus: () => typeof EventBus
   protected animationFrame: number
   protected frames: number

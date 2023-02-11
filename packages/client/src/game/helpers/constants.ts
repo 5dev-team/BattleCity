@@ -1,4 +1,4 @@
-import { DefaultPosition, Maps, Sprites } from './types'
+import { DefaultPosition, Maps, Sprite } from './types'
 
 export const NUMBER_OF_UNITS = 13
 export const TILE_SIZE = 16
@@ -18,7 +18,8 @@ export const Keys = {
   RIGHT: 'ArrowRight',
   DOWN: 'ArrowDown',
   LEFT: 'ArrowLeft',
-  SPACE: 'Space'
+  SPACE: 'Space',
+  ENTER: 'Enter',
 }
 
 export const Direction = {
@@ -40,7 +41,7 @@ export const ObjectType = {
 export const PROJECTILE_WIDTH = 8
 export const PROJECTILE_HEIGHT = 8
 export const PROJECTILE_SPEED = 2
-export const PROJECTILE_SPRITES: Sprites = [
+export const PROJECTILE_SPRITES: Sprite[] = [
   [20 * UNIT_SIZE + 4, 6 * UNIT_SIZE + 12, PROJECTILE_WIDTH, PROJECTILE_WIDTH],
   [
     21.5 * UNIT_SIZE + 4,
@@ -60,7 +61,7 @@ export const PROJECTILE_SPRITES: Sprites = [
 export const PROJECTILE_EXPLOSION_WIDTH = UNIT_SIZE
 export const PROJECTILE_EXPLOSION_HEIGHT = UNIT_SIZE
 export const PROJECTILE_EXPLOSION_SPEED = 4
-export const PROJECTILE_EXPLOSION_SPRITES: Sprites = [
+export const PROJECTILE_EXPLOSION_SPRITES: Sprite[] = [
   [16 * UNIT_SIZE, 8 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE],
   [17 * UNIT_SIZE, 8 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE],
   [18 * UNIT_SIZE, 8 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE]
@@ -69,7 +70,7 @@ export const PROJECTILE_EXPLOSION_SPRITES: Sprites = [
 export const BASE_POSITION: DefaultPosition = [6 * UNIT_SIZE, 12 * UNIT_SIZE]
 export const BASE_WIDTH = UNIT_SIZE
 export const BASE_HEIGHT = UNIT_SIZE
-export const BASE_SPRITES: Sprites = [
+export const BASE_SPRITES: Sprite[] = [
   [11 * UNIT_SIZE, 7.5 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE],
   [12 * UNIT_SIZE, 7.5 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE]
 ]
@@ -87,7 +88,7 @@ export const BULLET_SPRITES = [
 export const BULLET_EXPLOSION_WIDTH = UNIT_SIZE
 export const BULLET_EXPLOSION_HEIGHT = UNIT_SIZE
 export const BULLET_EXPLOSION_ANIMATION_SPEED = 4
-export const BULLET_EXPLOSION_SPRITES: Sprites = [
+export const BULLET_EXPLOSION_SPRITES: Sprite[] = [
   [16 * UNIT_SIZE, 2 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE],
   [17 * UNIT_SIZE, 2 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE],
   [18 * UNIT_SIZE, 2 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE]
@@ -105,7 +106,7 @@ export const TANK_TURN_THRESHOLD = 12
 export const TANK_EXPLOSION_WIDTH = 2 * UNIT_SIZE
 export const TANK_EXPLOSION_HEIGHT= 2 * UNIT_SIZE
 export const TANK_EXPLOSION_ANIMATION_SPEED = 100
-export const TANK_EXPLOSION_SPRITES: Sprites = [
+export const TANK_EXPLOSION_SPRITES: Sprite[] = [
   [16 * UNIT_SIZE, 2 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE],
   [17 * UNIT_SIZE, 2 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE],
   [18 * UNIT_SIZE, 2 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE],
@@ -118,7 +119,7 @@ export const PLAYER1_TANK_POSITION: DefaultPosition = [
   4 * UNIT_SIZE,
   12 * UNIT_SIZE
 ]
-export const PLAYER1_TANK_SPRITES: Sprites = [
+export const PLAYER1_TANK_SPRITES: Sprite[] = [
   [0, 0, UNIT_SIZE, UNIT_SIZE],
   [UNIT_SIZE, 0, UNIT_SIZE, UNIT_SIZE],
   [2 * UNIT_SIZE, 0, UNIT_SIZE, UNIT_SIZE],
@@ -134,7 +135,7 @@ export const ENEMY_TANK_START_POSITIONS: DefaultPosition[] = [
   [6 * UNIT_SIZE, 0],
   [12 * UNIT_SIZE, 0]
 ]
-export const ENEMY_TANK_SPRITES: Sprites = [
+export const ENEMY_TANK_SPRITES: Sprite[] = [
   [0, 4 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE],
   [UNIT_SIZE, 4 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE],
   [2 * UNIT_SIZE, 4 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE],
@@ -145,7 +146,7 @@ export const ENEMY_TANK_SPRITES: Sprites = [
   [7 * UNIT_SIZE, 4 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE]
 ]
 
-export const BRICK_WALL_SPRITES: Sprites = [
+export const BRICK_WALL_SPRITES: Sprite[] = [
   [8 * UNIT_SIZE, 4 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE], // full
   [9 * UNIT_SIZE, 4 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE], // top 8/16
   [10 * UNIT_SIZE, 4 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE], // right 8/16
@@ -174,7 +175,7 @@ export const BRICK_WALL_SPRITE_MAP: Maps = {
   '8': 13
 }
 
-export const STEEL_WALL_SPRITES: Sprites = [
+export const STEEL_WALL_SPRITES: Sprite[] = [
   [8 * UNIT_SIZE, 6.5 * UNIT_SIZE, TILE_SIZE, TILE_SIZE], // 1/4
   [8 * UNIT_SIZE, 6.5 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE], // full
   [9 * UNIT_SIZE, 6.5 * UNIT_SIZE, TILE_SIZE, TILE_SIZE], // top
@@ -183,16 +184,16 @@ export const STEEL_WALL_SPRITES: Sprites = [
   [12 * UNIT_SIZE, 6.5 * UNIT_SIZE, TILE_SIZE, TILE_SIZE] // left
 ]
 
-export const STAGE_NUMBER_SPRITES: Sprites = [
+export const STAGE_NUMBER_SPRITES: Sprite[] = [
   [23.5 * UNIT_SIZE, 11.5 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE], // flag
   [19 * UNIT_SIZE, 5.25 * UNIT_SIZE, TILE_SIZE, TILE_SIZE] // stage number
 ]
 
-export const PLAYER1_PANEL_SPRITES: Sprites = [
+export const PLAYER1_PANEL_SPRITES: Sprite[] = [
   [23.5 * UNIT_SIZE, 8.5 * UNIT_SIZE, UNIT_SIZE, TILE_SIZE], // 1P
   [23.5 * UNIT_SIZE, 9 * UNIT_SIZE, TILE_SIZE, TILE_SIZE], // tank icon
 ]
-export const PLAYER1_LIVES_SPRITES: Sprites = [
+export const PLAYER1_LIVES_SPRITES: Sprite[] = [
   [19.5 * UNIT_SIZE, 5.25 * UNIT_SIZE, TILE_SIZE, TILE_SIZE], // number
   [20 * UNIT_SIZE, 5.25 * UNIT_SIZE, TILE_SIZE, TILE_SIZE], // number
   [20.5 * UNIT_SIZE, 5.25 * UNIT_SIZE, TILE_SIZE, TILE_SIZE] // number
@@ -206,6 +207,6 @@ export const PLAYER1_LIVES_SPRITE_MAP: Maps = {
   '8': 13
 }
 
-export const ENEMY_TANK_ICONS_SPRITES: Sprites = [
+export const ENEMY_TANK_ICONS_SPRITES: Sprite[] = [
   [18 * UNIT_SIZE, 5.5 * UNIT_SIZE, TILE_SIZE, UNIT_SIZE]
 ]

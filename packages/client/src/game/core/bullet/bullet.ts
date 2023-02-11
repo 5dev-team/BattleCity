@@ -2,12 +2,12 @@ import { GameObjectArgs } from '@/game/core/types'
 import Explosion from '@/game/core/explosion/explosion'
 import GameObject from '@/game/core/game-object/game-object'
 import Stage from '@/game/core/stage/stage'
-import { TObjects } from '@/game/core/stage/types'
+import { UnknownGameObject } from '@/game/core/stage/types'
 import { BULLET_HEIGHT, BULLET_SPEED, BULLET_SPRITES, BULLET_WIDTH } from '@/game/helpers/constants'
+import { Sprite } from '@/game/helpers/types'
 import { getAxisForDirection, getValueForDirection } from '@/game/helpers/helpers'
 import Tank from '@/game/core/tank/tank'
 import BulletExplosion from '@/game/core/bullet-explosion/bullet-explosion'
-import { singleSprite } from '@/game/helpers/types'
 
 export default class Bullet extends GameObject {
   public readonly direction: number
@@ -39,7 +39,7 @@ export default class Bullet extends GameObject {
     this.objectType = 'bullet'
   }
   
-  get sprite(): singleSprite {
+  get sprite(): Sprite {
     return this.sprites[this.direction]
   }
   
@@ -79,7 +79,7 @@ export default class Bullet extends GameObject {
     }
   }
   
-  shouldCollide(object: TObjects) {
+  shouldCollide(object: GameObject) {
     if (object && object.objectType) {
       switch (object.objectType) {
         case 'base':
@@ -102,16 +102,16 @@ export default class Bullet extends GameObject {
   }
   
   
-  shouldExplode(object: TObjects) {
+  shouldExplode(object: GameObject) {
     return object.objectType !== 'bullet'
   }
   
-  private collide(objects: TObjects[]): boolean {
+  private collide(objects: GameObject[]): boolean {
     let shouldExplode = false
     
     for (const object of objects) {
       if (!this.shouldCollide(object)) continue
-      
+      // @ts-expect-error
       object?.hit(this)
       shouldExplode = this.shouldExplode(object)
     }

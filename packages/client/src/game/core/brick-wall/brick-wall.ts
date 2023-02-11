@@ -13,7 +13,7 @@ export default class BrickWall extends Wall {
   
   update({ world }: Record<string, Stage>) {
     if (this.isDestroyed) {
-      world.objects.delete(this)
+      world.gameObjects.delete(this)
     }
   }
   
