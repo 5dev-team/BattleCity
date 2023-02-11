@@ -84,7 +84,7 @@ export default class Bullet extends MobileGameObject
       } else {
         const axis = getAxisForDirection(this.direction)
         const value = getValueForDirection(this.direction)
-        this.move(axis, value)
+        this.move(axis, value * this.speed)
       }
     }
   }

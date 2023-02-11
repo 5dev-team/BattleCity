@@ -6,12 +6,12 @@ export default abstract class MobileGameObject extends GameObject {
   protected abstract direction: Direction
   protected abstract collideWith: GameObjectType[]
 
-  public move(axis: string, value: number): void {
+  public move(axis: string, offset: number): void {
     if (axis === 'y') {
-      this.pos.y += value * this.speed
+      this.pos.y += offset
     }
     if (axis === 'x') {
-      this.pos.x += value * this.speed
+      this.pos.x += offset
     }
   }
 

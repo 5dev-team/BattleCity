@@ -4,7 +4,7 @@ import Bullet from '@/game/core/bullet/bullet'
 import { WallArgs } from '@/game/core/wall/types'
 import { TILE_SIZE } from '@/game/helpers/constants'
 
-export default class Wall extends GameObject implements IHitable {
+export default abstract class Wall extends GameObject implements IHitable {
   public gameObjectType: GameObjectType = GameObjectType.Wall
   public damage: number
   public state: number
@@ -18,10 +18,8 @@ export default class Wall extends GameObject implements IHitable {
     this.state = 0b0000
   }
 
-  public hit(bullet: Bullet): void {
-    throw new Error('Method not implemented.')
-  }
-  
+  public abstract hit(bullet: Bullet): void
+
   get sprite() {
     return this.sprites[this.damage]
   }

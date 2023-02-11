@@ -54,23 +54,22 @@ export default class PlayerTank extends Tank implements IUpdatable {
       const gameObjects = Array.from(world.gameObjects)
 
       this.turn(direction, this.getTurnOffsetLimit(gameObjects))
-      
+
       const collisions = this.getCollisions(this.getColliders(gameObjects))
-      if (collisions.length === 0)
-        this.move(axis, value)
-      
-      if (world.isOutOfBounds(this))
-        this.move(axis, -value)
+
+      if (collisions.length === 0) {
+        const movement = this.getMovement(this.getMoveOffsetLimit(gameObjects))
+
+        this.move(axis, value * movement)
+
+        if (world.isOutOfBounds(this)) this.move(axis, -value * movement)
+      }
 
       this.animate(frameDelta)
     }
-    
+
     if (input.has(Keys.SPACE)) {
       this.fire()
-
-      if (this.bullet) {
-        world.gameObjects.add(this.bullet)
-      }
     }
   }
 }
