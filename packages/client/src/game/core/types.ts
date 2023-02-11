@@ -31,6 +31,10 @@ export interface IUpdatable {
   update(state: Partial<UpdateState>): void
 }
 
+export interface IDestroyable {
+  destroy(): void
+}
+
 export interface IMovable {
   direction: Direction
   move(axis: string, value: number): void

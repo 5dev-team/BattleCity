@@ -6,9 +6,9 @@ import {
   BASE_WIDTH,
 } from '@/game/helpers/constants'
 import { Sprite } from '@/game/helpers/types'
-import { GameObjectType, Vec2 } from '@/game/core/types'
+import { GameObjectType, IDestroyable, IHitable, Vec2 } from '@/game/core/types'
 
-export default class Base extends GameObject {
+export default class Base extends GameObject implements IHitable, IDestroyable {
   public gameObjectType: GameObjectType = GameObjectType.Base
   private readonly destroyed: boolean
 
@@ -27,7 +27,11 @@ export default class Base extends GameObject {
     return this.sprites[Number(this.destroyed)] // 0,1 разрушенный или целый в зависимости от damage
   }
 
-  hit() {
+  public hit() {
+    this.destroy()
+  }
+
+  public destroy(): void {
     this.emit('destroyed', this)
   }
 }

@@ -23,7 +23,7 @@ export default class Stage extends EventBus {
     ICE: 5,
   }
   private respawn: number
-  private enemies: EnemyTank[]
+  private readonly enemies: EnemyTank[]
   private readonly playerTank: PlayerTank
   private readonly base: Base
   private readonly terrain: (Wall | undefined)[]
@@ -108,7 +108,13 @@ export default class Stage extends EventBus {
       this.emit('gameOver')
     })
 
-    this.enemies.map(enemyTank => {
+    this.terrain.forEach(wall => {
+      if (wall) {
+        wall.on('destroyed', () => this.gameObjects.delete(wall))
+      }
+    })
+
+    this.enemies.forEach(enemyTank => {
       enemyTank.on('fire', (bullet: Bullet) => {
         this.gameObjects.add(bullet)
         bullet.on('explode', (explosion: Explosion) => {
@@ -218,38 +224,6 @@ export default class Stage extends EventBus {
     )
   }
 
-  public hasCollision(gameObject: UnknownGameObject) {
-    const collision = this.getCollision(gameObject)
-    return Boolean(collision)
-  }
-
-  public getCollision(gameObject: UnknownGameObject) {
-    const collisionObjects = this.getCollisionObjects(gameObject)
-    if (collisionObjects.size > 0) {
-      return { objects: collisionObjects }
-    }
-  }
-
-  private getCollisionObjects(gameObject: UnknownGameObject) {
-    const objects = new Set<UnknownGameObject>()
-
-    this.gameObjects.forEach(other => {
-      if (other !== gameObject && this.haveCollision(gameObject, other)) {
-        objects.add(other)
-      }
-    })
-    return objects
-  }
-
-  private haveCollision(gameObject: UnknownGameObject, other: UnknownGameObject) {
-    return (
-      gameObject.left < other.right &&
-      gameObject.right > other.left &&
-      gameObject.top < other.bottom &&
-      gameObject.bottom > other.top
-    )
-  }
-
   private removeTank(enemyTank: Tank) {
     this.gameObjects.delete(enemyTank)
     this.enemyTankCount -= 1
@@ -263,7 +237,6 @@ export default class Stage extends EventBus {
         return
       }
       enemyTank.setPosition(this.enemyTankPositionIndex)
-
       this.enemyTankPositionIndex = (this.enemyTankPositionIndex + 1) % 3
       this.enemyTankCount += 1
       this.enemyTankTimer = 0

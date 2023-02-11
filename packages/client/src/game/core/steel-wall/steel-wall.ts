@@ -10,6 +10,6 @@ export default class SteelWall extends Wall implements IHitable {
   }
   
   public hit() {
-    if (this.isDestroyed) return
+    return
   }
 }

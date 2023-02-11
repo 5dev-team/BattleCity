@@ -1,13 +1,14 @@
 import {
   Direction,
   GameObjectType,
+  IDestroyable,
+  IHitable,
   IUpdatable,
   UpdateState,
   Vec2,
 } from '@/game/core/types'
 import Explosion from '@/game/core/explosion/explosion'
 import GameObject from '@/game/core/game-object/game-object'
-import { UnknownGameObject } from '@/game/core/stage/types'
 import {
   BULLET_HEIGHT,
   BULLET_SPEED,
@@ -24,7 +25,14 @@ import { Sprite } from '@/game/helpers/types'
 import PlayerTank from '@/game/core/player-tank/player-tank'
 import MobileGameObject from '@/game/core/mobile-game-object/mobile-game-object'
 
-export default class Bullet extends MobileGameObject implements IUpdatable {
+export default class Bullet extends MobileGameObject
+  implements IUpdatable, IHitable, IDestroyable {
+  protected collideWith = [
+    GameObjectType.Base,
+    GameObjectType.Bullet,
+    GameObjectType.Tank,
+    GameObjectType.Wall,
+  ]
   public gameObjectType: GameObjectType = GameObjectType.Bullet
   public readonly direction: Direction
   private tank: Tank | null
@@ -53,36 +61,35 @@ export default class Bullet extends MobileGameObject implements IUpdatable {
   }
 
   public update(state: Pick<UpdateState, 'world'>): void {
-    const axis = getAxisForDirection(this.direction)
-    const value = getValueForDirection(this.direction)
+    const { world } = state
 
-    this.move(axis, value)
-
-    const isOutOfBounds = state.world.isOutOfBounds(this)
-    const collision = state.world.getCollision(this)
-    if (isOutOfBounds) {
+    if (world.isOutOfBounds(this)) {
       this.destroy()
-    } else if (collision) {
-      if (collision && this.collide([...collision.objects])) {
-        this.stop()
-        this.explode()
+    } else {
+      const gameObjects = Array.from(world.gameObjects)
+      const colliders = this.getColliders(gameObjects, true)
+      const insideCollisions = colliders.filter(c => this.isInsideOf(c))
+      const outerCollisions = this.getCollisions(colliders)
+      const collisions = [...outerCollisions, ...insideCollisions].filter(
+        c => this.shouldCollideWith(c) && c !== this.tank
+      )
+
+      if (collisions.length > 0) {
+        collisions.forEach(c => ((c as unknown) as IHitable).hit(this))
+        this.hit()
+        if (collisions.some(c => c.gameObjectType !== GameObjectType.Bullet)) {
+          this.stop()
+          this.explode()
+        }
+      } else {
+        const axis = getAxisForDirection(this.direction)
+        const value = getValueForDirection(this.direction)
+        this.move(axis, value)
       }
     }
   }
 
-  get sprite(): Sprite {
-    return this.sprites[this.direction]
-  }
-
-  get isFromPlayerTank() {
-    return this.tank instanceof PlayerTank
-  }
-
-  get isFromEnemyTank() {
-    return !this.isFromPlayerTank
-  }
-
-  shouldCollideWith(obj: GameObject) {
+  public shouldCollideWith(obj: GameObject) {
     switch (obj.gameObjectType) {
       case GameObjectType.Base:
       case GameObjectType.Wall:
@@ -101,29 +108,24 @@ export default class Bullet extends MobileGameObject implements IUpdatable {
     }
   }
 
-  private shouldExplode(gameObject: GameObject) {
-    return gameObject.gameObjectType !== GameObjectType.Bullet
+  get sprite(): Sprite {
+    return this.sprites[this.direction]
   }
 
-  private collide(objects: UnknownGameObject[]): boolean {
-    let shouldExplode = false
-
-    for (const object of objects) {
-      if (!this.shouldCollideWith(object)) continue
-
-      object?.hit(this)
-      shouldExplode = this.shouldExplode(object)
-    }
-
-    return shouldExplode
+  get isFromPlayerTank() {
+    return this.tank instanceof PlayerTank
   }
 
-  hit() {
+  get isFromEnemyTank() {
+    return !this.isFromPlayerTank
+  }
+
+  public hit() {
     this.stop()
     this.destroy()
   }
 
-  private destroy() {
+  public destroy() {
     this.tank = null
     this.explosion = null
     this.emit('destroyed', this)
@@ -144,7 +146,7 @@ export default class Bullet extends MobileGameObject implements IUpdatable {
     }
   }
 
-  explode() {
+  private explode() {
     const [x, y] = this.getExplosionStartingPosition()
     this.explosion = new BulletExplosion({ pos: new Vec2(x, y) })
     this.explosion.on('destroyed', () => this.destroy())

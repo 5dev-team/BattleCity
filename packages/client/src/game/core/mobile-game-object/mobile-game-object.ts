@@ -1,10 +1,10 @@
 import GameObject from '@/game/core/game-object/game-object'
 import { Direction, GameObjectType, Vec2 } from '@/game/core/types'
-import Stage from '@/game/core/stage/stage'
 
 export default abstract class MobileGameObject extends GameObject {
   protected abstract speed: number
   protected abstract direction: Direction
+  protected abstract collideWith: GameObjectType[]
 
   public move(axis: string, value: number): void {
     if (axis === 'y') {
@@ -19,73 +19,39 @@ export default abstract class MobileGameObject extends GameObject {
     this.speed = 0
   }
 
-  public getCollisions(
-    gameObjects: GameObject[],
-    ...withTypes: GameObjectType[]
-  ) {
-    const colliders = gameObjects.filter(
-      obj =>
+  public getColliders(gameObjects: GameObject[], ignoreInside: boolean = false) {
+    return gameObjects.filter(obj => {
+      const commonFilter =
         obj.id !== this.id &&
-        withTypes.some(type => obj.gameObjectType === type) &&
-        obj.pos.distance(this.pos) < this.width + obj.width &&
-        !this.isInsideOf(obj)
-    )
+        this.collideWith.some(type => obj.gameObjectType === type) &&
+        obj.center.distance(this.center) < (this.diagonal + obj.diagonal) / 2
 
-    // switch (this.direction) {
-    //   case Direction.Up:
-    //     colliders = colliders.filter(collider => collider.pos.y < this.pos.y)
-    //     break
-    //   case Direction.Down:
-    //     colliders = colliders.filter(collider => collider.pos.y > this.pos.y)
-    //     break
-    //   case Direction.Left:
-    //     colliders = colliders.filter(collider => collider.pos.x < this.pos.x)
-    //     break
-    //   case Direction.Right:
-    //     colliders = colliders.filter(collider => collider.pos.x > this.pos.x)
-    //     break
-    // }
+        return ignoreInside ? commonFilter : !this.isInsideOf(obj)
+    })
+  }
 
+  public getCollisions(
+    colliders: GameObject[]
+  ) {
     const collisions = colliders.filter(
       collider =>
-        this.signedDistanceBetween(this.direction, this, collider) === 0 &&
-        this.isTowardsDirection(this.direction, this, collider)
+        this.distanceBetweenBounds(collider, this.direction) === 0 &&
+        this.isTowardsTo(collider)
     )
 
     return collisions
-
-    // const collisions = colliders.map(collider => ({
-    //   collider,
-    //   range: this.signedDistanceBetween(this.direction, this, collider),
-    // }))
-
-    // return (
-    //   collisions.find(collision => {
-    //     // if (collision.range < 0) {
-    //     //   console.log('collision.distance < 0', collision.range)
-    //     // }
-    //     return (
-    //       collision.range === 0 &&
-    //       this.isTowardsDirection(this.direction, this, collision.collider)
-    //     )
-    //   }) === undefined
-    // )
   }
 
-  public isTowardsDirection(
-    direction: Direction,
-    origin: GameObject,
-    dest: GameObject
-  ): boolean {
+  public isTowardsTo(dest: GameObject): boolean {
     let vector = Vec2.up.opposite
-    if (direction === Direction.Down) {
+    if (this.direction === Direction.Down) {
       vector = Vec2.down.opposite
-    } else if (direction === Direction.Left) {
+    } else if (this.direction === Direction.Left) {
       vector = Vec2.left
-    } else if (direction === Direction.Right) {
+    } else if (this.direction === Direction.Right) {
       vector = Vec2.right
     }
-    const sourceVector = dest.center.add(origin.center.opposite)
+    const sourceVector = dest.center.add(this.center.opposite)
     const angle = sourceVector.angleBetween(vector) * (180 / Math.PI)
     // console.log(dest.center, origin.center, sourceVector, vector, angle)
 

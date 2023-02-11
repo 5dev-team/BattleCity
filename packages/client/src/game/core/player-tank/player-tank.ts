@@ -11,7 +11,6 @@ import {
 } from '@/game/helpers/helpers'
 import {
   GameObjectArgs,
-  GameObjectType,
   IUpdatable,
   UpdateState,
   Vec2,
@@ -48,41 +47,25 @@ export default class PlayerTank extends Tank implements IUpdatable {
   public update(state: UpdateState): void {
     const { input, frameDelta, world } = state
     if (input.has(Keys.UP, Keys.RIGHT, Keys.DOWN, Keys.LEFT)) {
-      // const direction = getDirectionForKeys(input.keys)
-      // const axis = getAxisForDirection(direction)
-      // const value = getValueForDirection(direction)
-
-      // this.turn(direction)
-      // this.move(axis, value)
-      // this.animate(frameDelta)
-
-      // const isOutOfBounds = world.isOutOfBounds(this)
-      // const hasCollision = world.hasCollision(this)
-
-      // if (isOutOfBounds || hasCollision) {
-      //   this.move(axis, -value)
-      // }
-
-
       const direction = getDirectionForKeys(input.keys)
       const axis = getAxisForDirection(direction)
       const value = getValueForDirection(direction)
 
-      this.turn(direction)
+      const gameObjects = Array.from(world.gameObjects)
+
+      this.turn(direction, this.getTurnOffsetLimit(gameObjects))
       
-      const hasCollision = this.getCollisions(Array.from(world.gameObjects), GameObjectType.Wall, GameObjectType.Tank)
-      if (hasCollision.length === 0)
+      const collisions = this.getCollisions(this.getColliders(gameObjects))
+      if (collisions.length === 0)
         this.move(axis, value)
       
-      // const hasCollision = world.hasCollision(this)
-      if (world.isOutOfBounds(this)) {
+      if (world.isOutOfBounds(this))
         this.move(axis, -value)
-      }
 
       this.animate(frameDelta)
     }
-
-    if (input.keys.has(Keys.SPACE)) {
+    
+    if (input.has(Keys.SPACE)) {
       this.fire()
 
       if (this.bullet) {

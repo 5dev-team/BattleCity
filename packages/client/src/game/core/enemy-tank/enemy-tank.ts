@@ -7,7 +7,12 @@ import {
   getAxisForDirection,
   getValueForDirection,
 } from '@/game/helpers/helpers'
-import { Direction, GameObjectType, IUpdatable, UpdateState, Vec2 } from '@/game/core/types'
+import {
+  Direction,
+  IUpdatable,
+  UpdateState,
+  Vec2,
+} from '@/game/core/types'
 
 export default class EnemyTank extends Tank implements IUpdatable {
   public type: number
@@ -19,45 +24,37 @@ export default class EnemyTank extends Tank implements IUpdatable {
     this.name = 'enemy-tank'
   }
 
-  public hit() {
-    if (!this.isDestroyed) {
-      this.isDestroyed = true
-    }
-    super.hit()
-  }
-
   private invertDirection() {
-    let newDirection = 0
     switch (this.direction) {
       case Direction.Down:
-        newDirection = Direction.Up
+        this.direction = Direction.Up
         break
       case Direction.Right:
-        newDirection = Direction.Left
+        this.direction = Direction.Left
         break
       case Direction.Up:
-        newDirection = Direction.Down
+        this.direction = Direction.Down
         break
       case Direction.Left:
-        newDirection = Direction.Right
+        this.direction = Direction.Right
         break
     }
-    this.direction = newDirection
   }
 
   public rotateClockwise() {
     if (this.direction !== Direction.Left) {
-      this.turn(this.direction + 1)
+      this.direction = this.direction + 1
     } else {
-      this.turn(Direction.Up)
+      this.direction = Direction.Up
     }
   }
 
   public rotateAntiClockwise() {
+
     if (this.direction !== Direction.Up) {
-      this.turn(this.direction - 1)
+      this.direction = this.direction - 1
     } else {
-      this.turn(Direction.Left)
+      this.direction = Direction.Left
     }
   }
 
@@ -84,55 +81,19 @@ export default class EnemyTank extends Tank implements IUpdatable {
   }
 
   public update({ world, frameDelta }: Omit<UpdateState, 'input'>): void {
-    // if (this.isDestroyed) {
-    //   world.gameObjects.delete(this)
-    // }
-
-    // const direction = this.direction
-    // const axis = getAxisForDirection(direction)
-    // const value = getValueForDirection(direction)
-    
-    // this.turn(direction)
-    // this.move(axis, value)
-    // if (Math.floor(Math.random() * 31) === 1) {
-    //   this.fire()
-    //   if (this.bullet) {
-    //     world.gameObjects.add(this.bullet)
-    //   }
-    // }
-
-    // this.animate(frameDelta)
-
-    // const isOutOfBounds = world.isOutOfBounds(this)
-    // const hasCollision = world.hasCollision(this)
-
-    // if (isOutOfBounds || hasCollision) {
-    //   this.move(axis, -value)
-    //   const rand = Math.round(Math.random() * 4)
-
-    //   if (rand % 4 == 0) {
-    //     if (this.pos.x % 8 !== 0 || this.pos.y % 8 !== 0) {
-    //       this.invertDirection()
-    //     } else {
-    //       this.changeDirectionWhenTileReach()
-    //     }
-    //   }
-    // }
-
-    if (this.isDestroyed) {
-      world.gameObjects.delete(this)
-    }
-
     const direction = this.direction
     const axis = getAxisForDirection(direction)
     const value = getValueForDirection(direction)
-    
-    this.turn(direction)
 
-    const hasCollision = this.getCollisions(Array.from(world.gameObjects), GameObjectType.Wall, GameObjectType.Tank)
-    if (hasCollision.length === 0)
+    const gameObjects = Array.from(world.gameObjects)
+
+    this.turn(direction, this.getTurnOffsetLimit(gameObjects))
+
+    const collisions = this.getCollisions(this.getColliders(gameObjects))
+    if (collisions.length === 0) {
       this.move(axis, value)
-    
+    }
+
     if (Math.floor(Math.random() * 31) === 1) {
       this.fire()
       if (this.bullet) {
@@ -141,14 +102,14 @@ export default class EnemyTank extends Tank implements IUpdatable {
     }
 
     this.animate(frameDelta)
-    
-    const isOutOfBounds = world.isOutOfBounds(this) 
+
+    const isOutOfBounds = world.isOutOfBounds(this)
 
     if (isOutOfBounds) {
       this.move(axis, -value)
     }
 
-    if (isOutOfBounds || hasCollision.length > 0) {
+    if (isOutOfBounds || collisions.length > 0) {
       const rand = Math.round(Math.random() * 4)
 
       if (rand % 4 == 0) {
