@@ -19,7 +19,7 @@ export default abstract class MobileGameObject extends GameObject {
     this.speed = 0
   }
 
-  public getColliders(gameObjects: GameObject[], ignoreInside: boolean = false) {
+  public getColliders(gameObjects: GameObject[], ignoreInside = false) {
     return gameObjects.filter(obj => {
       const commonFilter =
         obj.id !== this.id &&
@@ -53,7 +53,6 @@ export default abstract class MobileGameObject extends GameObject {
     }
     const sourceVector = dest.center.add(this.center.opposite)
     const angle = sourceVector.angleBetween(vector) * (180 / Math.PI)
-    // console.log(dest.center, origin.center, sourceVector, vector, angle)
 
     return angle < 45
   }

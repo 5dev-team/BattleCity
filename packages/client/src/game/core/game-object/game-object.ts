@@ -10,7 +10,7 @@ import EventBus from '@/game/core/event-bus/event-bus'
 import eventBusInstance from '@/game/core/event-bus/event-bus'
 
 export default abstract class GameObject extends EventBus implements IRect {
-  public abstract gameObjectType: GameObjectType
+  public readonly abstract gameObjectType: GameObjectType
   public readonly eventBus: () => typeof EventBus
   public readonly width: number
   public readonly height: number
@@ -19,10 +19,8 @@ export default abstract class GameObject extends EventBus implements IRect {
   public pos: Vec2
   public name = 'Root object'
   public debug = false
-  protected speed = 0
   protected frames = 0
   protected animationFrame = 0
-  // protected isDestroyed = false
 
   constructor(args: GameObjectArgs) {
     super()

@@ -5,8 +5,6 @@ import {
   GameObjectType,
   IDestroyable,
   IHitable,
-  IUpdatable,
-  UpdateState,
   Vec2,
 } from '@/game/core/types'
 import Bullet from '@/game/core/bullet/bullet'
@@ -33,15 +31,14 @@ export default class Tank extends MobileGameObject implements IHitable, IDestroy
   protected speed: number
   protected bullet: Bullet | null
   protected explosion: TankExplosion | null
-  private readonly bulletSpeed: number
-  private _fireTimeout?: number;
-  private _fireDelay: number = 700;
+  private readonly _bulletSpeed: number
+  private readonly _fireDelay = 1000
 
   constructor(args: Partial<GameObjectArgs>) {
     super({ ...args, width: TANK_WIDTH, height: TANK_HEIGHT } as GameObjectArgs)
     this.direction = Direction.Up
     this.speed = TANK_SPEED
-    this.bulletSpeed = 4
+    this._bulletSpeed = 4
     this.bullet = null
     this.explosion = null
     this.name = 'tank'
@@ -122,7 +119,7 @@ export default class Tank extends MobileGameObject implements IHitable, IDestroy
         this.direction,
         this,
         new Vec2(x, y),
-        this.bulletSpeed
+        this._bulletSpeed
       )
 
       this.bullet.on('destroyed', () => {
@@ -133,7 +130,7 @@ export default class Tank extends MobileGameObject implements IHitable, IDestroy
       this._isFireReady = false
       setTimeout(() => {
         this._isFireReady = true
-      }, this._fireDelay);
+      }, this._fireDelay)
     }
   }
 
