@@ -1,5 +1,5 @@
 import { WallArgs } from '@/game/core/wall/types'
-import Wall from '@/game/core/wall/wall'
+import Wall from '@/game/core/wall/Wall'
 import Bullet from '@/game/core/bullet/bullet'
 import { BRICK_WALL_SPRITE_MAP, BRICK_WALL_SPRITES } from '@/game/helpers/constants'
 import { Direction, IDestroyable, IHitable } from '@/game/core/types'

@@ -23,7 +23,7 @@ import { IGameOverData } from '@/game/core/game-engine/types'
 import { fetchUserHighScore } from '@/store/slices/leaderboard'
 import { leaderboardDataRequest } from '@/constants/configs/leaderboard'
 import { ControllerType } from '@/game/helpers/types'
-import gamepadSimulator from '@/utils/gamepadEmulator'
+// import gamepadSimulator from '@/utils/gamepadEmulator'
 
 enum GameView {
   Menu,
@@ -115,10 +115,10 @@ const Game: React.FC = () => {
   //   }
   // }, [])
   
-  useEffect(() => {
-    gamepadSimulator.create()
-    gamepadSimulator.connect()
-  }, [])
+  // useEffect(() => {
+  //   gamepadSimulator.create()
+  //   gamepadSimulator.connect()
+  // }, [])
   
   
   useEffect(() => {
