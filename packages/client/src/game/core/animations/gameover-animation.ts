@@ -1,11 +1,11 @@
 import { GameObjectArgs, UpdateState } from '@/game/core/types'
-import Animation from '@/game/core/animations/animation'
+import GameAnimation from '@/game/core/animations/game-animation'
 import {
   GAME_OVER_ANIMATION_HEIGHT,  GAME_OVER_ANIMATION_SPRITES,
   GAME_OVER_ANIMATION_WIDTH,
 } from '@/game/helpers/constants'
 
-export default class GameOverAnimation extends Animation {
+export default class GameOverAnimation extends GameAnimation {
   constructor(args: Pick<GameObjectArgs, 'pos'>) {
     super({
       pos: args.pos,

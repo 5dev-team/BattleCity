@@ -78,7 +78,6 @@ export default class Bullet extends MobileGameObject
         collisions.forEach(c => ((c as unknown) as IHitable).hit(this))
         this.hit()
         if (collisions.some(c => c.gameObjectType !== GameObjectType.Bullet)) {
-          this.stop()
           this.explode()
         }
       } else {

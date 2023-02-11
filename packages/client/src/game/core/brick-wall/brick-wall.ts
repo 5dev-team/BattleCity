@@ -1,4 +1,4 @@
-import Wall from '@/game/core/wall/Wall'
+import Wall from '@/game/core/wall/wall'
 import Bullet from '@/game/core/bullet/bullet'
 import { WallArgs } from '@/game/core/wall/types'
 import { BRICK_WALL_SPRITE_MAP, BRICK_WALL_SPRITES } from '@/game/helpers/constants'

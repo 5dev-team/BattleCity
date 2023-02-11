@@ -2,8 +2,8 @@ import GameObject from '@/game/core/game-object/game-object'
 import { GameObjectArgs, GameObjectType, IDestroyable, IUpdatable, UpdateState } from '@/game/core/types'
 import { PROJECTILE_EXPLOSION_SPEED } from '@/game/helpers/constants'
 
-export default class Animation extends GameObject implements IUpdatable, IDestroyable {
-  public gameObjectType: GameObjectType = GameObjectType.Explosion
+export default class GameAnimation extends GameObject implements IUpdatable, IDestroyable {
+  public gameObjectType: GameObjectType = GameObjectType.Animation
   protected speed: number
   protected duration: number
   protected startTime: number

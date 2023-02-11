@@ -7,14 +7,14 @@ import {
 import {
   getDirectionForKeys,
   getAxisForDirection,
-  getValueForDirection
+  getValueForDirection,
 } from '@/game/helpers/helpers'
 import {
   Direction,
   GameObjectArgs,
   IUpdatable,
   UpdateState,
-  Vec2
+  Vec2,
 } from '@/game/core/types'
 import { IScoreResult } from '@/game/core/player-tank/types'
 import PlayerRebornAnimation from '@/game/core/animations/player-reborn-animation'
@@ -34,7 +34,7 @@ export default class PlayerTank extends Tank implements IUpdatable {
       pos: args.pos
         ? args.pos
         : new Vec2(PLAYER1_TANK_POSITION[0], PLAYER1_TANK_POSITION[1]),
-      sprites: PLAYER1_TANK_SPRITES
+      sprites: PLAYER1_TANK_SPRITES,
     })
     this.name = 'player tank'
     this.lives = 2
@@ -47,15 +47,14 @@ export default class PlayerTank extends Tank implements IUpdatable {
       1: 0,
       2: 0,
       3: 0,
-      4: 0
+      4: 0,
     }
-    
   }
-  
+
   public getScore() {
     return this.score
   }
-  
+
   public setScore(newScore: IScoreResult) {
     this.score = newScore
   }
@@ -129,41 +128,24 @@ export default class PlayerTank extends Tank implements IUpdatable {
       const value = getValueForDirection(direction)
       
       const gameObjects = Array.from(world.gameObjects)
-      //TODO: fix it
-      //@ts-ignore
+      
       this.turn(direction, this.getTurnOffsetLimit(gameObjects))
-      //TODO: fix it
-      //@ts-ignore
+      
       const collisions = this.getCollisions(this.getColliders(gameObjects))
-      if (!this.pause) {
-        if (collisions.length === 0) {
-          //TODO: fix it
-          //@ts-ignore
-          const movement = this.getMovement(this.getMoveOffsetLimit(gameObjects))
-    
-          this.move(axis, value * movement)
-    
-          if (world.isOutOfBounds(this)) this.move(axis, -value * movement)
-        }
+      
+      if (collisions.length === 0) {
+        const movement = this.getMovement(this.getMoveOffsetLimit(gameObjects))
+        
+        this.move(axis, value * movement)
+        
+        if (world.isOutOfBounds(this)) this.move(axis, -value * movement)
       }
       
-      if (this.rebornAnimation) {
-        this.rebornAnimation.setPosition({
-          x: this.getX(),
-          y: this.getY()
-        })
-      }
-      
-
       this.animate(frameDelta)
     }
-
+    
     if (input.has(Keys.SPACE)) {
       this.fire()
-      
-      if (this.bullet) {
-        world.gameObjects.add(this.bullet)
-      }
     }
   }
 }

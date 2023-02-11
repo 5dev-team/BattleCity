@@ -16,6 +16,7 @@ export enum GameObjectType {
   Tank,
   Bullet,
   Explosion,
+  Animation
 }
 
 export type GameObjectArgs = {

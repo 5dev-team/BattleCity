@@ -1,11 +1,11 @@
 import { GameObjectArgs } from '@/game/core/types'
-import Animation from '@/game/core/animations/animation'
+import GameAnimation from '@/game/core/animations/game-animation'
 import {
   INIT_TANK_ANIMATION_HEIGHT, INIT_TANK_ANIMATION_SPEED,
   INIT_TANK_ANIMATION_SPRITES,
   INIT_TANK_ANIMATION_WIDTH
 } from '@/game/helpers/constants'
-export default class InitAnimation extends Animation {
+export default class InitAnimation extends GameAnimation {
   constructor(args: Pick<GameObjectArgs, 'pos'>) {
     super({
       pos: args.pos,

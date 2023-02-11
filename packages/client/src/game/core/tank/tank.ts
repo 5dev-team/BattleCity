@@ -111,6 +111,7 @@ export default class Tank extends MobileGameObject implements IHitable, IDestroy
   }
 
   public fire() {
+    console.log(!this.bullet)
     if (this._isFireReady && !this.bullet) {
       console.log('fire')
 
@@ -122,6 +123,7 @@ export default class Tank extends MobileGameObject implements IHitable, IDestroy
       )
 
       this.bullet.on('destroyed', () => {
+        console.log('bullet destroed')
         this.bullet = null
       })
       this.emit('fire', this.bullet)

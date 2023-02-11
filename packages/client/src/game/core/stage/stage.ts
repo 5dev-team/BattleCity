@@ -2,9 +2,9 @@ import BrickWall from '@/game/core/brick-wall/brick-wall'
 import SteelWall from '@/game/core/steel-wall/steel-wall'
 import Base from '@/game/core/base/base'
 import Tank from '@/game/core/tank/tank'
-import Wall from '@/game/core/wall/Wall'
+import Wall from '@/game/core/wall/wall'
 import Bullet from '@/game/core/bullet/bullet'
-import { IUpdatable, UpdateState, Vec2 } from '@/game/core/types'
+import { GameObjectType, IUpdatable, UpdateState, Vec2 } from '@/game/core/types'
 import { IStageConstructor, UnknownGameObject } from '@/game/core/stage/types'
 import { BASE_POSITION, STAGE_SIZE, TILE_SIZE } from '@/game/helpers/constants'
 import EventBus from '@/game/core/event-bus/event-bus'
@@ -247,12 +247,12 @@ export default class Stage extends EventBus {
     const { input, frameDelta } = stage
 
     if (this.enemyTankCount < 4) {
-      this.addEnemyTank(frameDelta)
+      // this.addEnemyTank(frameDelta)
     }
     if (this.pause) {
       objectsArr
       .filter(obj => {
-        return obj !== undefined && obj instanceof GameOverAnimation
+        return (obj as unknown as GameObject).gameObjectType === GameObjectType.Animation
       })
       .map(obj => obj as IUpdatable)
       .forEach((object: IUpdatable) => {

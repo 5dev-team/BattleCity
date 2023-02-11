@@ -5,8 +5,8 @@ import {
   PLAYER_REBORN_SPRITES,
   PLAYER_REBORN_WIDTH
 } from '@/game/helpers/constants'
-import Animation from '@/game/core/animations/animation'
-export default class PlayerRebornAnimation extends Animation {
+import GameAnimation from '@/game/core/animations/game-animation'
+export default class PlayerRebornAnimation extends GameAnimation {
   constructor(args: Pick<GameObjectArgs, 'pos'>) {
     super({
       pos: args.pos,
