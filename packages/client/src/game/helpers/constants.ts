@@ -137,7 +137,7 @@ export const GAME_OVER_ANIMATION_SPRITES: Sprite[] = [
   [16 * UNIT_SIZE, 5.25 * UNIT_SIZE, 2* UNIT_SIZE, UNIT_SIZE],
 ]
 
-export const PLAYER1_TANK_SPEED: number = 3
+export const PLAYER1_TANK_SPEED = 3
 export const PLAYER1_TANK_POSITION: DefaultPosition = [
   4 * UNIT_SIZE,
   12 * UNIT_SIZE

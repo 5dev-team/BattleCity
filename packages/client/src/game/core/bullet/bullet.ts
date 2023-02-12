@@ -120,15 +120,11 @@ export default class Bullet extends MobileGameObject
   }
 
   public hit() {
-    console.log('hit')
-
     this.stop()
     this.destroy()
   }
 
   public destroy() {
-    console.log('destroy')
-    
     this.tank = null
     this.explosion = null
     this.emit('destroyed', this)
