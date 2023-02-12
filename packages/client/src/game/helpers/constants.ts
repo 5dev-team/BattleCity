@@ -69,7 +69,7 @@ export const BASE_SPRITES: Sprite[] = [
 
 export const BULLET_WIDTH = 8
 export const BULLET_HEIGHT = 8
-export const BULLET_SPEED = 42
+export const BULLET_SPEED = 10
 export const BULLET_SPRITES: Sprite[] = [
   [16 * UNIT_SIZE, 0, BULLET_WIDTH, BULLET_HEIGHT],
   [16.5 * UNIT_SIZE, 0, BULLET_WIDTH, BULLET_HEIGHT],
