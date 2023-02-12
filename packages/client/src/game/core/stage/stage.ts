@@ -6,12 +6,13 @@ import Wall from '@/game/core/wall/Wall'
 import Bullet from '@/game/core/bullet/bullet'
 import { IUpdatable, UpdateState, Vec2 } from '@/game/core/types'
 import { IStageConstructor, UnknownGameObject } from '@/game/core/stage/types'
-import { STAGE_SIZE, TILE_SIZE } from '@/game/helpers/constants'
+import { BASE_POSITION, STAGE_SIZE, TILE_SIZE } from '@/game/helpers/constants'
 import EventBus from '@/game/core/event-bus/event-bus'
 import Explosion from '@/game/core/explosion/explosion'
 import GameObject from '@/game/core/game-object/game-object'
 import PlayerTank from '@/game/core/player-tank/player-tank'
 import EnemyTank from '@/game/core/enemy-tank/enemy-tank'
+import GameOverAnimation from '@/game/core/animations/gameover-animation'
 
 export default class Stage extends EventBus {
   static TerrainType = {
@@ -30,6 +31,8 @@ export default class Stage extends EventBus {
   private enemyTankTimer: number
   private enemyTankStartPosition: number
   private enemyTankPositionIndex: number
+  private gameOverAnimation: GameOverAnimation | null
+  private pause: boolean
 
   public stageIndex: number
   public readonly gameObjects: Set<UnknownGameObject>
@@ -50,6 +53,8 @@ export default class Stage extends EventBus {
     this.enemyTankTimer = 0
     this.enemyTankStartPosition = 0
     this.enemyTankPositionIndex = 0
+    this.gameOverAnimation = null
+    this.pause = false
     
     this.gameObjects = new Set<UnknownGameObject>([this.base, this.playerTank, ...this.terrain])
     this.initListeners()
@@ -97,12 +102,28 @@ export default class Stage extends EventBus {
     this.on('worldInitialized', world => {
       world.playerTank.animateInitAnimation()
     })
+    
+    this.on('gameOverAnimation', () => {
+      this.pause = true
+      this.gameOverAnimation = new GameOverAnimation({pos: new Vec2(BASE_POSITION[0] - 16, BASE_POSITION[1]) })
+      //TODO: fix it
+      //@ts-ignore
+      this.gameObjects.add(this.gameOverAnimation)
+      
+      this.gameOverAnimation.on('destroyed', () => {
+        //TODO: fix it
+        //@ts-ignore
+        this.gameObjects.delete(this.gameOverAnimation)
+        this.emit('gameOver')
+      })
+    })
+    
     this.on('killAll', () => {
       this.emit('gameOver')
     })
 
     this.base.on('destroyed', () => {
-      this.emit('gameOver')
+      this.emit('gameOverAnimation')
     })
 
     this.terrain.forEach(wall => {
@@ -150,7 +171,7 @@ export default class Stage extends EventBus {
       this.playerTank.reborn()
       } else {
         this.gameObjects.delete(tank)
-        this.emit('gameOver')
+        this.emit('gameOverAnimation')
       }
 
     })
@@ -159,7 +180,6 @@ export default class Stage extends EventBus {
       this.gameObjects.add(rebornAnimation)
   
       rebornAnimation.on('destroyed', () => {
-        console.log('ВСЁ!')
         this.gameObjects.delete(rebornAnimation)
         this.playerTank.removeRebornAnimation()
         this.playerTank.turnOffIDDQD()
@@ -222,13 +242,24 @@ export default class Stage extends EventBus {
   }
 
   public update(stage: Omit<UpdateState, 'world'>): void {
+
     const objectsArr: UnknownGameObject[] = [...this.gameObjects]
     const { input, frameDelta } = stage
 
     if (this.enemyTankCount < 4) {
       this.addEnemyTank(frameDelta)
     }
-
+    if (this.pause) {
+      objectsArr
+      .filter(obj => {
+        return obj !== undefined && obj instanceof GameOverAnimation
+      })
+      .map(obj => obj as IUpdatable)
+      .forEach((object: IUpdatable) => {
+        object.update({ input, frameDelta, world: this })
+      })
+      return
+    }
     objectsArr
       .filter(obj => obj !== undefined && 'update' in obj)
       .map(obj => obj as IUpdatable)

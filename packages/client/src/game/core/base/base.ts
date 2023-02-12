@@ -10,7 +10,7 @@ import { GameObjectType, IDestroyable, IHitable, Vec2 } from '@/game/core/types'
 
 export default class Base extends GameObject implements IHitable, IDestroyable {
   public gameObjectType: GameObjectType = GameObjectType.Base
-  private readonly destroyed: boolean
+  private destroyed: boolean
 
   constructor() {
     super({
@@ -32,6 +32,8 @@ export default class Base extends GameObject implements IHitable, IDestroyable {
   }
 
   public destroy(): void {
+    this.destroyed = true
     this.emit('destroyed', this)
   }
+  
 }

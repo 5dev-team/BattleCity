@@ -17,7 +17,7 @@ import {
   Vec2
 } from '@/game/core/types'
 import { IScoreResult } from '@/game/core/player-tank/types'
-import PlayerReborn from '@/game/core/animations/player-reborn'
+import PlayerRebornAnimation from '@/game/core/animations/player-reborn-animation'
 import InitAnimation from '@/game/core/animations/init-animation'
 
 export default class PlayerTank extends Tank implements IUpdatable {
@@ -26,7 +26,7 @@ export default class PlayerTank extends Tank implements IUpdatable {
   private pause: boolean
   private paralized: boolean
   private IDDQD: boolean
-  private rebornAnimation: PlayerReborn | null
+  private rebornAnimation: PlayerRebornAnimation | null
   private initAnimation: InitAnimation | null
   
   constructor(args: Partial<GameObjectArgs>) {
@@ -63,6 +63,7 @@ export default class PlayerTank extends Tank implements IUpdatable {
   public getLives() {
     return this.lives
   }
+  
   public animateInitAnimation() {
     this.stop()
     this.initAnimation = new InitAnimation({ pos: new Vec2(this.pos.x, this.pos.y) })
@@ -82,7 +83,7 @@ export default class PlayerTank extends Tank implements IUpdatable {
     this.direction = Direction.Up
     this.paralized = true
     this.turnOnIDDQD()
-    this.rebornAnimation = new PlayerReborn({ pos: new Vec2(this.pos.x, this.pos.y) })
+    this.rebornAnimation = new PlayerRebornAnimation({ pos: new Vec2(this.pos.x, this.pos.y) })
     this.emit('reborn', this.rebornAnimation)
     setTimeout(() => {
       this.paralized = false
@@ -128,12 +129,16 @@ export default class PlayerTank extends Tank implements IUpdatable {
       const value = getValueForDirection(direction)
       
       const gameObjects = Array.from(world.gameObjects)
-      
+      //TODO: fix it
+      //@ts-ignore
       this.turn(direction, this.getTurnOffsetLimit(gameObjects))
-      
+      //TODO: fix it
+      //@ts-ignore
       const collisions = this.getCollisions(this.getColliders(gameObjects))
       if (!this.pause) {
         if (collisions.length === 0) {
+          //TODO: fix it
+          //@ts-ignore
           const movement = this.getMovement(this.getMoveOffsetLimit(gameObjects))
     
           this.move(axis, value * movement)

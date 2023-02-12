@@ -55,7 +55,6 @@ export default class Animation extends GameObject implements IUpdatable, IDestro
   
   public animate(frameDelta: number): void {
     this.frames += frameDelta
-    console.log(this.frames)
     if (this.frames > this.speed) {
       if (this.animationFrame > this.sprites.length) {
         this.animationFrame = 0

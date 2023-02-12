@@ -10,6 +10,7 @@ export type UnknownGameObject =
   | Wall
   | Explosion
   | Bullet
+  | Animation
 
 export interface IStageConstructor {
   stage: number[][]

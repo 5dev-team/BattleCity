@@ -131,6 +131,12 @@ export const INIT_TANK_ANIMATION_SPRITES: Sprite[] = [
   [21 * UNIT_SIZE, 0, UNIT_SIZE, UNIT_SIZE],
 ]
 
+export const GAME_OVER_ANIMATION_WIDTH = 2* UNIT_SIZE
+export const GAME_OVER_ANIMATION_HEIGHT= UNIT_SIZE
+export const GAME_OVER_ANIMATION_SPRITES: Sprite[] = [
+  [16 * UNIT_SIZE, 5.25 * UNIT_SIZE, 2* UNIT_SIZE, UNIT_SIZE],
+]
+
 export const PLAYER1_TANK_POSITION: DefaultPosition = [
   4 * UNIT_SIZE,
   12 * UNIT_SIZE
