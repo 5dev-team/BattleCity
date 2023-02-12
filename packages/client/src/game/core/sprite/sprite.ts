@@ -8,9 +8,10 @@ export default class ImageLoader {
   }
 
   async load(): Promise<ImageLoader> {
-    return new Promise((resolve, _) => {
+    return new Promise((resolve, reject) => {
       this.image.src = this.src
       this.image.addEventListener('load', () => resolve(this))
+      this.image.addEventListener('error', (e) => reject(e.message))
     })
   }
 }

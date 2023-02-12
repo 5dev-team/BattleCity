@@ -7,12 +7,7 @@ import {
   getAxisForDirection,
   getValueForDirection,
 } from '@/game/helpers/helpers'
-import {
-  Direction,
-  IUpdatable,
-  UpdateState,
-  Vec2,
-} from '@/game/core/types'
+import { Direction, IUpdatable, UpdateState, Vec2 } from '@/game/core/types'
 
 export default class EnemyTank extends Tank implements IUpdatable {
   public type: number
@@ -50,7 +45,6 @@ export default class EnemyTank extends Tank implements IUpdatable {
   }
 
   public rotateAntiClockwise() {
-
     if (this.direction !== Direction.Up) {
       this.direction = this.direction - 1
     } else {
@@ -90,23 +84,14 @@ export default class EnemyTank extends Tank implements IUpdatable {
     this.turn(direction, this.getTurnOffsetLimit(gameObjects))
 
     const collisions = this.getCollisions(this.getColliders(gameObjects))
+
+    let isOutOfBounds = false
     if (collisions.length === 0) {
-      this.move(axis, value)
-    }
+      const movement = this.getMovement(this.getMoveOffsetLimit(gameObjects))
+      this.move(axis, value * movement)
 
-    if (Math.floor(Math.random() * 31) === 1) {
-      this.fire()
-      if (this.bullet) {
-        world.gameObjects.add(this.bullet)
-      }
-    }
-
-    this.animate(frameDelta)
-
-    const isOutOfBounds = world.isOutOfBounds(this)
-
-    if (isOutOfBounds) {
-      this.move(axis, -value)
+      if ((isOutOfBounds = world.isOutOfBounds(this)))
+        this.move(axis, -value * movement)
     }
 
     if (isOutOfBounds || collisions.length > 0) {
@@ -119,6 +104,12 @@ export default class EnemyTank extends Tank implements IUpdatable {
           this.changeDirectionWhenTileReach()
         }
       }
+    }
+
+    this.animate(frameDelta)
+
+    if (Math.floor(Math.random() * 31) === 1) {
+      this.fire()
     }
   }
 }

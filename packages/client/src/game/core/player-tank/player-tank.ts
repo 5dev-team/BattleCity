@@ -112,11 +112,13 @@ export default class PlayerTank extends Tank implements IUpdatable {
       
       const collisions = this.getCollisions(this.getColliders(gameObjects))
       if (!this.pause) {
-        if (collisions.length === 0)
-          this.move(axis, value)
-        
-        if (world.isOutOfBounds(this))
-          this.move(axis, -value)
+        if (collisions.length === 0) {
+          const movement = this.getMovement(this.getMoveOffsetLimit(gameObjects))
+    
+          this.move(axis, value * movement)
+    
+          if (world.isOutOfBounds(this)) this.move(axis, -value * movement)
+        }
       }
       
       if (this.rebornAnimation) {
@@ -126,9 +128,10 @@ export default class PlayerTank extends Tank implements IUpdatable {
         })
       }
       
+
       this.animate(frameDelta)
     }
-    
+
     if (input.has(Keys.SPACE)) {
       this.fire()
       

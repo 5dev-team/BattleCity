@@ -14,14 +14,14 @@ class EventBus {
   
   
   public once(event: string, handler: IFn): void {
-    const onceFn = (...res: any[]) => {
+    const onceFn = (...res: unknown[]) => {
       handler(...res)
       this.off(event, handler)
     }
     this.on(event, onceFn)
   }
   
-  public emit(event: string, params?: any): void {
+  public emit(event: string, params?: unknown): void {
     this.events.get(event)?.forEach(handler => handler(params))
   }
   

@@ -31,14 +31,13 @@ export default class Tank extends MobileGameObject implements IHitable, IDestroy
   protected speed: number
   protected bullet: Bullet | null
   protected explosion: TankExplosion | null
-  private readonly _bulletSpeed: number
-  private readonly _fireDelay = 1000
+  private _isFireReady = true
+  private readonly _fireDelay = 200
 
   constructor(args: Partial<GameObjectArgs>) {
     super({ ...args, width: TANK_WIDTH, height: TANK_HEIGHT } as GameObjectArgs)
     this.direction = Direction.Up
     this.speed = TANK_SPEED
-    this._bulletSpeed = 4
     this.bullet = null
     this.explosion = null
     this.name = 'tank'
@@ -80,8 +79,20 @@ export default class Tank extends MobileGameObject implements IHitable, IDestroy
 
     if (offsetLimit >= offsetLength) this.pos = this.pos.add(offset)
   }
+  
+  protected getMovement(offsetLimit: number): number {
+    return offsetLimit >= this.speed ? this.speed : offsetLimit
+  }
 
   protected getTurnOffsetLimit(colliders: GameObject[]): number {
+    return this.getMoveOffset(colliders, TANK_TURN_THRESHOLD)
+  }
+
+  protected getMoveOffsetLimit(colliders: GameObject[]): number {
+    return this.getMoveOffset(colliders, this.speed)
+  }
+  
+  private getMoveOffset(colliders: GameObject[], defaultOffset: number): number {
     return colliders
       .filter(
         obj =>
@@ -96,29 +107,18 @@ export default class Tank extends MobileGameObject implements IHitable, IDestroy
         )
 
         return distanceToCollider < distance ? distanceToCollider : distance
-      }, TANK_TURN_THRESHOLD)
+      }, defaultOffset)
   }
-
-  public move(axis: string, value: number): void {
-    if (axis === 'y') {
-      this.pos.y += value * this.speed
-    }
-    if (axis === 'x') {
-      this.pos.x += value * this.speed
-    }
-  }
-
-  private _isFireReady = true
 
   public fire() {
-    if (this._isFireReady) {
+    if (this._isFireReady && !this.bullet) {
+      console.log('fire')
 
       const [x, y] = this.getBulletStartingPosition()
       this.bullet = new Bullet(
         this.direction,
         this,
-        new Vec2(x, y),
-        this._bulletSpeed
+        new Vec2(x, y)
       )
 
       this.bullet.on('destroyed', () => {
