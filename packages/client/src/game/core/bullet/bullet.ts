@@ -16,8 +16,7 @@ import {
   BULLET_WIDTH,
 } from '@/game/helpers/constants'
 import {
-  getAxisForDirection,
-  getValueForDirection,
+  getVectorForDirection,
 } from '@/game/helpers/helpers'
 import Tank from '@/game/core/tank/tank'
 import BulletExplosion from '@/game/core/bullet-explosion/bullet-explosion'
@@ -60,30 +59,31 @@ export default class Bullet extends MobileGameObject
     this.name = 'bullet'
   }
 
-  public update(state: Pick<UpdateState, 'world'>): void {
-    const { world } = state
+  public update({ world }: Pick<UpdateState, 'world'>): void {
+    const gameObjects = Array.from(world.gameObjects).filter(
+      c => this.shouldCollideWith(c) && c !== this.tank
+    )
+
+    const directionVector = getVectorForDirection(this.direction)
+    const movement = this.getMovement(this.getMoveOffsetLimit(gameObjects))
+
+    this.move(directionVector.scale(movement))
 
     if (world.isOutOfBounds(this)) {
-      this.destroy()
-    } else {
-      const gameObjects = Array.from(world.gameObjects)
-      const colliders = this.getColliders(gameObjects, true)
-      const insideCollisions = colliders.filter(c => this.isInsideOf(c))
-      const outerCollisions = this.getCollisions(colliders)
-      const collisions = [...outerCollisions, ...insideCollisions].filter(
-        c => this.shouldCollideWith(c) && c !== this.tank
-      )
+      this.move(world.getOutOfBoundsOffset(this))
+      this.explode()
+      this.hit()
+      return
+    }
 
-      if (collisions.length > 0) {
-        collisions.forEach(c => ((c as unknown) as IHitable).hit(this))
+    if (movement < this.speed) {
+      const collisions = this.getCollisions(this.getColliders(gameObjects))
+      collisions.forEach(c => ((c as unknown) as IHitable).hit(this))
+      
+      if (collisions.length > 0)
         this.hit()
-        if (collisions.some(c => c.gameObjectType !== GameObjectType.Bullet)) {
-          this.explode()
-        }
-      } else {
-        const axis = getAxisForDirection(this.direction)
-        const value = getValueForDirection(this.direction)
-        this.move(axis, value * this.speed)
+      if (collisions.some(c => c.gameObjectType !== GameObjectType.Bullet)) {
+        this.explode()
       }
     }
   }
@@ -120,11 +120,15 @@ export default class Bullet extends MobileGameObject
   }
 
   public hit() {
+    console.log('hit')
+
     this.stop()
     this.destroy()
   }
 
   public destroy() {
+    console.log('destroy')
+    
     this.tank = null
     this.explosion = null
     this.emit('destroyed', this)
@@ -148,7 +152,6 @@ export default class Bullet extends MobileGameObject
   private explode() {
     const [x, y] = this.getExplosionStartingPosition()
     this.explosion = new BulletExplosion({ pos: new Vec2(x, y) })
-    this.explosion.on('destroyed', () => this.destroy())
     this.emit('explode', this.explosion)
   }
 }

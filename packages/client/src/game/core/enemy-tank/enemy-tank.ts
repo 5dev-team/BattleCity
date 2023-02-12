@@ -1,11 +1,9 @@
 import Tank from '@/game/core/tank/tank'
 import {
   ENEMY_TANK_SPRITES,
-  ENEMY_TANK_START_POSITIONS,
 } from '@/game/helpers/constants'
 import {
-  getAxisForDirection,
-  getValueForDirection,
+  getVectorForDirection,
 } from '@/game/helpers/helpers'
 import { Direction, IUpdatable, UpdateState, Vec2 } from '@/game/core/types'
 
@@ -54,44 +52,30 @@ export default class EnemyTank extends Tank implements IUpdatable {
 
   private changeDirectionWhenTileReach() {
     if (Math.round(Math.random()) === 0) {
-      this.changeDirection()
-      // eslint-disable-next-line no-dupe-else-if
-    } else if (Math.round(Math.random()) === 0) {
       this.rotateClockwise()
     } else {
       this.rotateAntiClockwise()
     }
   }
 
-  private changeDirection() {
-    // const periodDuration = this.respawn / 8
-  }
-
-  public setPosition(positionIndex: number) {
-    this.pos = new Vec2(
-      ENEMY_TANK_START_POSITIONS[positionIndex][0],
-      ENEMY_TANK_START_POSITIONS[positionIndex][1]
-    )
-  }
-
   public update({ world, frameDelta }: Omit<UpdateState, 'input'>): void {
     const direction = this.direction
-    const axis = getAxisForDirection(direction)
-    const value = getValueForDirection(direction)
+    const colliders = this.getColliders(Array.from(world.gameObjects))
 
-    const gameObjects = Array.from(world.gameObjects)
+    this.turn(direction, this.getTurnOffsetLimit(colliders))
 
-    this.turn(direction, this.getTurnOffsetLimit(gameObjects))
-
-    const collisions = this.getCollisions(this.getColliders(gameObjects))
+    const collisions = this.getCollisions(colliders)
 
     let isOutOfBounds = false
     if (collisions.length === 0) {
-      const movement = this.getMovement(this.getMoveOffsetLimit(gameObjects))
-      this.move(axis, value * movement)
+      const directionVector = getVectorForDirection(direction)
+      const movement = this.getMovement(this.getMoveOffsetLimit(colliders))
+      this.move(directionVector.scale(movement))
 
-      if ((isOutOfBounds = world.isOutOfBounds(this)))
-        this.move(axis, -value * movement)
+      if ((isOutOfBounds = world.isOutOfBounds(this))) {
+        const outerOffset = world.getOutOfBoundsOffset(this)
+        this.move(outerOffset)
+      }
     }
 
     if (isOutOfBounds || collisions.length > 0) {

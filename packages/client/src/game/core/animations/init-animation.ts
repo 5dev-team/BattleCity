@@ -14,5 +14,4 @@ export default class InitAnimation extends GameAnimation {
       sprites: INIT_TANK_ANIMATION_SPRITES,
     }, INIT_TANK_ANIMATION_SPEED)
   }
-  
 }

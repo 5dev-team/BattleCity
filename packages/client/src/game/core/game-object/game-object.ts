@@ -32,6 +32,8 @@ export default abstract class GameObject extends EventBus implements IRect {
     this.eventBus = () => eventBusInstance
   }
 
+  abstract get sprite(): Sprite
+
   get diagonal() {
     return this.width * Math.sqrt(2)
   }

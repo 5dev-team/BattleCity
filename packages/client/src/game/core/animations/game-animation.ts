@@ -27,8 +27,6 @@ export default class GameAnimation extends GameObject implements IUpdatable, IDe
   }
   
   isDurationEnd(frameDelta: number) {
-    console.log(this.startTime)
-    console.log(frameDelta)
     if (this.startTime === 0) {
       this.startTime = frameDelta
     }

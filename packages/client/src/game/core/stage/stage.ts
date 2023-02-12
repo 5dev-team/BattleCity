@@ -4,17 +4,24 @@ import Base from '@/game/core/base/base'
 import Tank from '@/game/core/tank/tank'
 import Wall from '@/game/core/wall/wall'
 import Bullet from '@/game/core/bullet/bullet'
-import { GameObjectType, IUpdatable, UpdateState, Vec2 } from '@/game/core/types'
-import { IStageConstructor, UnknownGameObject } from '@/game/core/stage/types'
-import { BASE_POSITION, STAGE_SIZE, TILE_SIZE } from '@/game/helpers/constants'
+import { IRect, IUpdatable, UpdateState, Vec2 } from '@/game/core/types'
+import { IStageConstructor } from '@/game/core/stage/types'
+import {
+  BASE_POSITION,
+  ENEMY_TANK_START_POSITIONS,
+  STAGE_SIZE,
+  TILE_SIZE,
+} from '@/game/helpers/constants'
 import EventBus from '@/game/core/event-bus/event-bus'
 import Explosion from '@/game/core/explosion/explosion'
 import GameObject from '@/game/core/game-object/game-object'
 import PlayerTank from '@/game/core/player-tank/player-tank'
 import EnemyTank from '@/game/core/enemy-tank/enemy-tank'
 import GameOverAnimation from '@/game/core/animations/gameover-animation'
+import PlayerShieldAnimation from '../animations/player-shield-animation'
+import InitAnimation from '../animations/init-animation'
 
-export default class Stage extends EventBus {
+export default class Stage extends EventBus implements IRect {
   static TerrainType = {
     BRICK_WALL: 1,
     STEEL_WALL: 2,
@@ -25,22 +32,20 @@ export default class Stage extends EventBus {
   private respawn: number
   private readonly enemies: EnemyTank[]
   private readonly playerTank: PlayerTank
+  private readonly tanks: Tank[]
   private readonly base: Base
   private readonly terrain: Wall[]
   private enemyTankCount: number
   private enemyTankTimer: number
   private enemyTankStartPosition: number
   private enemyTankPositionIndex: number
-  private gameOverAnimation: GameOverAnimation | null
   private pause: boolean
 
   public stageIndex: number
-  public readonly gameObjects: Set<UnknownGameObject>
+  public readonly gameObjects: Set<GameObject>
+  public readonly pos: Vec2 = Vec2.zero
 
-  constructor(
-    data: IStageConstructor,
-    stageIndex: number
-  ) {
+  constructor(data: IStageConstructor, stageIndex: number) {
     super()
     //TODO add 2 players: (1 - 1) and (2 - 1)
     this.stageIndex = stageIndex
@@ -53,10 +58,11 @@ export default class Stage extends EventBus {
     this.enemyTankTimer = 0
     this.enemyTankStartPosition = 0
     this.enemyTankPositionIndex = 0
-    this.gameOverAnimation = null
     this.pause = false
-    
-    this.gameObjects = new Set<UnknownGameObject>([this.base, this.playerTank, ...this.terrain])
+
+    this.tanks = [this.playerTank, ...this.enemies]
+    this.gameObjects = new Set<GameObject>([this.base, ...this.terrain])
+
     this.initListeners()
     this.emit('worldInitialized', this)
   }
@@ -99,25 +105,28 @@ export default class Stage extends EventBus {
   }
 
   private initListeners() {
-    this.on('worldInitialized', world => {
-      world.playerTank.animateInitAnimation()
+    this.on('worldInitialized', () => {
+      this.playerTank.emit(
+        'initTank',
+        new InitAnimation({ pos: this.playerTank.pos })
+      )
     })
-    
-    this.on('gameOverAnimation', () => {
+
+    this.once('gameOverAnimation', () => {
+      this.playerTank.stop()
+      this.playerTank.turnOnIDDQD()
       this.pause = true
-      this.gameOverAnimation = new GameOverAnimation({pos: new Vec2(BASE_POSITION[0] - 16, BASE_POSITION[1]) })
-      //TODO: fix it
-      //@ts-ignore
-      this.gameObjects.add(this.gameOverAnimation)
-      
-      this.gameOverAnimation.on('destroyed', () => {
-        //TODO: fix it
-        //@ts-ignore
-        this.gameObjects.delete(this.gameOverAnimation)
+      const gameOverAnim = new GameOverAnimation({
+        pos: new Vec2(BASE_POSITION[0] - 16, BASE_POSITION[1]),
+      })
+      this.gameObjects.add(gameOverAnim)
+
+      gameOverAnim.on('destroyed', () => {
+        this.gameObjects.delete(gameOverAnim)
         this.emit('gameOver')
       })
     })
-    
+
     this.on('killAll', () => {
       this.emit('gameOver')
     })
@@ -126,14 +135,12 @@ export default class Stage extends EventBus {
       this.emit('gameOverAnimation')
     })
 
-    this.terrain.forEach(wall => {
-      if (wall) {
-        wall.on('destroyed', () => this.gameObjects.delete(wall))
-      }
-    })
+    this.terrain.forEach(wall =>
+      wall.on('destroyed', () => this.gameObjects.delete(wall))
+    )
 
-    this.enemies.forEach(enemyTank => {
-      enemyTank.on('fire', (bullet: Bullet) => {
+    this.tanks.forEach(tank => {
+      tank.on('fire', (bullet: Bullet) => {
         this.gameObjects.add(bullet)
         bullet.on('explode', (explosion: Explosion) => {
           this.gameObjects.add(explosion)
@@ -148,11 +155,22 @@ export default class Stage extends EventBus {
         })
       })
 
-      enemyTank.on('explode', explosion => {
+      tank.on('explode', explosion => {
         this.gameObjects.add(explosion)
 
         explosion.on('destroyed', () => {
           this.gameObjects.delete(explosion)
+        })
+      })
+    })
+
+    this.enemies.forEach(enemyTank => {
+      enemyTank.on('initTank', initAnimation => {
+        this.gameObjects.add(initAnimation)
+  
+        initAnimation.on('destroyed', () => {
+          this.gameObjects.delete(initAnimation)
+          this.gameObjects.add(enemyTank)
         })
       })
 
@@ -166,51 +184,44 @@ export default class Stage extends EventBus {
       })
     })
 
-    this.playerTank.on('destroyed', (tank: PlayerTank) => {
+    this.playerTank.on('initTank', initAnimation => {
+      this.gameObjects.add(initAnimation)
+
+      initAnimation.on('destroyed', () => {
+        this.gameObjects.delete(initAnimation)
+        this.gameObjects.add(this.playerTank)
+
+        const shieldAnimation = new PlayerShieldAnimation({ pos: this.playerTank.pos })
+        this.playerTank.emit('reborn', shieldAnimation)
+      })
+    })
+
+    this.playerTank.on('destroyed', () => {
+      this.gameObjects.delete(this.playerTank)
       if (this.playerTank.getLives() > 0) {
-      this.playerTank.reborn()
+        this.playerTank.reborn()
+        this.playerTank.emit(
+          'initTank',
+          new InitAnimation({ pos: this.playerTank.pos })
+        )
       } else {
-        this.gameObjects.delete(tank)
         this.emit('gameOverAnimation')
       }
-
     })
-  
-    this.playerTank.on('reborn', (rebornAnimation) => {
+
+    this.playerTank.on('reborn', (rebornAnimation: PlayerShieldAnimation) => {
       this.gameObjects.add(rebornAnimation)
-  
+      this.playerTank.turnOnIDDQD()
+
       rebornAnimation.on('destroyed', () => {
         this.gameObjects.delete(rebornAnimation)
-        this.playerTank.removeRebornAnimation()
         this.playerTank.turnOffIDDQD()
       })
     })
-    
-    this.playerTank.on('initTank', (initAnimation) => {
-      console.log(123123)
-      this.gameObjects.add(initAnimation)
-  
-      initAnimation.on('destroyed', () => {
-        this.gameObjects.delete(initAnimation)
-        this.playerTank.play()
-      })
-    })
+  }
 
-    this.playerTank.on('fire', bullet => {
-      this.gameObjects.add(bullet)
-
-      bullet.on('explode', (explosion: Explosion) => {
-        this.gameObjects.add(explosion)
-
-        explosion.on('destroyed', () => {
-          this.gameObjects.delete(explosion)
-        })
-      })
-
-      bullet.on('destroyed', () => {
-        this.gameObjects.delete(bullet)
-      })
-    })
+  public get center(): Vec2 {
+    return Vec2.zero.add(STAGE_SIZE / 2)
   }
 
   public get width(): number {
@@ -242,27 +253,16 @@ export default class Stage extends EventBus {
   }
 
   public update(stage: Omit<UpdateState, 'world'>): void {
-
-    const objectsArr: UnknownGameObject[] = [...this.gameObjects]
+    const objectsArr: GameObject[] = [...this.gameObjects]
     const { input, frameDelta } = stage
 
     if (this.enemyTankCount < 4) {
-       this.addEnemyTank(frameDelta)
+      this.addEnemyTank(frameDelta)
     }
-    if (this.pause) {
-      objectsArr
-      .filter(obj => {
-        return [GameObjectType.Animation, GameObjectType.Explosion].includes((obj as unknown as GameObject).gameObjectType)
-      })
-      .map(obj => obj as IUpdatable)
-      .forEach((object: IUpdatable) => {
-        object.update({ input, frameDelta, world: this })
-      })
-      return
-    }
+
     objectsArr
       .filter(obj => obj !== undefined && 'update' in obj)
-      .map(obj => obj as IUpdatable)
+      .map(obj => (obj as unknown) as IUpdatable)
       .forEach((object: IUpdatable) => {
         object.update({ input, frameDelta, world: this })
       })
@@ -277,6 +277,21 @@ export default class Stage extends EventBus {
     )
   }
 
+  public getOutOfBoundsOffset(outerGameObject: GameObject): Vec2 {
+    const offset = Vec2.zero
+
+    if (outerGameObject.top < this.top)
+      offset.y = this.top - outerGameObject.top
+    if (outerGameObject.bottom > this.bottom)
+      offset.y = this.bottom - outerGameObject.bottom
+    if (outerGameObject.right > this.right)
+      offset.x = this.right - outerGameObject.right
+    if (outerGameObject.left < this.left)
+      offset.x = this.left - outerGameObject.left
+
+    return offset
+  }
+
   private removeTank(enemyTank: Tank) {
     this.gameObjects.delete(enemyTank)
     this.enemyTankCount -= 1
@@ -289,11 +304,19 @@ export default class Stage extends EventBus {
       if (!enemyTank) {
         return
       }
-      enemyTank.setPosition(this.enemyTankPositionIndex)
+
+      enemyTank.pos = new Vec2(
+        ENEMY_TANK_START_POSITIONS[this.enemyTankPositionIndex][0],
+        ENEMY_TANK_START_POSITIONS[this.enemyTankPositionIndex][1]
+      )
       this.enemyTankPositionIndex = (this.enemyTankPositionIndex + 1) % 3
       this.enemyTankCount += 1
       this.enemyTankTimer = 0
-      this.gameObjects.add(enemyTank)
+
+      enemyTank.emit(
+        'initTank',
+        new InitAnimation({ pos: enemyTank.pos })
+      )
     }
   }
 }

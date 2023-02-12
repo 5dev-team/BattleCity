@@ -1,4 +1,4 @@
-import { Direction } from '@/game/core/types'
+import { Direction, Vec2 } from '@/game/core/types'
 
 export function getDirectionForKeys(keys: {
   has(value: string): boolean
@@ -23,11 +23,24 @@ export function getDirectionForKeys(keys: {
   return Direction.Up
 }
 
-export function getAxisForDirection(direction: number): string {
+export function getAxisForDirection(direction: Direction): string {
   return direction % 2 === 0 ? 'y' : 'x'
 }
 
-export function getValueForDirection(direction: number): 1 | -1 {
+export function getVectorForDirection(direction: Direction): Vec2 {
+  switch (direction) {
+    case Direction.Up:
+      return Vec2.up.opposite
+    case Direction.Right:
+      return Vec2.right
+    case Direction.Down:
+      return Vec2.down.opposite
+    case Direction.Left:
+      return Vec2.left
+  }
+}
+
+export function getValueForDirection(direction: Direction): 1 | -1 {
   switch (direction) {
     case Direction.Up:
       return -1
@@ -43,7 +56,7 @@ export function getValueForDirection(direction: number): 1 | -1 {
 }
 
 export function getSideForDirection(
-  direction: number
+  direction: Direction
 ): 'top' | 'Right' | 'bottom' | 'Left' | undefined {
   switch (direction) {
     case Direction.Up:

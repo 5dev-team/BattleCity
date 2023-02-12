@@ -55,9 +55,6 @@ export class Vec2 {
   }
 
   scale(val: number) {
-    this.x *= val
-    this.y *= val
-
     return new Vec2(this.x * val, this.y * val)
   }
 

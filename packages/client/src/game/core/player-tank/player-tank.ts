@@ -2,12 +2,12 @@ import Tank from '@/game/core/tank/tank'
 import {
   Keys,
   PLAYER1_TANK_POSITION,
+  PLAYER1_TANK_SPEED,
   PLAYER1_TANK_SPRITES,
 } from '@/game/helpers/constants'
 import {
   getDirectionForKeys,
-  getAxisForDirection,
-  getValueForDirection,
+  getVectorForDirection,
 } from '@/game/helpers/helpers'
 import {
   Direction,
@@ -17,19 +17,14 @@ import {
   Vec2,
 } from '@/game/core/types'
 import { IScoreResult } from '@/game/core/player-tank/types'
-import PlayerRebornAnimation from '@/game/core/animations/player-reborn-animation'
-import InitAnimation from '@/game/core/animations/init-animation'
 
 export default class PlayerTank extends Tank implements IUpdatable {
   private score: IScoreResult
   public lives: number
   private pause: boolean
-  private paralized: boolean
   private IDDQD: boolean
-  private rebornAnimation: PlayerRebornAnimation | null
-  private initAnimation: InitAnimation | null
-  
-  constructor(args: Partial<GameObjectArgs>) {
+
+  constructor(args: Partial<Pick<GameObjectArgs, 'pos'>>) {
     super({
       pos: args.pos
         ? args.pos
@@ -38,11 +33,9 @@ export default class PlayerTank extends Tank implements IUpdatable {
     })
     this.name = 'player tank'
     this.lives = 2
+    this.speed = PLAYER1_TANK_SPEED
     this.IDDQD = false
     this.pause = false
-    this.paralized = false
-    this.rebornAnimation = null
-    this.initAnimation = null
     this.score = {
       1: 0,
       2: 0,
@@ -58,96 +51,65 @@ export default class PlayerTank extends Tank implements IUpdatable {
   public setScore(newScore: IScoreResult) {
     this.score = newScore
   }
-  
+
   public getLives() {
     return this.lives
   }
-  
-  public animateInitAnimation() {
-    this.stop()
-    this.initAnimation = new InitAnimation({ pos: new Vec2(this.pos.x, this.pos.y) })
-    this.emit('initTank', this.initAnimation)
-  }
-  
+
   public stop() {
     this.pause = true
   }
   public play() {
     this.pause = false
   }
-  
+
   public reborn() {
     this.lives--
     this.pos = new Vec2(PLAYER1_TANK_POSITION[0], PLAYER1_TANK_POSITION[1])
     this.direction = Direction.Up
-    this.paralized = true
-    this.turnOnIDDQD()
-    this.rebornAnimation = new PlayerRebornAnimation({ pos: this.pos })
-    this.emit('reborn', this.rebornAnimation)
-    setTimeout(() => {
-      this.paralized = false
-    }, 2000)
-    
   }
-  
+
   public turnOnIDDQD() {
     this.IDDQD = true
   }
-  
+
   public turnOffIDDQD() {
     this.IDDQD = false
   }
-  
-  getX() {
-    return this.pos.x
-  }
-  
-  getY() {
-    return this.pos.y
-  }
-  
-  removeRebornAnimation() {
-    this.rebornAnimation = null
-  }
-  
+
   public hit() {
-    console.log('hit')
-    if (!this.IDDQD) {
-      super.hit()
-    }
+    if (this.IDDQD) return
+
+    super.hit()
   }
-  
-  public update(state: UpdateState): void {
+
+  public update({ input, frameDelta, world }: UpdateState): void {
     if (this.pause) {
       return
     }
-    const { input, frameDelta, world } = state
+
     if (input.has(Keys.UP, Keys.RIGHT, Keys.DOWN, Keys.LEFT)) {
       const direction = getDirectionForKeys(input.keys)
-      const axis = getAxisForDirection(direction)
-      const value = getValueForDirection(direction)
-      
-      const gameObjects = Array.from(world.gameObjects)
-      
-      this.turn(direction, this.getTurnOffsetLimit(gameObjects))
-      
-      const collisions = this.getCollisions(this.getColliders(gameObjects))
-      
+      const colliders = this.getColliders(Array.from(world.gameObjects))
+
+      this.turn(direction, this.getTurnOffsetLimit(colliders))
+
+      const collisions = this.getCollisions(colliders)
+
       if (collisions.length === 0) {
-        const movement = this.getMovement(this.getMoveOffsetLimit(gameObjects))
-        
-        this.move(axis, value * movement)
-        
-        if (world.isOutOfBounds(this)) this.move(axis, -value * movement)
+        const directionVector = getVectorForDirection(direction)
+        const movement = this.getMovement(this.getMoveOffsetLimit(colliders))
+        this.move(directionVector.scale(movement))
+
+        if (world.isOutOfBounds(this)) {
+          const outerOffset = world.getOutOfBoundsOffset(this)
+          this.move(outerOffset)
+        }
       }
 
-      if (this.rebornAnimation) {
-        this.rebornAnimation.pos = this.pos
-      }
-      
       this.animate(frameDelta)
     }
-    
+
     if (input.has(Keys.SPACE)) {
       this.fire()
     }

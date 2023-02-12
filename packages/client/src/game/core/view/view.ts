@@ -61,23 +61,18 @@ export default class View {
     this.context.fillStyle = '#000000'
     this.context.fillRect(PLAYFIELD_X, PLAYFIELD_Y, PLAYFIELD_WIDTH, PLAYFIELD_HEIGHT)
     
-    if (stage) {
-      for (const gameObject of stage.gameObjects) {
-        if (gameObject) {
-          if (!gameObject.sprite) return
-
-          this.context.drawImage(
-            this.imageLoader.image,
-            ...gameObject.sprite,
-            PLAYFIELD_X + gameObject.pos.x,
-            PLAYFIELD_Y + gameObject.pos.y,
-            gameObject.width,
-            gameObject.height
-          )
-        }
-        
+    stage.gameObjects.forEach(gameObject => {
+      if (gameObject.sprite) {
+        this.context.drawImage(
+          this.imageLoader.image,
+          ...gameObject.sprite,
+          PLAYFIELD_X + gameObject.pos.x,
+          PLAYFIELD_Y + gameObject.pos.y,
+          gameObject.width,
+          gameObject.height
+        )
       }
-    }
+    })
   }
   
   renderPanel(stage: Stage, player1: PlayerTank | null) {
@@ -163,6 +158,4 @@ export default class View {
       TILE_SIZE
     )
   }
-  
-  
 }

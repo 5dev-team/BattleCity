@@ -34,7 +34,7 @@ export default class Tank extends MobileGameObject implements IHitable, IDestroy
   private _isFireReady = true
   private readonly _fireDelay = 200
 
-  constructor(args: Partial<GameObjectArgs>) {
+  constructor(args: Pick<GameObjectArgs, 'pos' | 'sprites'>) {
     super({ ...args, width: TANK_WIDTH, height: TANK_HEIGHT } as GameObjectArgs)
     this.direction = Direction.Up
     this.speed = TANK_SPEED
@@ -77,44 +77,18 @@ export default class Tank extends MobileGameObject implements IHitable, IDestroy
 
     const offsetLength = offset.length()
 
-    if (offsetLimit >= offsetLength) this.pos = this.pos.add(offset)
-  }
-  
-  protected getMovement(offsetLimit: number): number {
-    return offsetLimit >= this.speed ? this.speed : offsetLimit
+    if (offsetLimit >= offsetLength) {
+      this.pos.x += offset.x
+      this.pos.y += offset.y
+    }
   }
 
   protected getTurnOffsetLimit(colliders: GameObject[]): number {
     return this.getMoveOffset(colliders, TANK_TURN_THRESHOLD)
   }
 
-  protected getMoveOffsetLimit(colliders: GameObject[]): number {
-    return this.getMoveOffset(colliders, this.speed)
-  }
-  
-  private getMoveOffset(colliders: GameObject[], defaultOffset: number): number {
-    return colliders
-      .filter(
-        obj =>
-          obj.id !== this.id &&
-          this.collideWith.some(objType => obj.gameObjectType === objType) &&
-          this.isTowardsTo(obj)
-      )
-      .reduce((distance: number, collider) => {
-        const distanceToCollider = this.distanceBetweenBounds(
-          collider,
-          this.direction
-        )
-
-        return distanceToCollider < distance ? distanceToCollider : distance
-      }, defaultOffset)
-  }
-
   public fire() {
-    console.log(!this.bullet)
-    if (this._isFireReady && !this.bullet) {
-      console.log('fire')
-
+    if (this._isFireReady && this.bullet === null) {
       const [x, y] = this.getBulletStartingPosition()
       this.bullet = new Bullet(
         this.direction,
@@ -123,7 +97,6 @@ export default class Tank extends MobileGameObject implements IHitable, IDestroy
       )
 
       this.bullet.on('destroyed', () => {
-        console.log('bullet destroed')
         this.bullet = null
       })
       this.emit('fire', this.bullet)

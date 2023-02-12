@@ -69,7 +69,7 @@ export const BASE_SPRITES: Sprite[] = [
 
 export const BULLET_WIDTH = 8
 export const BULLET_HEIGHT = 8
-export const BULLET_SPEED = 10
+export const BULLET_SPEED = 8
 export const BULLET_SPRITES: Sprite[] = [
   [16 * UNIT_SIZE, 0, BULLET_WIDTH, BULLET_HEIGHT],
   [16.5 * UNIT_SIZE, 0, BULLET_WIDTH, BULLET_HEIGHT],
@@ -107,10 +107,10 @@ export const TANK_EXPLOSION_SPRITES: Sprite[] = [
   [16 * UNIT_SIZE, 2 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE]
 ]
 
-export const PLAYER_REBORN_WIDTH = UNIT_SIZE
-export const PLAYER_REBORN_HEIGHT= UNIT_SIZE
-export const PLAYER_REBORN_ANIMATION_SPEED = 50
-export const PLAYER_REBORN_SPRITES: Sprite[] = [
+export const PLAYER_SHIELD_WIDTH = UNIT_SIZE
+export const PLAYER_SHIELD_HEIGHT= UNIT_SIZE
+export const PLAYER_SHIELD_ANIMATION_SPEED = 1
+export const PLAYER_SHIELD_SPRITES: Sprite[] = [
   [16 * UNIT_SIZE, 3 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE],
   [17 * UNIT_SIZE, 3 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE],
 ]
@@ -137,6 +137,7 @@ export const GAME_OVER_ANIMATION_SPRITES: Sprite[] = [
   [16 * UNIT_SIZE, 5.25 * UNIT_SIZE, 2* UNIT_SIZE, UNIT_SIZE],
 ]
 
+export const PLAYER1_TANK_SPEED: number = 3
 export const PLAYER1_TANK_POSITION: DefaultPosition = [
   4 * UNIT_SIZE,
   12 * UNIT_SIZE
