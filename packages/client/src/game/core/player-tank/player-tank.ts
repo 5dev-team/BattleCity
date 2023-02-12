@@ -82,7 +82,7 @@ export default class PlayerTank extends Tank implements IUpdatable {
     this.direction = Direction.Up
     this.paralized = true
     this.turnOnIDDQD()
-    this.rebornAnimation = new PlayerRebornAnimation({ pos: new Vec2(this.pos.x, this.pos.y) })
+    this.rebornAnimation = new PlayerRebornAnimation({ pos: this.pos })
     this.emit('reborn', this.rebornAnimation)
     setTimeout(() => {
       this.paralized = false
@@ -139,6 +139,10 @@ export default class PlayerTank extends Tank implements IUpdatable {
         this.move(axis, value * movement)
         
         if (world.isOutOfBounds(this)) this.move(axis, -value * movement)
+      }
+
+      if (this.rebornAnimation) {
+        this.rebornAnimation.pos = this.pos
       }
       
       this.animate(frameDelta)

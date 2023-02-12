@@ -247,12 +247,12 @@ export default class Stage extends EventBus {
     const { input, frameDelta } = stage
 
     if (this.enemyTankCount < 4) {
-      // this.addEnemyTank(frameDelta)
+       this.addEnemyTank(frameDelta)
     }
     if (this.pause) {
       objectsArr
       .filter(obj => {
-        return (obj as unknown as GameObject).gameObjectType === GameObjectType.Animation
+        return [GameObjectType.Animation, GameObjectType.Explosion].includes((obj as unknown as GameObject).gameObjectType)
       })
       .map(obj => obj as IUpdatable)
       .forEach((object: IUpdatable) => {

@@ -13,7 +13,7 @@ export default class PlayerRebornAnimation extends GameAnimation {
       width: PLAYER_REBORN_WIDTH,
       height: PLAYER_REBORN_HEIGHT,
       sprites: PLAYER_REBORN_SPRITES,
-    }, PLAYER_REBORN_ANIMATION_SPEED, 10)
+    }, PLAYER_REBORN_ANIMATION_SPEED, 1)
   }
   
   

@@ -7,6 +7,7 @@ export default class GameAnimation extends GameObject implements IUpdatable, IDe
   protected speed: number
   protected duration: number
   protected startTime: number
+  protected currentFrame: number
   
   constructor(args: GameObjectArgs, speed: number, duration = 0) {
     super(args)
@@ -14,6 +15,7 @@ export default class GameAnimation extends GameObject implements IUpdatable, IDe
     this.speed = speed || PROJECTILE_EXPLOSION_SPEED
     this.duration = duration
     this.startTime = 0
+    this.currentFrame = 0
   }
   
   public get sprite() {
@@ -25,11 +27,13 @@ export default class GameAnimation extends GameObject implements IUpdatable, IDe
   }
   
   isDurationEnd(frameDelta: number) {
+    console.log(this.startTime)
+    console.log(frameDelta)
     if (this.startTime === 0) {
       this.startTime = frameDelta
     }
     
-    return (this.frames - this.startTime) > this.duration * 60 * 10
+    return (this.currentFrame - this.startTime) > this.duration * 60 * 10
   }
   
   private canAnimate(frameDelta: number): boolean{
@@ -41,6 +45,7 @@ export default class GameAnimation extends GameObject implements IUpdatable, IDe
   }
   public update(state: Partial<UpdateState>) {
     const { frameDelta } = state
+    
     if (frameDelta && this.canAnimate(frameDelta)) {
       this.animate(frameDelta)
     } else {
@@ -55,6 +60,7 @@ export default class GameAnimation extends GameObject implements IUpdatable, IDe
   
   public animate(frameDelta: number): void {
     this.frames += frameDelta
+    this.currentFrame += frameDelta
     if (this.frames > this.speed) {
       if (this.animationFrame > this.sprites.length) {
         this.animationFrame = 0
