@@ -53,6 +53,7 @@ export default class Stage extends EventBus {
     
     this.gameObjects = new Set<UnknownGameObject>([this.base, this.playerTank, ...this.terrain])
     this.initListeners()
+    this.emit('worldInitialized', this)
   }
 
   static createObject(type: number, pos: Vec2): Wall | undefined {
@@ -93,6 +94,9 @@ export default class Stage extends EventBus {
   }
 
   private initListeners() {
+    this.on('worldInitialized', world => {
+      world.playerTank.animateInitAnimation()
+    })
     this.on('killAll', () => {
       this.emit('gameOver')
     })
@@ -159,6 +163,16 @@ export default class Stage extends EventBus {
         this.gameObjects.delete(rebornAnimation)
         this.playerTank.removeRebornAnimation()
         this.playerTank.turnOffIDDQD()
+      })
+    })
+    
+    this.playerTank.on('initTank', (initAnimation) => {
+      console.log(123123)
+      this.gameObjects.add(initAnimation)
+  
+      initAnimation.on('destroyed', () => {
+        this.gameObjects.delete(initAnimation)
+        this.playerTank.play()
       })
     })
 

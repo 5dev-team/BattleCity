@@ -18,13 +18,16 @@ import {
 } from '@/game/core/types'
 import { IScoreResult } from '@/game/core/player-tank/types'
 import PlayerReborn from '@/game/core/animations/player-reborn'
+import InitAnimation from '@/game/core/animations/init-animation'
 
 export default class PlayerTank extends Tank implements IUpdatable {
   private score: IScoreResult
   public lives: number
   private pause: boolean
+  private paralized: boolean
   private IDDQD: boolean
   private rebornAnimation: PlayerReborn | null
+  private initAnimation: InitAnimation | null
   
   constructor(args: Partial<GameObjectArgs>) {
     super({
@@ -37,13 +40,16 @@ export default class PlayerTank extends Tank implements IUpdatable {
     this.lives = 2
     this.IDDQD = false
     this.pause = false
+    this.paralized = false
     this.rebornAnimation = null
+    this.initAnimation = null
     this.score = {
       1: 0,
       2: 0,
       3: 0,
       4: 0
     }
+    
   }
   
   public getScore() {
@@ -57,17 +63,29 @@ export default class PlayerTank extends Tank implements IUpdatable {
   public getLives() {
     return this.lives
   }
+  public animateInitAnimation() {
+    this.stop()
+    this.initAnimation = new InitAnimation({ pos: new Vec2(this.pos.x, this.pos.y) })
+    this.emit('initTank', this.initAnimation)
+  }
+  
+  public stop() {
+    this.pause = true
+  }
+  public play() {
+    this.pause = false
+  }
   
   public reborn() {
     this.lives--
     this.pos = new Vec2(PLAYER1_TANK_POSITION[0], PLAYER1_TANK_POSITION[1])
     this.direction = Direction.Up
-    this.pause = true
+    this.paralized = true
     this.turnOnIDDQD()
     this.rebornAnimation = new PlayerReborn({ pos: new Vec2(this.pos.x, this.pos.y) })
     this.emit('reborn', this.rebornAnimation)
     setTimeout(() => {
-      this.pause = false
+      this.paralized = false
     }, 2000)
     
   }
@@ -100,6 +118,9 @@ export default class PlayerTank extends Tank implements IUpdatable {
   }
   
   public update(state: UpdateState): void {
+    if (this.pause) {
+      return
+    }
     const { input, frameDelta, world } = state
     if (input.has(Keys.UP, Keys.RIGHT, Keys.DOWN, Keys.LEFT)) {
       const direction = getDirectionForKeys(input.keys)

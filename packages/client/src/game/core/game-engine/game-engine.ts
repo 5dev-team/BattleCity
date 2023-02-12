@@ -64,7 +64,7 @@ export default class GameEngine {
       this.controllerMode = controllerMode
     }
     
-    this.stage = new Stage(this.stages[this.stageIndex], this.stageIndex, this.controllerMode)
+    this.stage = new Stage(this.stages[this.stageIndex], this.stageIndex)
     this.setPlayerFirst(this.stage.getPlayerTank())
     
     this.stage.on('gameOver', () => {
