@@ -112,7 +112,6 @@ export default class Tank extends MobileGameObject implements IHitable, IDestroy
 
   public fire() {
     if (this._isFireReady) {
-      console.log('fire')
 
       const [x, y] = this.getBulletStartingPosition()
       this.bullet = new Bullet(

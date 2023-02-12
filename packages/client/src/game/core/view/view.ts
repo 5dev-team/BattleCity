@@ -1,13 +1,15 @@
 import Stage from '@/game/core/stage/stage'
 import {
   ENEMY_TANK_ICONS_SPRITES,
+  NUMBERS,
   PANEL_HEIGHT,
   PANEL_X,
-  PANEL_Y, PLAYER1_LIVES_SPRITES, PLAYER1_PANEL_SPRITES,
+  PLAYER1_PANEL_SPRITES,
   PLAYFIELD_HEIGHT,
   PLAYFIELD_WIDTH,
   PLAYFIELD_X,
-  PLAYFIELD_Y, STAGE_NUMBER_SPRITES,
+  PLAYFIELD_Y,
+  STAGE_NUMBER_SPRITES,
   TILE_SIZE,
   UNIT_SIZE
 } from '@/game/helpers/constants'
@@ -80,7 +82,9 @@ export default class View {
   
   renderPanel(stage: Stage, player1: PlayerTank | null) {
     this.renderEnemyTankIcons(stage.getEnemies)
-    this.renderPlayer1Lives(player1)
+    if (player1) {
+      this.renderPlayer1Lives(player1)
+    }
     this.renderStageNumber(stage)
   }
   
@@ -96,7 +100,7 @@ export default class View {
         this.imageLoader.image,
         ...ENEMY_TANK_ICONS_SPRITES[0],
         PANEL_X + x * TILE_SIZE + 16,
-        PANEL_Y + y * TILE_SIZE + 16,
+        PLAYFIELD_Y + y * TILE_SIZE + 16,
         TILE_SIZE,
         UNIT_SIZE
       )
@@ -111,12 +115,12 @@ export default class View {
   }
   
   //TODO: player should be new Class with lives, bonuses and scores
-  renderPlayer1Lives(player1: any) {
+  renderPlayer1Lives(player1: PlayerTank) {
     this.context.drawImage(
       this.imageLoader.image,
       ...PLAYER1_PANEL_SPRITES[0],
       PANEL_X + TILE_SIZE,
-      PANEL_Y + PANEL_HEIGHT * 0.5,
+      PLAYFIELD_Y + PANEL_HEIGHT * 0.5,
       UNIT_SIZE,
       TILE_SIZE
     )
@@ -125,16 +129,16 @@ export default class View {
       this.imageLoader.image,
       ...PLAYER1_PANEL_SPRITES[1],
       PANEL_X + TILE_SIZE,
-      PANEL_Y + PANEL_HEIGHT * 0.5 + TILE_SIZE,
+      PLAYFIELD_Y + PANEL_HEIGHT * 0.5 + TILE_SIZE,
       TILE_SIZE,
       TILE_SIZE
     )
 
     this.context.drawImage(
       this.imageLoader.image,
-      ...PLAYER1_LIVES_SPRITES[0],
+      ...NUMBERS[player1.getLives()],
       PANEL_X + TILE_SIZE * 2,
-      PANEL_Y + PANEL_HEIGHT * 0.5 + TILE_SIZE,
+      PLAYFIELD_Y + PANEL_HEIGHT * 0.5 + TILE_SIZE,
       TILE_SIZE,
       TILE_SIZE
     )
@@ -145,7 +149,7 @@ export default class View {
       this.imageLoader.image,
       ...STAGE_NUMBER_SPRITES[stage.stageIndex],
       PANEL_X + TILE_SIZE,
-      PANEL_Y + PANEL_HEIGHT * 0.75,
+      PLAYFIELD_Y + PANEL_HEIGHT * 0.75,
       UNIT_SIZE,
       UNIT_SIZE
     )
@@ -154,7 +158,7 @@ export default class View {
       this.imageLoader.image,
       ...STAGE_NUMBER_SPRITES[1],
       PANEL_X + TILE_SIZE * 2,
-      PANEL_Y + PANEL_HEIGHT * 0.75 + UNIT_SIZE,
+      PLAYFIELD_Y + PANEL_HEIGHT * 0.75 + UNIT_SIZE,
       TILE_SIZE,
       TILE_SIZE
     )

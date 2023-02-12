@@ -9,7 +9,6 @@ import { IStageConstructor, UnknownGameObject } from '@/game/core/stage/types'
 import { STAGE_SIZE, TILE_SIZE } from '@/game/helpers/constants'
 import EventBus from '@/game/core/event-bus/event-bus'
 import Explosion from '@/game/core/explosion/explosion'
-import { ControllerType } from '@/game/helpers/types'
 import GameObject from '@/game/core/game-object/game-object'
 import PlayerTank from '@/game/core/player-tank/player-tank'
 import EnemyTank from '@/game/core/enemy-tank/enemy-tank'
@@ -26,7 +25,7 @@ export default class Stage extends EventBus {
   private readonly enemies: EnemyTank[]
   private readonly playerTank: PlayerTank
   private readonly base: Base
-  private readonly terrain: (Wall | undefined)[]
+  private readonly terrain: Wall[]
   private enemyTankCount: number
   private enemyTankTimer: number
   private enemyTankStartPosition: number
@@ -37,8 +36,7 @@ export default class Stage extends EventBus {
 
   constructor(
     data: IStageConstructor,
-    stageIndex: number,
-    controllerMode: ControllerType
+    stageIndex: number
   ) {
     super()
     //TODO add 2 players: (1 - 1) and (2 - 1)
@@ -52,28 +50,22 @@ export default class Stage extends EventBus {
     this.enemyTankTimer = 0
     this.enemyTankStartPosition = 0
     this.enemyTankPositionIndex = 0
-
-    //TODO: fix it
-    // @ts-ignore
-    this.gameObjects = new Set([this.base, this.playerTank, ...this.terrain])
+    
+    this.gameObjects = new Set<UnknownGameObject>([this.base, this.playerTank, ...this.terrain])
     this.initListeners()
   }
 
   static createObject(type: number, pos: Vec2): Wall | undefined {
-    let wall: Wall | undefined = undefined
     switch (type) {
       case Stage.TerrainType.BRICK_WALL:
-        wall = new BrickWall({ pos }) as Wall
-        break
+        return new BrickWall({ pos }) as Wall
       case Stage.TerrainType.STEEL_WALL:
-        wall = new SteelWall({ pos }) as Wall
-        break
+        return new SteelWall({ pos }) as Wall
     }
-    return wall
   }
 
-  static createTerrain(level: number[][]): (Wall | undefined)[] {
-    const objects = []
+  static createTerrain(level: number[][]): Wall[] {
+    const objects = [] as Wall[]
     for (let i = 0; i < level.length; i++) {
       for (let j = 0; j < level.length; j++) {
         const value = level[j][i]
@@ -83,8 +75,9 @@ export default class Stage extends EventBus {
             value,
             new Vec2(i * TILE_SIZE, j * TILE_SIZE)
           )
-
-          objects.push(object)
+          if (object) {
+            objects.push(object)
+          }
         }
       }
     }
@@ -149,8 +142,24 @@ export default class Stage extends EventBus {
     })
 
     this.playerTank.on('destroyed', (tank: PlayerTank) => {
-      this.gameObjects.delete(tank)
-      this.emit('gameOver')
+      if (this.playerTank.getLives() > 0) {
+      this.playerTank.reborn()
+      } else {
+        this.gameObjects.delete(tank)
+        this.emit('gameOver')
+      }
+
+    })
+  
+    this.playerTank.on('reborn', (rebornAnimation) => {
+      this.gameObjects.add(rebornAnimation)
+  
+      rebornAnimation.on('destroyed', () => {
+        console.log('ВСЁ!')
+        this.gameObjects.delete(rebornAnimation)
+        this.playerTank.removeRebornAnimation()
+        this.playerTank.turnOffIDDQD()
+      })
     })
 
     this.playerTank.on('fire', bullet => {
@@ -165,7 +174,6 @@ export default class Stage extends EventBus {
       })
 
       bullet.on('destroyed', () => {
-        console.log('desctoy player bullet')
         this.gameObjects.delete(bullet)
       })
     })

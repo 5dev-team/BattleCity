@@ -7,67 +7,131 @@ import {
 import {
   getDirectionForKeys,
   getAxisForDirection,
-  getValueForDirection,
+  getValueForDirection
 } from '@/game/helpers/helpers'
 import {
+  Direction,
   GameObjectArgs,
   IUpdatable,
   UpdateState,
-  Vec2,
+  Vec2
 } from '@/game/core/types'
 import { IScoreResult } from '@/game/core/player-tank/types'
+import PlayerReborn from '@/game/core/animations/player-reborn'
 
 export default class PlayerTank extends Tank implements IUpdatable {
   private score: IScoreResult
-
+  public lives: number
+  private pause: boolean
+  private IDDQD: boolean
+  private rebornAnimation: PlayerReborn | null
+  
   constructor(args: Partial<GameObjectArgs>) {
     super({
       pos: args.pos
         ? args.pos
         : new Vec2(PLAYER1_TANK_POSITION[0], PLAYER1_TANK_POSITION[1]),
-      sprites: PLAYER1_TANK_SPRITES,
+      sprites: PLAYER1_TANK_SPRITES
     })
     this.name = 'player tank'
+    this.lives = 2
+    this.IDDQD = false
+    this.pause = false
+    this.rebornAnimation = null
     this.score = {
       1: 0,
       2: 0,
       3: 0,
-      4: 0,
+      4: 0
     }
   }
-
+  
   public getScore() {
     return this.score
   }
-
+  
   public setScore(newScore: IScoreResult) {
     this.score = newScore
   }
-
+  
+  public getLives() {
+    return this.lives
+  }
+  
+  public reborn() {
+    this.lives--
+    this.pos = new Vec2(PLAYER1_TANK_POSITION[0], PLAYER1_TANK_POSITION[1])
+    this.direction = Direction.Up
+    this.pause = true
+    this.turnOnIDDQD()
+    this.rebornAnimation = new PlayerReborn({ pos: new Vec2(this.pos.x, this.pos.y) })
+    this.emit('reborn', this.rebornAnimation)
+    setTimeout(() => {
+      this.pause = false
+    }, 2000)
+    
+  }
+  
+  public turnOnIDDQD() {
+    this.IDDQD = true
+  }
+  
+  public turnOffIDDQD() {
+    this.IDDQD = false
+  }
+  
+  getX() {
+    return this.pos.x
+  }
+  
+  getY() {
+    return this.pos.y
+  }
+  
+  removeRebornAnimation() {
+    this.rebornAnimation = null
+  }
+  
+  public hit() {
+    console.log('hit')
+    if (!this.IDDQD) {
+      super.hit()
+    }
+  }
+  
   public update(state: UpdateState): void {
     const { input, frameDelta, world } = state
     if (input.has(Keys.UP, Keys.RIGHT, Keys.DOWN, Keys.LEFT)) {
       const direction = getDirectionForKeys(input.keys)
       const axis = getAxisForDirection(direction)
       const value = getValueForDirection(direction)
-
+      
       const gameObjects = Array.from(world.gameObjects)
-
+      
       this.turn(direction, this.getTurnOffsetLimit(gameObjects))
       
       const collisions = this.getCollisions(this.getColliders(gameObjects))
-      if (collisions.length === 0)
-        this.move(axis, value)
+      if (!this.pause) {
+        if (collisions.length === 0)
+          this.move(axis, value)
+        
+        if (world.isOutOfBounds(this))
+          this.move(axis, -value)
+      }
       
-      if (world.isOutOfBounds(this))
-        this.move(axis, -value)
-
+      if (this.rebornAnimation) {
+        this.rebornAnimation.setPosition({
+          x: this.getX(),
+          y: this.getY()
+        })
+      }
+      
       this.animate(frameDelta)
     }
     
     if (input.has(Keys.SPACE)) {
       this.fire()
-
+      
       if (this.bullet) {
         world.gameObjects.add(this.bullet)
       }
