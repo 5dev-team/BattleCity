@@ -13,6 +13,7 @@ import SpriteAtlas from '@/game/sprites/sprite_1.png'
 import Sprite from '@/game/core/sprite'
 import { levels as Levels } from '@/game/helpers/levels'
 import styles from './game.module.scss'
+import { useAppSelector } from '@/hooks/redux'
 
 enum GameView {
   Menu,
@@ -31,6 +32,9 @@ const Game: React.FC = () => {
   const [gameView, setView] = useState(GameView.Menu)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [online, setOnline] = useState(true)
+  
+  const gameOverData = useAppSelector(state => state.leaderboard.tableData)
+  
   useEffect(() => {
     window.addEventListener('offline', () => {
       setOnline(false)
@@ -51,33 +55,6 @@ const Game: React.FC = () => {
 
     }
   },[])
-
-  const initialState = {
-    nextGame: false,
-    stage: 1,
-    playersCount: 2,
-    bestScore: 0,
-    player1: {
-      user: 3213213,
-      scores: {
-        1: { count: 2, points: 200 },
-        2: { count: 3, points: 600 },
-        3: { count: 4, points: 1200 },
-        4: { count: 5, points: 2000 }
-      },
-      total: 7000
-    },
-    player2: {
-      user: 3213123,
-      scores: {
-        1: { count: 2, points: 200 },
-        2: { count: 3, points: 600 },
-        3: { count: 4, points: 1200 },
-        4: { count: 5, points: 2000 }
-      },
-      total: 7000
-    }
-  }
 
   const initGame = (gameMode: GameMode) => {
     console.log(`init gameMode: ${GameMode[gameMode]}`)
@@ -156,12 +133,12 @@ const Game: React.FC = () => {
           ></canvas>
         )}
         {gameView === GameView.GameOver && (
-          <GameOver {...initialState}>
+          <GameOver {...gameOverData}>
             <GameMenu
               selectItemId={0}
               className={styles['game-over-page-buttons']}
             >
-              {initialState.nextGame ? (
+              {gameOverData.nextGame ? (
                 <GameButton onClick={() => console.log('load next level')}>
                   NEXT LEVEL
                 </GameButton>
