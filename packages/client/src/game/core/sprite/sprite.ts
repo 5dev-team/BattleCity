@@ -7,11 +7,10 @@ export default class ImageLoader {
     this.image = new Image()
   }
 
-  async load(): Promise<ImageLoader> {
-    return new Promise((resolve, reject) => {
+  public load = (): Promise<ImageLoader> =>
+    new Promise((resolve, reject) => {
       this.image.src = this.src
       this.image.addEventListener('load', () => resolve(this))
-      this.image.addEventListener('error', (e) => reject(e.message))
+      this.image.addEventListener('error', e => reject(e.message))
     })
-  }
 }

@@ -3,6 +3,11 @@ import Stage from '@/game/core/stage/stage'
 import Bullet from '@/game/core/bullet/bullet'
 import { Sprite } from '@/game/helpers/types'
 
+export enum ControllerType {
+  Keyboard,
+  Gamepad,
+}
+
 export enum Direction {
   Up,
   Right,

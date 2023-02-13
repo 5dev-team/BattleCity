@@ -15,9 +15,7 @@ import {
   BULLET_SPRITES,
   BULLET_WIDTH,
 } from '@/game/helpers/constants'
-import {
-  getVectorForDirection,
-} from '@/game/helpers/helpers'
+import { getVectorForDirection } from '@/game/helpers/helpers'
 import Tank from '@/game/core/tank/tank'
 import BulletExplosion from '@/game/core/bullet-explosion/bullet-explosion'
 import { Sprite } from '@/game/helpers/types'
@@ -26,13 +24,13 @@ import MobileGameObject from '@/game/core/mobile-game-object/mobile-game-object'
 
 export default class Bullet extends MobileGameObject
   implements IUpdatable, IHitable, IDestroyable {
+  public gameObjectType: GameObjectType = GameObjectType.Bullet
   protected collideWith = [
     GameObjectType.Base,
     GameObjectType.Bullet,
     GameObjectType.Tank,
     GameObjectType.Wall,
   ]
-  public gameObjectType: GameObjectType = GameObjectType.Bullet
   public readonly direction: Direction
   private tank: Tank | null
   private tankId: number
@@ -79,9 +77,8 @@ export default class Bullet extends MobileGameObject
     if (movement < this.speed) {
       const collisions = this.getCollisions(this.getColliders(gameObjects))
       collisions.forEach(c => ((c as unknown) as IHitable).hit(this))
-      
-      if (collisions.length > 0)
-        this.hit()
+
+      if (collisions.length > 0) this.hit()
       if (collisions.some(c => c.gameObjectType !== GameObjectType.Bullet)) {
         this.explode()
       }

@@ -3,8 +3,8 @@ import Input from '@/game/core/input/input'
 import Stage from '@/game/core/stage/stage'
 import { IGameConstructor, IGameOverData } from '@/game/core/game-engine/types'
 import { Level } from '@/game/helpers/levels'
-import { ControllerType } from '@/game/helpers/types'
 import PlayerTank from '@/game/core/player-tank/player-tank'
+import { ControllerType } from '@/game/core/types';
 
 export default class GameEngine {
   private readonly input: Input
@@ -28,7 +28,7 @@ export default class GameEngine {
     this.player1 = null
     this.player2 = null
     this.stage = null
-    this.controllerMode = 'KEYBOARD'
+    this.controllerMode = ControllerType.Keyboard
     this.stageIndex = 0
     this.frames = 0
     this.lastFrame = 0
@@ -58,9 +58,9 @@ export default class GameEngine {
   }
   
   public start(
-    resolve: (value: IGameOverData | PromiseLike<IGameOverData>) => void, controllerMode: ControllerType = 'KEYBOARD'
+    resolve: (value: IGameOverData | PromiseLike<IGameOverData>) => void, controllerMode: ControllerType = ControllerType.Keyboard
   ): void {
-    if (controllerMode !== 'KEYBOARD') {
+    if (controllerMode !== ControllerType.Keyboard) {
       this.controllerMode = controllerMode
     }
     
@@ -83,7 +83,7 @@ export default class GameEngine {
   
   private loop(currentFrame: number): void {
     
-    if (this.controllerMode === 'GAMEPAD') {
+    if (this.controllerMode === ControllerType.Gamepad) {
       this.input.controllerInput()
     }
     

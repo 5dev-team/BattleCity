@@ -140,9 +140,9 @@ export default class Stage extends EventBus implements IRect {
     )
 
     this.tanks.forEach(tank => {
-      tank.on('fire', (bullet: Bullet) => {
+      tank.on<Bullet>('fire', bullet => {
         this.gameObjects.add(bullet)
-        bullet.on('explode', (explosion: Explosion) => {
+        bullet.on<Explosion>('explode', explosion => {
           this.gameObjects.add(explosion)
 
           explosion.on('destroyed', () => {
@@ -155,7 +155,7 @@ export default class Stage extends EventBus implements IRect {
         })
       })
 
-      tank.on('explode', explosion => {
+      tank.on<Explosion>('explode', explosion => {
         this.gameObjects.add(explosion)
 
         explosion.on('destroyed', () => {
@@ -165,7 +165,7 @@ export default class Stage extends EventBus implements IRect {
     })
 
     this.enemies.forEach(enemyTank => {
-      enemyTank.on('initTank', initAnimation => {
+      enemyTank.on<InitAnimation>('initTank', initAnimation => {
         this.gameObjects.add(initAnimation)
   
         initAnimation.on('destroyed', () => {
@@ -184,7 +184,10 @@ export default class Stage extends EventBus implements IRect {
       })
     })
 
-    this.playerTank.on('initTank', initAnimation => {
+    this.playerTank.on<InitAnimation>('initTank', initAnimation => {
+      if (!initAnimation)
+        return
+      
       this.gameObjects.add(initAnimation)
 
       initAnimation.on('destroyed', () => {
@@ -209,7 +212,7 @@ export default class Stage extends EventBus implements IRect {
       }
     })
 
-    this.playerTank.on('reborn', (rebornAnimation: PlayerShieldAnimation) => {
+    this.playerTank.on<PlayerShieldAnimation>('reborn', rebornAnimation => {
       this.gameObjects.add(rebornAnimation)
       this.playerTank.turnOnIDDQD()
 
