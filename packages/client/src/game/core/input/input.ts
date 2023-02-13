@@ -1,5 +1,5 @@
 import { Keys } from '@/game/helpers/constants'
-import { ControllerType } from '@/game/core/types';
+import { ControllerType } from '@/game/core/types'
 
 export default class Input {
   keys: Set<string>
@@ -14,11 +14,11 @@ export default class Input {
     switch (controller) {
       case ControllerType.Keyboard:
         this.init()
-        break;
+        break
       case ControllerType.Gamepad:
         this.gamepad = navigator.getGamepads()[0]
         this.controllerInput()
-        break;
+        break
     }
   }
 
