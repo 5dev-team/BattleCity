@@ -1,71 +1,74 @@
-import { controllerModeType } from '@/game/helpers/types'
+import { Keys } from '@/game/helpers/constants'
+import { ControllerType } from '@/game/core/types'
 
 export default class Input {
   keys: Set<string>
-  
-  constructor(controllerMode: controllerModeType) {
+  gamepad: Gamepad | null
+
+  constructor(controller: ControllerType) {
     this.keys = new Set()
     this.gamepad = null
-    console.log(controllerMode)
-    if (controllerMode === 'KEYBOARD') {
-      this.init()
-    } else {
-      this.gamepad = navigator.getGamepads()[0]
-      this.controllerInput()
+
+    console.log(controller)
+
+    switch (controller) {
+      case ControllerType.Keyboard:
+        this.init()
+        break
+      case ControllerType.Gamepad:
+        this.gamepad = navigator.getGamepads()[0]
+        this.controllerInput()
+        break
     }
   }
-  
+
   init() {
-    
     //TODO: remove any type
-    document.addEventListener('keydown', this.controllerInput)
-    
-    document.addEventListener('keyup', this.controllerInput)
+    document.addEventListener('keydown', e => this.controllerInput(e, false))
+
+    document.addEventListener('keyup', e => this.controllerInput(e, true))
   }
-  
-  arrowBinding() {
-    
+
+  getGamepadKeyCode() {
+    if (!this.gamepad) return
+
     const buttons = this.gamepad.buttons
-    
-    const arrowsAfterBind = {
-      ArrowUp: buttons[12].pressed,
-      ArrowRight: buttons[15].pressed,
-      ArrowDown: buttons[13].pressed,
-      ArrowLeft: buttons[14].pressed,
-      Space: buttons[1].pressed,
-      Enter: buttons[9].pressed,
+    const pressed = buttons.findIndex(btn => btn.pressed)
+
+    switch (pressed) {
+      case 12:
+        return Keys.UP
+      case 15:
+        return Keys.RIGHT
+      case 13:
+        return Keys.DOWN
+      case 14:
+        return Keys.LEFT
+      case 1:
+        return Keys.SPACE
+      case 9:
+        return Keys.ENTER
     }
-    return Object.keys(arrowsAfterBind).filter(
-      b => arrowsAfterBind[b] === true
-    )[0]
   }
-  
-  controllerInput(e) {
-    let keyCode = e?.code
-    if (this.gamepad) {
-      keyCode = this.arrowBinding()
-    }
-    console.log(keyCode)
+
+  controllerInput(e?: KeyboardEvent, isKeyUp?: boolean) {
+    const keyCode = this.gamepad ? this.getGamepadKeyCode() : e?.code
+
     switch (keyCode) {
-      case 'ArrowUp':
-      case 'ArrowRight':
-      case 'ArrowDown':
-      case 'ArrowLeft':
-      case 'Space':
-      case 'Enter':
-        if (e) {
-          e.preventDefault()
-        }
-        this.keys.add(keyCode)
+      case Keys.UP:
+      case Keys.RIGHT:
+      case Keys.DOWN:
+      case Keys.LEFT:
+      case Keys.SPACE:
+      case Keys.ENTER:
+        e?.preventDefault()
+        isKeyUp ? this.keys.delete(keyCode) : this.keys.add(keyCode)
         break
       default:
-        for(const i of this.keys) {
-          this.keys.delete(i)
-        }
+        this.keys.clear()
     }
   }
-  
-  
+
   has(...arg: string[]) {
     return Array.isArray(arg)
       ? arg.some(key => this.keys.has(key))

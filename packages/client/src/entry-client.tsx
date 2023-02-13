@@ -7,7 +7,7 @@ import { setupStore } from '@/store'
 import App from '@/App'
 import { fetchUser, fetchYandexSignIn } from '@/store/slices/auth'
 
-const store = setupStore(JSON.parse(window.__PRELOADED_STATE__ || ''))
+const store = __NODE_ENV__ === 'development' ? setupStore() : setupStore(JSON.parse(window.__PRELOADED_STATE__ || ''))
 
 delete window.__PRELOADED_STATE__
 
