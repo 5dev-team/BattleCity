@@ -1,36 +1,40 @@
 import { Keys } from '@/game/helpers/constants'
-import { ControllerType } from '@/game/helpers/types'
+import { ControllerType } from '@/game/core/types'
 
 export default class Input {
   keys: Set<string>
   gamepad: Gamepad | null
-  
-  constructor(controllerMode: ControllerType) {
+
+  constructor(controller: ControllerType) {
     this.keys = new Set()
     this.gamepad = null
-    
-    console.log(controllerMode)
-    if (controllerMode === 'KEYBOARD') {
-      this.init()
-    } else {
-      this.gamepad = navigator.getGamepads()[0]
-      this.controllerInput()
+
+    console.log(controller)
+
+    switch (controller) {
+      case ControllerType.Keyboard:
+        this.init()
+        break
+      case ControllerType.Gamepad:
+        this.gamepad = navigator.getGamepads()[0]
+        this.controllerInput()
+        break
     }
   }
-  
+
   init() {
     //TODO: remove any type
     document.addEventListener('keydown', e => this.controllerInput(e, false))
-    
+
     document.addEventListener('keyup', e => this.controllerInput(e, true))
   }
-  
+
   getGamepadKeyCode() {
     if (!this.gamepad) return
-    
+
     const buttons = this.gamepad.buttons
     const pressed = buttons.findIndex(btn => btn.pressed)
-    
+
     switch (pressed) {
       case 12:
         return Keys.UP
@@ -46,10 +50,10 @@ export default class Input {
         return Keys.ENTER
     }
   }
-  
+
   controllerInput(e?: KeyboardEvent, isKeyUp?: boolean) {
     const keyCode = this.gamepad ? this.getGamepadKeyCode() : e?.code
-    
+
     switch (keyCode) {
       case Keys.UP:
       case Keys.RIGHT:
@@ -64,7 +68,7 @@ export default class Input {
         this.keys.clear()
     }
   }
-  
+
   has(...arg: string[]) {
     return Array.isArray(arg)
       ? arg.some(key => this.keys.has(key))
