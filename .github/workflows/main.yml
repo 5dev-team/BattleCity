@@ -1,0 +1,72 @@
+# Определяем название процесса (просто отображается на странице Actions в GitHub)
+name: Push To Yandex Cloud CR
+
+# Определяем условия запуска процесса
+# Подробнее см. https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows)
+on:
+  # Позволяет запускать вручную из GitHub
+  workflow_dispatch:
+
+	# Позволяет запускать при push в main (и при commit и при merge) 
+  push:
+    branches:
+      - main
+      - dev
+      - deploy
+
+
+# Определяем процесс (состоит из нескольких последовательных/параллельных джобов)
+jobs:
+  # Но нам хватит одного
+  build:
+    # Для построение проекта от вас не требуется сервер или что-либо подобное, 
+		# GitHub выполнит построение, используя собственный runner - такую
+		# общедоступную 'виртуальную машину'
+    runs-on: ubuntu-latest
+
+    # Определяем шаги процесса
+    steps:
+      # Запускает предварительную проверку 
+			# Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Авторизация в Яндекс.Облаке (здесь ничего не меняем)
+      - name: Yandex Cloud CR "Login" Action for GitHub Actions
+        uses: yc-actions/yc-cr-login@v0.1-alpha
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+
+			# Построение образа и отправка его в Container Registry
+      - name: Build, tag, and push image to Yandex Cloud Container Registry
+        env:
+					# Здесь указываем идентификатор регистра (о нём позднее)
+          CR_REGISTRY: crpe70i40r7a5a94kugj
+					# Здесь указываем название репозитория (впрочем оно далее не используется)
+          CR_REPOSITORY: github.com/5dev-team/BattleCity
+					# Здесь ничего не меняем (формирует уникальное название для образа)
+          IMAGE_TAG: ${{ github.sha }}
+					# Далее указываем все прочие нужные нам перееменные среды
+          CLIENT_PORT: 3000
+          SERVER_PORT: 3000
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+          POSTGRES_PORT: 5432
+          YANDEX_API: http://localhost:3000/api/v2
+          PGADMIN_DEFAULT_EMAIL: admin@admin.com
+          PGADMIN_DEFAULT_PASSWORD: secret
+          PGADMIN_LISTEN_PORT: 80
+          NODE_ENV: production
+          YANDEX_OAUTH_URL: https://oauth.yandex.ru/authorize
+          YANDEX_REDIRECT_URI: http://localhost:3000
+          DOMAIN: localhost
+				# Всё описание выше было лишь подготовкой
+				# Тем не менее, оставшиеся шаги более не должны вызывать вопросы
+        run: |
+          docker compose build
+          docker tag server:latest cr.yandex/$CR_REGISTRY/server:latest
+          docker tag postgres:14 cr.yandex/$CR_REGISTRY/postgres:14
+          docker tag dpage/pgadmin4:4.18 cr.yandex/$CR_REGISTRY/dpage/pgadmin4:4.18
+          docker push cr.yandex/$CR_REGISTRY/server:latest
+          docker push cr.yandex/$CR_REGISTRY/postgres:14
+          docker push cr.yandex/$CR_REGISTRY/dpage/pgadmin4:4.18
