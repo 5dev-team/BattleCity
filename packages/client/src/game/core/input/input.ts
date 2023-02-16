@@ -9,8 +9,6 @@ export default class Input {
     this.keys = new Set()
     this.gamepad = null
 
-    console.log(controller)
-
     switch (controller) {
       case ControllerType.Keyboard:
         this.init()

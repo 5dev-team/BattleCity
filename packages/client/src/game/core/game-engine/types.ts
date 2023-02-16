@@ -7,6 +7,7 @@ export interface IGameConstructor {
   input: Input
   view: View
   levels: Level[]
+  stageIndex: number
 }
 
 export interface IGameOverData {
