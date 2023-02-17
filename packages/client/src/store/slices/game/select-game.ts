@@ -1,7 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit'
-import { IUser } from '@/store/slices/auth/auth.models'
-import { baseSelectProfile } from '@/store/slices/profile/select-profile'
 import { RootState } from '@/store'
+import { IGameOverProps } from '@/components/UI/game-over/game-over'
 
 export const bestScore= (state: RootState) => state.game.bestScore
 export const player1= (state: RootState) => state.game.player1
@@ -9,7 +8,7 @@ export const player2= (state: RootState) => state.game.player2
 
 export const selectProfile = createSelector(
   [bestScore, player1, player2],
-  (bestScore, player1) => {
+  (bestScore, player1): IGameOverProps => {
     return {
       nextGame: true,
       stage: 1,

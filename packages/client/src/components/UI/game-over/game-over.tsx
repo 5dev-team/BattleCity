@@ -5,22 +5,18 @@ import T2 from '@/assets/tanks/T2.png'
 import T3 from '@/assets/tanks/T3.png'
 import T4 from '@/assets/tanks/T4.png'
 import arrow from '@/assets/svg/arrow.svg'
+import { IPlayer } from '@/store/slices/game/game.models'
 
 const tanks: string[] = [T1, T2, T3, T4]
 
-type scoresType = {
-  [key: number]: { count: number, points: number },
-}
 
-type playerType = { user: null | number, total: number, scores: scoresType }
-
-interface IGameOverProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface IGameOverProps extends React.HTMLAttributes<HTMLDivElement> {
   nextGame: boolean
   bestScore: number,
   stage: number,
   playersCount: number,
-  player1: playerType,
-  player2?: playerType,
+  player1: IPlayer,
+  player2?: IPlayer,
 }
 
 

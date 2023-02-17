@@ -1,31 +1,41 @@
+import Tank from '@/game/core/tank/tank'
 import {
   Keys,
   PLAYER1_TANK_POSITION,
+  PLAYER1_TANK_SPEED,
   PLAYER1_TANK_SPRITES,
-  TANK_SPEED,
 } from '@/game/helpers/constants'
 import {
   getDirectionForKeys,
-  getAxisForDirection,
-  getValueForDirection,
+  getVectorForDirection,
 } from '@/game/helpers/helpers'
-import Tank from '@/game/core/tank/tank'
-import { GameObjectArgs, IUpdatable, UpdateState } from '@/game/core/types'
+import {
+  Direction,
+  GameObjectArgs,
+  IUpdatable,
+  UpdateState,
+  Vec2,
+} from '@/game/core/types'
 import { IScoreResult } from '@/game/core/player-tank/types'
-
-
 
 export default class PlayerTank extends Tank implements IUpdatable {
   private score: IScoreResult
-  constructor(args: Partial<GameObjectArgs>) {
-    super({ ...args, sprites: PLAYER1_TANK_SPRITES })
-    this.x = args.x ? args.x : PLAYER1_TANK_POSITION[0]
-    this.y = args.y ? args.y : PLAYER1_TANK_POSITION[1]
-    this.direction = Tank.Direction.UP
-    // this.speed = TANK_SPEED
-     this.speed = 8
-    this.objectType = 'playerTank'
+  public lives: number
+  private pause: boolean
+  private IDDQD: boolean
+
+  constructor(args: Partial<Pick<GameObjectArgs, 'pos'>>) {
+    super({
+      pos: args.pos
+        ? args.pos
+        : new Vec2(PLAYER1_TANK_POSITION[0], PLAYER1_TANK_POSITION[1]),
+      sprites: PLAYER1_TANK_SPRITES,
+    })
     this.name = 'player tank'
+    this.lives = 2
+    this.speed = PLAYER1_TANK_SPEED
+    this.IDDQD = false
+    this.pause = false
     this.score = {
       1: 0,
       2: 0,
@@ -33,40 +43,75 @@ export default class PlayerTank extends Tank implements IUpdatable {
       4: 0,
     }
   }
-  
+
   public getScore() {
     return this.score
   }
-  
+
   public setScore(newScore: IScoreResult) {
     this.score = newScore
   }
 
-  update(state: UpdateState): void {
-    const { input, frameDelta, world } = state
-    if (input.has(Keys.UP, Keys.RIGHT, Keys.DOWN, Keys.LEFT)) {
-      const direction = getDirectionForKeys(input.keys)
-      const axis = getAxisForDirection(direction)
-      const value = getValueForDirection(direction)
+  public getLives() {
+    return this.lives
+  }
 
-      this.turn(direction)
-      this.move(axis, value)
-      this.animate(frameDelta)
+  public stop() {
+    this.pause = true
+  }
+  public play() {
+    this.pause = false
+  }
 
-      const isOutOfBounds = world.isOutOfBounds(this)
-      const hasCollision = world.hasCollision(this)
+  public reborn() {
+    this.lives--
+    this.pos = new Vec2(PLAYER1_TANK_POSITION[0], PLAYER1_TANK_POSITION[1])
+    this.direction = Direction.Up
+  }
 
-      if (isOutOfBounds || hasCollision) {
-        this.move(axis, -value)
-      }
+  public turnOnIDDQD() {
+    this.IDDQD = true
+  }
+
+  public turnOffIDDQD() {
+    this.IDDQD = false
+  }
+
+  public hit() {
+    if (this.IDDQD) return
+
+    super.hit()
+  }
+
+  public update({ input, frameDelta, world }: UpdateState): void {
+    if (this.pause) {
+      return
     }
 
-    if (input.keys.has(Keys.SPACE)) {
-      this.fire()
+    if (input.has(Keys.UP, Keys.RIGHT, Keys.DOWN, Keys.LEFT)) {
+      const direction = getDirectionForKeys(input.keys)
+      const colliders = this.getColliders(Array.from(world.gameObjects))
 
-      if (this.bullet) {
-        world.objects.add(this.bullet)
+      this.turn(direction, this.getTurnOffsetLimit(colliders))
+
+      const collisions = this.getCollisions(colliders)
+
+      if (collisions.length === 0) {
+        const directionVector = getVectorForDirection(direction)
+        const movement = this.getMovement(this.getMoveOffsetLimit(colliders))
+        this.move(directionVector.scale(movement))
+
+        if (world.isOutOfBounds(this)) {
+          const outerOffset = world.getOutOfBoundsOffset(this)
+          this.move(outerOffset)
+        }
       }
+
+      this.animate(frameDelta)
+    }
+
+    if (input.has(Keys.SPACE)) {
+      this.fire()
     }
   }
 }

@@ -4,7 +4,7 @@ import Stage from '@/game/core/stage/stage'
 import { IGameConstructor, IGameOverData } from '@/game/core/game-engine/types'
 import { Level } from '@/game/helpers/levels'
 import PlayerTank from '@/game/core/player-tank/player-tank'
-import { controllerModeType } from '@/game/helpers/types'
+import { ControllerType } from '@/game/core/types'
 
 export default class GameEngine {
   private readonly input: Input
@@ -15,7 +15,7 @@ export default class GameEngine {
   private stage: Stage | null
   private lastFrame: number
   private frames: number
-  public controllerMode: controllerModeType
+  public controllerMode: ControllerType
   private isGameOver: boolean
   private debugMode: boolean
   private pause: boolean
@@ -28,7 +28,7 @@ export default class GameEngine {
     this.player1 = null
     this.player2 = null
     this.stage = null
-    this.controllerMode = 'KEYBOARD'
+    this.controllerMode = ControllerType.Keyboard
     this.stageIndex = 0
     this.frames = 0
     this.lastFrame = 0
@@ -58,13 +58,13 @@ export default class GameEngine {
   }
   
   public start(
-    resolve: (value: IGameOverData | PromiseLike<IGameOverData>) => void, controllerMode: controllerModeType = 'KEYBOARD'
+    resolve: (value: IGameOverData | PromiseLike<IGameOverData>) => void, controllerMode: ControllerType = ControllerType.Keyboard
   ): void {
-    if (controllerMode !== 'KEYBOARD') {
+    if (controllerMode !== ControllerType.Keyboard) {
       this.controllerMode = controllerMode
     }
     
-    this.stage = new Stage(this.stages[this.stageIndex], this.stageIndex, this.controllerMode)
+    this.stage = new Stage(this.stages[this.stageIndex], this.stageIndex)
     this.setPlayerFirst(this.stage.getPlayerTank())
     
     this.stage.on('gameOver', () => {
@@ -83,7 +83,7 @@ export default class GameEngine {
   
   private loop(currentFrame: number): void {
     
-    if (this.controllerMode === 'GAMEPAD') {
+    if (this.controllerMode === ControllerType.Gamepad) {
       this.input.controllerInput()
     }
     
@@ -92,7 +92,7 @@ export default class GameEngine {
       this.stage.update({ input: this.input, frameDelta })
     }
     if (this.stage) {
-      this.view.update(this.stage, this.player1, this.player2)
+      this.view.update(this.stage, this.player1)
     }
     this.frames = 0
     this.lastFrame = currentFrame
@@ -112,5 +112,4 @@ export default class GameEngine {
   setPlayerFirst(player: PlayerTank) {
     this.player1 = player
   }
-  
 }

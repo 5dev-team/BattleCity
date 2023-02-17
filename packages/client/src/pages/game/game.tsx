@@ -9,11 +9,19 @@ import ErrorFallback from '@/components/UI/error-fallback'
 import GameEngine from '@/game/core/game-engine'
 import { InputHandler } from '@/game/core/input'
 import View from '@/game/core/view'
-import SpriteAtlas from '@/game/sprites/sprite_1.png'
-import Sprite from '@/game/core/sprite'
+import SpriteAtlas from '@/game/sprites/sprite2.png'
+import ImageLoader from '@/game/core/sprite'
 import { levels as Levels } from '@/game/helpers/levels'
 import styles from './game.module.scss'
+import { useAppDispatch } from '@/hooks/redux'
+import { saveGameScores } from '@/store/slices/game'
+import { IGameOverData } from '@/game/core/game-engine/types'
+import { fetchUserHighScore } from '@/store/slices/leaderboard'
+import { leaderboardDataRequest } from '@/constants/configs/leaderboard'
+import { ControllerType } from '@/game/core/types'
+// import gamepadSimulator from '@/utils/gamepadEmulator'
 import { useAppSelector } from '@/hooks/redux'
+import { selectProfile } from '@/store/slices/game/select-game'
 
 enum GameView {
   Menu,
@@ -28,12 +36,15 @@ enum GameMode {
 }
 
 const Game: React.FC = () => {
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const [gameView, setView] = useState(GameView.Menu)
+  const [controllerMode, setControllerMode] =
+    useState<ControllerType>(ControllerType.Keyboard)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [online, setOnline] = useState(true)
   
-  const gameOverData = useAppSelector(state => state.leaderboard.tableData)
+  const gameOverData = useAppSelector(selectProfile)
   
   useEffect(() => {
     window.addEventListener('offline', () => {
@@ -61,30 +72,51 @@ const Game: React.FC = () => {
 
     setView(GameView.Game)
   }
-
+  useEffect(() => {
+    window.addEventListener('gamepadconnected', setGamepadMode)
+    window.addEventListener('gamepaddisconnected', setKeyboardMode)
+    return () => {
+      window.removeEventListener('gamepadconnected', setGamepadMode)
+      window.removeEventListener('gamepaddisconnected', setKeyboardMode)
+    }
+  }, [])
+  
+  const setGamepadMode = () => {
+    setControllerMode(ControllerType.Gamepad)
+  }
+  const setKeyboardMode = () => {
+    setControllerMode(ControllerType.Keyboard)
+  }
+  
   useEffect(() => {
     if (gameView === GameView.Game) {
+      dispatch(fetchUserHighScore(leaderboardDataRequest))
       const canvas = canvasRef.current
 
       if (canvas) {
-        const viewSprite = new Sprite(SpriteAtlas)
+        const spriteAtlasLoader = new ImageLoader(SpriteAtlas)
         const game = new GameEngine({
-          input: new InputHandler(),
-          view: new View(canvas, viewSprite),
+          input: new InputHandler(controllerMode),
+          view: new View(canvas, spriteAtlasLoader),
           levels: Levels,
         })
-
-        game.init().then(() => game.start())
-
-        setTimeout(() => {
-          game.end()
-
+        
+        let resolve: (value: IGameOverData | PromiseLike<IGameOverData>) => void
+        
+        new Promise<IGameOverData>((res, _) => {
+          resolve = res
+        })
+        .then(response => {
+          dispatch(saveGameScores(response))
           setView(GameView.GameOver)
-        }, 5000)
+        })
+        .catch(error => console.log(error))
+        
+        game.init(false).then(() => game.start(resolve, controllerMode))
       }
     }
   }, [gameView])
-
+  
   return (
     <div className={styles['game']}>
       <div className={styles['game__container']}>
@@ -96,14 +128,18 @@ const Game: React.FC = () => {
               alt={'Battle City'}
               style={{ imageRendering: 'pixelated' }}
             />
-            {!online && <div className={`nes-container is-centered ${styles['offline-warning']} ${styles['flashing']}`}>
-              <span className='nes-text is-error' style={{ color: '#f00' }}>OFFLINE</span>
-            </div>}
+            {!online && (
+              <div
+                className={`nes-container is-centered ${styles['offline-warning']} ${styles['flashing']}`}>
+                <span className='nes-text is-error' style={{ color: '#f00' }}>
+                  OFFLINE
+                </span>
+              </div>
+            )}
             <ErrorBoundary FallbackComponent={ErrorFallback}>
               <GameMenu
                 selectItemId={0}
-                className={`${styles['control-wrapper']} ${styles['control-page-buttons']}`}
-              >
+                className={`${styles['control-wrapper']} ${styles['control-page-buttons']}`}>
                 <GameButton onClick={() => initGame(GameMode.Singleplayer)}>
                   1 PLAYER
                 </GameButton>
@@ -128,9 +164,8 @@ const Game: React.FC = () => {
           <canvas
             className={styles['game__canvas']}
             ref={canvasRef}
-            width={640}
-            height={640}
-          ></canvas>
+            width={512}
+            height={480}></canvas>
         )}
         {gameView === GameView.GameOver && (
           <GameOver {...gameOverData}>
