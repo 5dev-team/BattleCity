@@ -12,20 +12,19 @@ import { z } from 'zod'
 import { zodValidation } from '@/utils/validation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useInputVariant } from '@/hooks/useInputVariant'
+  
+const signUpSchema = z.object({
+  first_name: zodValidation.name,
+  second_name: zodValidation.name,
+  email: zodValidation.email,
+  login: zodValidation.login,
+  password: zodValidation.password,
+  phone: zodValidation.phone,
+})
+
+type SignUpSchema = z.infer<typeof signUpSchema>
 
 const SignUp: React.FC = () => {
-  
-  const signUpSchema = z.object({
-    first_name: zodValidation.name,
-    second_name: zodValidation.name,
-    email: zodValidation.email,
-    login: zodValidation.login,
-    password: zodValidation.password,
-    phone: zodValidation.phone,
-  })
-
-  type SignUpSchema = z.infer<typeof signUpSchema>
-
   const dispatch = useAppDispatch()
   const authError = useAppSelector((state) => state.auth.authError)
 

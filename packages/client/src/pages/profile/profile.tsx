@@ -16,30 +16,30 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { zodValidation } from '@/utils/validation'
 
+const profileSchema = z.object({
+  passwords: z.object({
+    newPassword: zodValidation.password,
+    oldPassword: zodValidation.password,
+  }),
+  profile: z.object({
+    first_name: zodValidation.name,
+    second_name: zodValidation.name,
+    display_name: zodValidation.name,
+    login: zodValidation.login,
+    email: zodValidation.email,
+    phone: zodValidation.phone,
+  }),
+  avatar: z.custom<File>(),
+})
+
+type ProfileSchema = z.infer<typeof profileSchema>
+
 enum ProfileMode {
   View,
   Edit,
 }
 
 const Profile: React.FC = () => {
-  const profileSchema = z.object({
-    passwords: z.object({
-      newPassword: zodValidation.password,
-      oldPassword: zodValidation.password,
-    }),
-    profile: z.object({
-      first_name: zodValidation.name,
-      second_name: zodValidation.name,
-      display_name: zodValidation.name,
-      login: zodValidation.login,
-      email: zodValidation.email,
-      phone: zodValidation.phone,
-    }),
-    avatar: z.instanceof(FileList),
-  })
-
-  type ProfileSchema = z.infer<typeof profileSchema>
-
   const user = useAppSelector(selectProfile) ?? ({} as Partial<IUser>)
   const responseError = useAppSelector(state => state.profile.fetchError)
 
@@ -133,7 +133,7 @@ const Profile: React.FC = () => {
     if (isEditingDragEvent(e)) {
       const files = e.dataTransfer.files
 
-      setValue('avatar', files, { shouldDirty: true, shouldValidate: true })
+      setValue('avatar', files[0], { shouldDirty: true, shouldValidate: true })
       setAvatarSrc(URL.createObjectURL(files[0]))
       setIsDragOver(false)
     }

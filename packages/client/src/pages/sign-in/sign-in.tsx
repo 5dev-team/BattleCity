@@ -11,14 +11,13 @@ import { zodValidation } from '@/utils/validation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useInputVariant } from '@/hooks/useInputVariant'
 
-const SignIn: React.FC = () => {
-  const signInSchema = z.object({
-    login: zodValidation.login,
-    password: zodValidation.password,
-  })
-  
-  type SignInSchema = z.infer<typeof signInSchema>
+const signInSchema = z.object({
+  login: zodValidation.login,
+  password: zodValidation.password,
+})
 
+type SignInSchema = z.infer<typeof signInSchema>
+const SignIn: React.FC = () => {
   const dispatch = useAppDispatch()
   const authError = useAppSelector(state => state.auth.authError)
   const {

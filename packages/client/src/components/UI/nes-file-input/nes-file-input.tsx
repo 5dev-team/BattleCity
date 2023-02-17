@@ -73,7 +73,9 @@ const NesFileInput: React.FC<INesFileInputProps> = forwardRef<HTMLInputElement, 
                 onChange(e)
               }
               setValue(e.target.value)
-              field.onChange(e.target.files)
+              const files = e.target.files
+              if (files)
+                field.onChange(files[0])
             }}
             disabled={plain}
             {...props}
