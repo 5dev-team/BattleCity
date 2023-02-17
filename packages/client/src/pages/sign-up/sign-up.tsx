@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect } from 'react'
 import styles from './sign-up.module.scss'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
@@ -8,10 +8,10 @@ import NesLink from '@/components/UI/nes-link'
 import NesButton from '@/components/UI/nes-button'
 import { authSlice, fetchRegister, fetchUser } from '@/store/slices/auth'
 import { RoutePaths } from '@/router'
-import { z } from 'zod';
-import { zodValidation } from '@/utils/validation';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useInputVariant } from '@/hooks/useInputVariant';
+import { z } from 'zod'
+import { zodValidation } from '@/utils/validation'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useInputVariant } from '@/hooks/useInputVariant'
 
 const SignUp: React.FC = () => {
   

@@ -6,10 +6,10 @@ import NesInput from '@/components/UI/nes-input'
 import NesLink from '@/components/UI/nes-link'
 import NesButton from '@/components/UI/nes-button'
 import { authSlice, fetchLogin, fetchUser, fetchYandexOauth } from '@/store/slices/auth'
-import { z } from 'zod';
-import { zodValidation } from '@/utils/validation';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useInputVariant } from '@/hooks/useInputVariant';
+import { z } from 'zod'
+import { zodValidation } from '@/utils/validation'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useInputVariant } from '@/hooks/useInputVariant'
 
 const SignIn: React.FC = () => {
   const signInSchema = z.object({

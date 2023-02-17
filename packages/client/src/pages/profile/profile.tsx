@@ -2,7 +2,7 @@ import React, { ChangeEvent, DragEvent, useEffect, useState } from 'react'
 import styles from './profile.module.scss'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useInputVariant } from '@/hooks/useInputVariant';
+import { useInputVariant } from '@/hooks/useInputVariant'
 import { Control, useForm } from 'react-hook-form'
 import NesButton from '@/components/UI/nes-button'
 import NesInput from '@/components/UI/nes-input'
@@ -166,7 +166,7 @@ const Profile: React.FC = () => {
 
   const saveBtn = (
     <NesButton
-      type="submit"
+      type='submit'
       variant={isValid && isFormDirty ? 'success' : 'disabled'}
       disabled={!isValid || !isFormDirty}>
       save
@@ -175,7 +175,7 @@ const Profile: React.FC = () => {
 
   const cancelBtn = (
     <NesButton
-      variant="error"
+      variant='error'
       onClick={e => {
         e.preventDefault()
         reset(defaultValues)
@@ -190,12 +190,12 @@ const Profile: React.FC = () => {
     <div className={styles['profile']}>
       <div className={styles['profile__body']}>
         <div className={`nes-container with-title ${styles['container']}`}>
-          <h3 className="title is-dark" style={{ backgroundColor: '#000' }}>
-            Profile <span className="error-text">{responseError}</span>
+          <h3 className='title is-dark' style={{ backgroundColor: '#000' }}>
+            Profile <span className='error-text'>{responseError}</span>
           </h3>
           <ErrorBoundary
             FallbackComponent={() => <div>Something went wrong :(</div>}>
-            <div className="nes-table-responsive">
+            <div className='nes-table-responsive'>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <table
                   className={`nes-table is-bordered is-centered is-dark`}
@@ -207,8 +207,8 @@ const Profile: React.FC = () => {
                           //TODO: fix types
                           control={control as unknown as Control}
                           src={avatarSrc ?? user.avatar ?? ''}
-                          label="Avatar"
-                          accept="image/*"
+                          label='Avatar'
+                          accept='image/*'
                           alt={`your avatar ${user.login}`}
                           plain={mode === ProfileMode.View}
                           plainText={'No Avatar'}
@@ -222,7 +222,7 @@ const Profile: React.FC = () => {
                       </th>
                       <td>
                         <NesInput
-                          label="First name"
+                          label='First name'
                           errorText={errors.profile?.first_name?.message}
                           variant={getInputVariant<'profile'>('first_name', 'profile')}
                           {...commonProps}
@@ -233,7 +233,7 @@ const Profile: React.FC = () => {
                     <tr>
                       <td>
                         <NesInput
-                          label="Second name"
+                          label='Second name'
                           errorText={errors.profile?.second_name?.message}
                           variant={getInputVariant<'profile'>('second_name', 'profile')}
                           {...commonProps}
@@ -244,7 +244,7 @@ const Profile: React.FC = () => {
                     <tr>
                       <td>
                         <NesInput
-                          label="Display name"
+                          label='Display name'
                           errorText={errors.profile?.display_name?.message}
                           variant={getInputVariant<'profile'>('display_name', 'profile')}
                           {...commonProps}
@@ -255,7 +255,7 @@ const Profile: React.FC = () => {
                     <tr>
                       <td>
                         <NesInput
-                          label="Login"
+                          label='Login'
                           errorText={errors.profile?.login?.message}
                           variant={getInputVariant<'profile'>('login', 'profile')}
                           {...commonProps}
@@ -266,8 +266,8 @@ const Profile: React.FC = () => {
                     <tr>
                       <td>
                         <NesInput
-                          label="Email"
-                          type="email"
+                          label='Email'
+                          type='email'
                           errorText={errors.profile?.email?.message}
                           variant={getInputVariant<'profile'>('email', 'profile')}
                           {...commonProps}
@@ -278,7 +278,7 @@ const Profile: React.FC = () => {
                     <tr>
                       <td>
                         <NesInput
-                          label="Phone"
+                          label='Phone'
                           errorText={errors.profile?.phone?.message}
                           variant={getInputVariant<'profile'>('phone', 'profile')}
                           {...commonProps}
@@ -291,8 +291,8 @@ const Profile: React.FC = () => {
                     <tr>
                       <td colSpan={4}>
                         <NesInput
-                          label="Old Password"
-                          type="password"
+                          label='Old Password'
+                          type='password'
                           errorText={errors.passwords?.oldPassword?.message}
                           variant={getInputVariant<'passwords'>('oldPassword', 'passwords')}                          
                           {...commonProps}
@@ -303,8 +303,8 @@ const Profile: React.FC = () => {
                     <tr>
                       <td colSpan={3}>
                         <NesInput
-                          label="New Password"
-                          type="password"
+                          label='New Password'
+                          type='password'
                           errorText={errors.passwords?.newPassword?.message}
                           variant={getInputVariant<'passwords'>('newPassword', 'passwords')}
                           {...commonProps}
@@ -331,16 +331,16 @@ const Profile: React.FC = () => {
       <div className={styles['profile__footer']}>
         <NesButton
           fullWidth
-          variant="primary"
+          variant='primary'
           onClick={() => navigate('/')}
-          type="button">
+          type='button'>
           menu
         </NesButton>
         <NesButton
           fullWidth
-          variant="warning"
+          variant='warning'
           onClick={() => dispatch(fetchLogout())}
-          type="button">
+          type='button'>
           logout
         </NesButton>
       </div>

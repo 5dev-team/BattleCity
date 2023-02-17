@@ -13,7 +13,7 @@ const isDirtyOrError = <TSchema extends UseFormFields, TKeyName = string>(
   fields: UseFormFields,
   key?: keyof TSchema
 ) => {
-  const sourceField = key ? Object.entries(fields).find(([k, _]) => k === key) : undefined
+  const sourceField = key ? Object.entries(fields).find(entry => entry[0] === key) : undefined
   const formFields = sourceField ? sourceField[1] as UseFormFields : fields
 
   return Object.keys(formFields).find(key => key === name) !== undefined
