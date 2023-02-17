@@ -21,7 +21,7 @@ const NesInput = React.forwardRef<HTMLInputElement, INesInputProps>(
       <div data-testid='nes-input__field' className={`nes-field ${inline ? 'is-inline' : ''}`}>
         <label
           data-testid='nes-input__label'
-          className={`${styles['nes-input__label']}${labelHidden ? 'visually-hidden' : ''}`}
+          className={`${styles['nes-input__label']} ${labelHidden ? 'visually-hidden' : ''}`}
           htmlFor={id}
         >
           {label}
