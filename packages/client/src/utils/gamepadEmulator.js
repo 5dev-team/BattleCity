@@ -172,7 +172,7 @@ fill: fuchsia;
     Array.from(document.querySelectorAll('.amdfc-int')).forEach(function (
       element
     ) {
-      element.addEventListener('mouseenter', function (e) {
+      element.addEventListener('mouseenter', function () {
         if (element.id.indexOf('amdfc-button') === 0) {
           const index = parseInt(element.id.replace('amdfc-button-', ''))
           gamepadSimulator.fakeController.buttons[index].touched = true
