@@ -4,6 +4,7 @@ import styles from './nes-input.module.scss'
 interface INesInputProps extends InputHTMLAttributes<HTMLInputElement> {
   inline?: boolean
   label: string
+  errorText?: string
   variant?: 'basic' | 'primary' | 'success' | 'warning' | 'error' | 'dark'
   fullWidth?: boolean
   labelHidden?: boolean
@@ -12,7 +13,7 @@ interface INesInputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 const NesInput = React.forwardRef<HTMLInputElement, INesInputProps>(
   (
-    { inline, label, variant, fullWidth, labelHidden, plain, ...props },
+    { inline, label, variant, fullWidth, labelHidden, errorText, plain, ...props },
     ref
   ) => {
     const id = useId()
@@ -20,10 +21,11 @@ const NesInput = React.forwardRef<HTMLInputElement, INesInputProps>(
       <div data-testid='nes-input__field' className={`nes-field ${inline ? 'is-inline' : ''}`}>
         <label
           data-testid='nes-input__label'
-          className={`${labelHidden ? 'visually-hidden' : ''}`}
+          className={`${styles['nes-input__label']}${labelHidden ? 'visually-hidden' : ''}`}
           htmlFor={id}
         >
           {label}
+          {errorText && <span className='nes-text is-error' style={{fontSize: '.7rem'}}>{errorText}</span>}
         </label>
 
         <input

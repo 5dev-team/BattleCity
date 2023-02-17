@@ -18,6 +18,14 @@
     box-sizing: border-box;
     text-align: left;
   }
+  
+  &__label {
+    position: relative;
+    span {
+      position: absolute;
+      right: 0;
+    }
+  }
 }
 
 input[plain='true'] {
