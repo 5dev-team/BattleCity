@@ -20,6 +20,8 @@ import { fetchUserHighScore } from '@/store/slices/leaderboard'
 import { leaderboardDataRequest } from '@/constants/configs/leaderboard'
 import { ControllerType } from '@/game/core/types'
 // import gamepadSimulator from '@/utils/gamepadEmulator'
+import { useAppSelector } from '@/hooks/redux'
+import { selectProfile } from '@/store/slices/game/select-game'
 
 enum GameView {
   Menu,
@@ -41,81 +43,56 @@ const Game: React.FC = () => {
     useState<ControllerType>(ControllerType.Keyboard)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [online, setOnline] = useState(true)
+  
+  const gameOverData = useAppSelector(selectProfile)
+  
   useEffect(() => {
     window.addEventListener('offline', () => {
       setOnline(false)
     })
-    
+
     window.addEventListener('online', () => {
       setOnline(true)
     })
-    
+
     return () => {
       window.removeEventListener('offline', () => {
         setOnline(false)
       })
-      
+
       window.removeEventListener('online', () => {
         setOnline(true)
       })
+
     }
-  }, [])
-  const initialState = {
-    nextGame: false,
-    stage: 1,
-    playersCount: 2,
-    bestScore: 0,
-    player1: {
-      user: 3213213,
-      scores: {
-        1: { count: 2, points: 200 },
-        2: { count: 3, points: 600 },
-        3: { count: 4, points: 1200 },
-        4: { count: 5, points: 2000 }
-      },
-      total: 7000
-    },
-    player2: {
-      user: 3213123,
-      scores: {
-        1: { count: 2, points: 200 },
-        2: { count: 3, points: 600 },
-        3: { count: 4, points: 1200 },
-        4: { count: 5, points: 2000 }
-      },
-      total: 7000
-    }
-  }
-  
+  },[])
+
   const initGame = (gameMode: GameMode) => {
     console.log(`init gameMode: ${GameMode[gameMode]}`)
-    
+
     setView(GameView.Game)
   }
-  
+  useEffect(() => {
+    window.addEventListener('gamepadconnected', setGamepadMode)
+    window.addEventListener('gamepaddisconnected', setKeyboardMode)
+    return () => {
+      window.removeEventListener('gamepadconnected', setGamepadMode)
+      window.removeEventListener('gamepaddisconnected', setKeyboardMode)
+    }
+  }, [])
   
   const setGamepadMode = () => {
     setControllerMode(ControllerType.Gamepad)
   }
-  
-  // useEffect(() => {
-  //   window.addEventListener('gamepadconnected', setGamepadMode)
-  //   return () => {
-  //     window.removeEventListener('gamepadconnected', setGamepadMode)
-  //   }
-  // }, [])
-  
-  // useEffect(() => {
-  //   gamepadSimulator.create()
-  //   gamepadSimulator.connect()
-  // }, [])
-  
+  const setKeyboardMode = () => {
+    setControllerMode(ControllerType.Keyboard)
+  }
   
   useEffect(() => {
     if (gameView === GameView.Game) {
       dispatch(fetchUserHighScore(leaderboardDataRequest))
       const canvas = canvasRef.current
-      
+
       if (canvas) {
         const spriteAtlasLoader = new ImageLoader(SpriteAtlas)
         const game = new GameEngine({
@@ -191,11 +168,12 @@ const Game: React.FC = () => {
             height={480}></canvas>
         )}
         {gameView === GameView.GameOver && (
-          <GameOver {...initialState}>
+          <GameOver {...gameOverData}>
             <GameMenu
               selectItemId={0}
-              className={styles['game-over-page-buttons']}>
-              {initialState.nextGame ? (
+              className={styles['game-over-page-buttons']}
+            >
+              {gameOverData.nextGame ? (
                 <GameButton onClick={() => console.log('load next level')}>
                   NEXT LEVEL
                 </GameButton>
