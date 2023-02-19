@@ -4,7 +4,7 @@ export const bodyForumPostPosts = celebrate({
   body: Joi.object().keys({
     content: Joi.string().required(),
     forumId: Joi.number().required(),
-    rootPost: Joi.number()
+    rootPost: Joi.number().allow(null)
   })
 })
 
