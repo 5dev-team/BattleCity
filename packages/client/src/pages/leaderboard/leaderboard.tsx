@@ -3,25 +3,17 @@ import styles from './leaderboard.module.scss'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { fetchLeaderboardAll } from '@/store/slices/leaderboard'
-import { ILeaderboardRequest } from '@/api/leaderboard/leaderboard.models'
-import { LEADERBOARD_RATING_FIELD_NAME } from '@/constants/configs/leaderboard'
+import { leaderboardDataRequest } from '@/constants/configs/leaderboard'
 import NesAvatar from '@/components/UI/nes-avatar'
 import NesButton from '@/components/UI/nes-button'
 import ErrorBoundary from '@/components/error-boundary'
 import ErrorFallback from '@/components/UI/error-fallback'
 import useEffectOnce from '@/utils/useEffectOnce'
 
-export const TABLE_TOTAL_ITEMS = 50
-
 const Leaderboard: React.FC = () => {
   
   const dispatch = useAppDispatch()
-  const leaderboardDataRequest: ILeaderboardRequest = {
-    ratingFieldName: LEADERBOARD_RATING_FIELD_NAME,
-    cursor: 0,
-    limit: TABLE_TOTAL_ITEMS
-  }
-  
+
   const tableHeadersProps = [
     {
       name: 'id',

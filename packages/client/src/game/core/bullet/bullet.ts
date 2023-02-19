@@ -1,117 +1,150 @@
-import { GameObjectArgs, IHitable } from '@/game/core/types'
+import {
+  Direction,
+  GameObjectType,
+  IDestroyable,
+  IHitable,
+  IUpdatable,
+  UpdateState,
+  Vec2,
+} from '@/game/core/types'
 import Explosion from '@/game/core/explosion/explosion'
 import GameObject from '@/game/core/game-object/game-object'
-import Stage from '@/game/core/stage/stage'
-import { TObjects } from '@/game/core/stage/types'
 import {
-  PROJECTILE_HEIGHT,
-  PROJECTILE_SPEED,
-  PROJECTILE_SPRITES,
-  PROJECTILE_WIDTH,
+  BULLET_HEIGHT,
+  BULLET_SPEED,
+  BULLET_SPRITES,
+  BULLET_WIDTH,
 } from '@/game/helpers/constants'
-import {
-  getAxisForDirection,
-  getValueForDirection,
-} from '@/game/helpers/helpers'
+import { getVectorForDirection } from '@/game/helpers/helpers'
+import Tank from '@/game/core/tank/tank'
+import BulletExplosion from '@/game/core/bullet-explosion/bullet-explosion'
+import { Sprite } from '@/game/helpers/types'
+import PlayerTank from '@/game/core/player-tank/player-tank'
+import MobileGameObject from '@/game/core/mobile-game-object/mobile-game-object'
 
-export default class Bullet extends GameObject {
-  private type: string
-  private readonly direction: number
-  private speed: number
-  private explosion: null | Explosion
-  private readonly onCollide?: () => void
+export default class Bullet extends MobileGameObject
+  implements IUpdatable, IHitable, IDestroyable {
+  public gameObjectType: GameObjectType = GameObjectType.Bullet
+  protected collideWith = [
+    GameObjectType.Base,
+    GameObjectType.Bullet,
+    GameObjectType.Tank,
+    GameObjectType.Wall,
+  ]
+  public readonly direction: Direction
+  private tank: Tank | null
+  private tankId: number
+  private explosion: Explosion | null
+  protected speed: number
 
   constructor(
-    direction: number,
-    x = 0,
-    y = 0,
-    speed = PROJECTILE_SPEED,
-    onCollide?: () => void
+    direction: Direction,
+    tank: Tank,
+    pos = Vec2.zero,
+    speed = BULLET_SPEED
   ) {
     super({
-      x,
-      y,
-      width: PROJECTILE_WIDTH,
-      height: PROJECTILE_HEIGHT,
-      sprites: PROJECTILE_SPRITES,
-    } as GameObjectArgs)
-    this.type = 'bullet'
-    this.direction = direction
-    this.explosion = null
+      pos: pos,
+      width: BULLET_WIDTH,
+      height: BULLET_HEIGHT,
+      sprites: BULLET_SPRITES,
+    })
     this.speed = speed
-    this.onCollide = onCollide
+    this.direction = direction
+    this.tank = tank
+    this.tankId = tank.id
+    this.explosion = null
+    this.name = 'bullet'
   }
 
-  get sprite(): number[] {
-    return this.sprites[this.direction]
-  }
+  public update({ world }: Pick<UpdateState, 'world'>): void {
+    const gameObjects = Array.from(world.gameObjects).filter(
+      c => this.shouldCollideWith(c) && c !== this.tank
+    )
 
-  public update({ world }: { world: Stage }): void {
-    const axis = getAxisForDirection(this.direction)
-    const value = getValueForDirection(this.direction)
+    const directionVector = getVectorForDirection(this.direction)
+    const movement = this.getMovement(this.getMoveOffsetLimit(gameObjects))
 
-    this.move(axis, value)
+    this.move(directionVector.scale(movement))
 
-    const isOutOfBounds = world.isOutOfBounds(this)
-    const collision = world.getCollision(this)
+    if (world.isOutOfBounds(this)) {
+      this.move(world.getOutOfBoundsOffset(this))
+      this.explode()
+      this.hit()
+      return
+    }
 
-    if (isOutOfBounds) {
-      this.destroy(world)
-    } else if (collision) {
-      if (collision && this.collide([...collision.objects])) {
-        this.destroy(world)
+    if (movement < this.speed) {
+      const collisions = this.getCollisions(this.getColliders(gameObjects))
+      collisions.forEach(c => ((c as unknown) as IHitable).hit(this))
+
+      if (collisions.length > 0) this.hit()
+      if (collisions.some(c => c.gameObjectType !== GameObjectType.Bullet)) {
+        this.explode()
       }
     }
   }
 
-  private destroy(stage: Stage) {
-    this.speed = 0
-
-    if (!this.explosion) {
-      const [x, y]: number[] = this.getExplosionStartingPosition()
-
-      this.explosion = new Explosion(x, y)
-
-      stage.objects.add(this.explosion)
-    } else if (this.explosion.exploded) {
-      stage.objects.delete(this.explosion) // удаляем взрыв из мира
-      stage.objects.delete(this) // удаляем projectile из мира
-      if (this.onCollide) this.onCollide()
-      this.explosion = null
+  public shouldCollideWith(obj: GameObject) {
+    switch (obj.gameObjectType) {
+      case GameObjectType.Base:
+      case GameObjectType.Wall:
+        return true
+      case GameObjectType.Bullet:
+        return (
+          (this.isFromEnemyTank && (obj as Bullet).isFromPlayerTank) ||
+          (this.isFromPlayerTank && (obj as Bullet).isFromEnemyTank)
+        )
+      case GameObjectType.Tank:
+        return obj instanceof PlayerTank
+          ? this.tankId !== obj.id
+          : this.tank instanceof PlayerTank
+      default:
+        return false
     }
   }
 
-  private move(axis: string, value: number): void {
-    if (axis === 'y') {
-      this.y += value * this.speed
-    }
-    if (axis === 'x') {
-      this.x += value * this.speed
-    }
+  get sprite(): Sprite {
+    return this.sprites[this.direction]
   }
 
-  private collide(objects: TObjects[]): boolean {
-    const hitableObjs = objects
-      .filter(obj => obj !== undefined && 'hit' in obj)
-      .map(obj => obj as IHitable)
-    const hit = hitableObjs.length
-    hitableObjs.forEach(hitable => hitable.hit(this))
+  get isFromPlayerTank() {
+    return this.tank instanceof PlayerTank
+  }
 
-    return !!hit
+  get isFromEnemyTank() {
+    return !this.isFromPlayerTank
+  }
+
+  public hit() {
+    this.stop()
+    this.destroy()
+  }
+
+  public destroy() {
+    this.tank = null
+    this.explosion = null
+    this.emit('destroyed', this)
   }
 
   private getExplosionStartingPosition(): number[] {
     switch (this.direction) {
-      case GameObject.Direction.UP:
+      case Direction.Up:
         return [this.left - 10, this.top - 12]
-      case GameObject.Direction.RIGHT:
+      case Direction.Right:
         return [this.right - 16, this.top - 12]
-      case GameObject.Direction.DOWN:
+      case Direction.Down:
         return [this.left - 10, this.bottom - 16]
-      case GameObject.Direction.LEFT:
+      case Direction.Left:
         return [this.left - 16, this.top - 12]
       default:
         return [this.left - 10, this.top - 12]
     }
+  }
+
+  private explode() {
+    const [x, y] = this.getExplosionStartingPosition()
+    this.explosion = new BulletExplosion({ pos: new Vec2(x, y) })
+    this.emit('explode', this.explosion)
   }
 }

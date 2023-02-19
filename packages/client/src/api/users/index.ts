@@ -5,6 +5,7 @@ import {
   IChangeProfileRequest,
   IChangePasswordRequest,
 } from '@/api/users/users.models'
+import { AxiosResponse } from 'axios'
 
 export default {
   changeProfile(data: IChangeProfileRequest) {
@@ -31,8 +32,9 @@ export default {
       data,
     })
   },
+  //TODO add AxiosResponse in all requests
   getUser(id: number) {
-    return request<IUserDTO>({
+    return request<AxiosResponse<IUserDTO>>({
       url: __YANDEX_API__ + `/user/${id}`,
       method: 'GET',
     })

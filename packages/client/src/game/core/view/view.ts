@@ -1,15 +1,29 @@
-import { ISprite } from '@/game/core/sprite/types'
-import { IObjectOfWorld } from '@/game/core/view/types'
 import Stage from '@/game/core/stage/stage'
-import { NUMBER_OF_UNITS, TILE_SIZE, UNIT_SIZE } from '@/game/helpers/constants'
+import {
+  ENEMY_TANK_ICONS_SPRITES,
+  NUMBERS,
+  PANEL_HEIGHT,
+  PANEL_X,
+  PLAYER1_PANEL_SPRITES,
+  PLAYFIELD_HEIGHT,
+  PLAYFIELD_WIDTH,
+  PLAYFIELD_X,
+  PLAYFIELD_Y,
+  STAGE_NUMBER_SPRITES,
+  TILE_SIZE,
+  UNIT_SIZE
+} from '@/game/helpers/constants'
+import ImageLoader from '@/game/core/sprite'
+import PlayerTank from '@/game/core/player-tank/player-tank'
+import EnemyTank from '@/game/core/enemy-tank/enemy-tank'
 
 export default class View {
   private canvas: HTMLCanvasElement
   private context: CanvasRenderingContext2D
-  private sprite: ISprite
+  private imageLoader: ImageLoader
   private readonly ctx: CanvasRenderingContext2D | null
-
-  constructor(canvas: HTMLCanvasElement, sprite: ISprite) {
+  
+  constructor(canvas: HTMLCanvasElement, loader: ImageLoader) {
     this.canvas = canvas
     this.ctx = canvas.getContext('2d')
     if (!this.ctx || !(this.ctx instanceof CanvasRenderingContext2D)) {
@@ -17,81 +31,131 @@ export default class View {
     }
     this.context = this.ctx
     this.context.imageSmoothingEnabled = false
-    this.context.setTransform(1.54, 0, 0, 1.54, 0, 0)
-    this.sprite = sprite
+    this.imageLoader = loader
   }
-
+  
+  get width() {
+    return this.canvas.width
+  }
+  
+  get height() {
+    return this.canvas.height
+  }
+  
   async init(): Promise<void> {
-    await this.sprite.load()
+    await this.imageLoader.load()
   }
-
-  public update(stage: number | Stage): void {
+  
+  public update(stage: Stage, player1: PlayerTank | null): void {
     this.clearScreen()
     if (typeof stage === 'object') {
       this.renderObjects(stage)
     }
-    // this.renderGrid() // отрисовка сетки
+    this.renderPanel(stage, player1)
   }
-
-  public renderObjects(objects: Stage): void {
-    if (objects) {
-      for (const object of objects.objects) {
-        if (object) {
-          const { width, height, sprite }: IObjectOfWorld = object
-          if (!sprite) return
-          const [sp1, sp2, sp3, sp4]: number[] = sprite
-          this.context.drawImage(
-            this.sprite.image,
-            sp1,
-            sp2,
-            sp3,
-            sp4,
-            object.left,
-            object.top,
-            width,
-            height
-          )
-        }
-        // Включение дебага НЕ УДАЛЯТЬ! stage.getCollision
-        // if (object.debug) {
-        //   this.context.strokeStyle = '#fafafa'
-        //   this.context.lineWidth = 2
-        //   this.context.strokeRect(x + 1, y + 1, width - 2, height - 2)
-        //   object.debug = false
-        // }
-      }
-    }
-  }
-
-  private renderGrid(): void {
-    for (let y = 0; y < NUMBER_OF_UNITS; y++) {
-      for (let x = 0; x < NUMBER_OF_UNITS; x++) {
-        this.context.strokeStyle = '#ffffff'
-        this.context.lineWidth = 0.2
-        this.context.strokeRect(
-          x * UNIT_SIZE + 1,
-          y * UNIT_SIZE + 1,
-          UNIT_SIZE - 2,
-          UNIT_SIZE - 2
+  
+  public renderObjects(stage: Stage): void {
+    this.context.fillStyle = '#636363'
+    this.context.fillRect(0, 0, this.width, this.height)
+    
+    this.context.fillStyle = '#000000'
+    this.context.fillRect(PLAYFIELD_X, PLAYFIELD_Y, PLAYFIELD_WIDTH, PLAYFIELD_HEIGHT)
+    
+    stage.gameObjects.forEach(gameObject => {
+      if (gameObject.sprite) {
+        this.context.drawImage(
+          this.imageLoader.image,
+          ...gameObject.sprite,
+          PLAYFIELD_X + gameObject.pos.x,
+          PLAYFIELD_Y + gameObject.pos.y,
+          gameObject.width,
+          gameObject.height
         )
       }
-    }
-
-    for (let y = 0; y < NUMBER_OF_UNITS * 2; y++) {
-      for (let x = 0; x < NUMBER_OF_UNITS * 2; x++) {
-        this.context.strokeStyle = '#ffffff'
-        this.context.lineWidth = 0.1
-        this.context.strokeRect(
-          x * TILE_SIZE + 1,
-          y * TILE_SIZE + 1,
-          TILE_SIZE - 2,
-          TILE_SIZE - 2
-        )
-      }
-    }
+    })
   }
-
+  
+  renderPanel(stage: Stage, player1: PlayerTank | null) {
+    this.renderEnemyTankIcons(stage.getEnemies)
+    if (player1) {
+      this.renderPlayer1Lives(player1)
+    }
+    this.renderStageNumber(stage)
+  }
+  
   public clearScreen(): void {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+  }
+  
+  renderEnemyTankIcons(enemyTanks: EnemyTank[]) {
+    this.context.fillStyle = '#000000'
+    
+    for (let i = 0, x = 0, y = 0; i < enemyTanks.length; i++) {
+      this.context.drawImage(
+        this.imageLoader.image,
+        ...ENEMY_TANK_ICONS_SPRITES[0],
+        PANEL_X + x * TILE_SIZE + 16,
+        PLAYFIELD_Y + y * TILE_SIZE + 16,
+        TILE_SIZE,
+        UNIT_SIZE
+      )
+      
+      if (x === 1) {
+        x = 0
+        y++
+      } else {
+        x++
+      }
+    }
+  }
+  
+  //TODO: player should be new Class with lives, bonuses and scores
+  renderPlayer1Lives(player1: PlayerTank) {
+    this.context.drawImage(
+      this.imageLoader.image,
+      ...PLAYER1_PANEL_SPRITES[0],
+      PANEL_X + TILE_SIZE,
+      PLAYFIELD_Y + PANEL_HEIGHT * 0.5,
+      UNIT_SIZE,
+      TILE_SIZE
+    )
+    
+    this.context.drawImage(
+      this.imageLoader.image,
+      ...PLAYER1_PANEL_SPRITES[1],
+      PANEL_X + TILE_SIZE,
+      PLAYFIELD_Y + PANEL_HEIGHT * 0.5 + TILE_SIZE,
+      TILE_SIZE,
+      TILE_SIZE
+    )
+
+    this.context.drawImage(
+      this.imageLoader.image,
+      ...NUMBERS[player1.getLives()],
+      PANEL_X + TILE_SIZE * 2,
+      PLAYFIELD_Y + PANEL_HEIGHT * 0.5 + TILE_SIZE,
+      TILE_SIZE,
+      TILE_SIZE
+    )
+  }
+  
+  renderStageNumber(stage: Stage) {
+    this.context.drawImage(
+      this.imageLoader.image,
+      ...STAGE_NUMBER_SPRITES[stage.stageIndex],
+      PANEL_X + TILE_SIZE,
+      PLAYFIELD_Y + PANEL_HEIGHT * 0.75,
+      UNIT_SIZE,
+      UNIT_SIZE
+    )
+    
+    this.context.drawImage(
+      this.imageLoader.image,
+      ...STAGE_NUMBER_SPRITES[1],
+      PANEL_X + TILE_SIZE * 2,
+      PLAYFIELD_Y + PANEL_HEIGHT * 0.75 + UNIT_SIZE,
+      TILE_SIZE,
+      TILE_SIZE
+    )
   }
 }

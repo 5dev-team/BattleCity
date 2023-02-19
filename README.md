@@ -105,3 +105,14 @@
 
 Если вам понадобится только один сервис, просто уточните какой в команде
 `docker compose up {sevice_name}`, например `docker compose up server`
+
+<h2 align="center">Проверка на утечки памяти</h2>
+<br>
+
+Фрагмент теста (короткий) - утечек не обнаружено
+
+<image src="./packages/client/src/assets/memoryLeaksScreen/2.png" alt="image short test">
+<br>
+
+Фрагмент теста (длинный) через несколько дней/обновлений - утечек не обнаружено
+<image src="./packages/client/src/assets/memoryLeaksScreen/1.png" alt="image long test">
