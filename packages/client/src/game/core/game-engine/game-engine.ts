@@ -59,7 +59,7 @@ export default class GameEngine {
   }
   
   public start(
-    resolve: (value: IGameOverData | PromiseLike<IGameOverData>) => void, controllerMode: ControllerType = ControllerType.Keyboard
+    resolve: (value: IGameOverData) => void, controllerMode: ControllerType = ControllerType.Keyboard
   ): void {
     if (controllerMode !== ControllerType.Keyboard) {
       this.controllerMode = controllerMode

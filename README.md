@@ -111,8 +111,7 @@
 
 Фрагмент теста (короткий) - утечек не обнаружено
 
-<image src="./packages/client/src/assets/memoryLeaksScreen/2.png" alt="image short test">
-<br>
+<image src="./packages/client/src/assets/memoryLeaksScreen/2.png" alt="image short test"/>
 
 Фрагмент теста (длинный) через несколько дней/обновлений - утечек не обнаружено
-<image src="./packages/client/src/assets/memoryLeaksScreen/1.png" alt="image long test">
+<image src="./packages/client/src/assets/memoryLeaksScreen/1.png" alt="image long test"/>
