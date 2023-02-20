@@ -6,7 +6,7 @@ const sw = self as unknown as ServiceWorkerGlobalScope & typeof globalThis
 const CACHE_NAME = 'my-pwa-cache-v1'
   // write path manually after build from dist/
 const urlsToCache = [
-  '/index.html',
+  // '/index.html',
   '/index.js',
   '/vite.svg',
   '/assets/avatarPlaceholder.png',
