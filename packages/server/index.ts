@@ -10,7 +10,7 @@ import express, { NextFunction, Request, Response } from 'express'
 import serveStatic from 'serve-static'
 import * as path from 'path'
 import * as fs from 'fs'
-import * as helmet from 'helmet'
+import { contentSecurityPolicy } from 'helmet'
 import type { ViteDevServer } from 'vite'
 import { createServer as createViteServer } from 'vite'
 import { indexRouters } from './routes'
@@ -21,7 +21,7 @@ async function startServer() {
   app.use(cors())
   app.use((req: Request, _res: Response, next: NextFunction) => {
     const wsSrc: string = (req.protocol === 'https' ? 'ws://' : 'wss://') + req.get('host')
-    helmet.contentSecurityPolicy({
+    contentSecurityPolicy({
       directives: {
         'connectSrc': ['\'self\'', wsSrc],
         'script-src': ['\'self\'', '\'unsafe-inline\'']
