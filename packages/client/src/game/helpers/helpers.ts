@@ -4,7 +4,6 @@ export function getDirectionForKeys(keys: {
   has(value: string): boolean
 }): number {
   if (keys.has('ArrowUp')) {
-    // debugger
     return Direction.Up
   }
 
