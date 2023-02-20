@@ -30,15 +30,14 @@ export const zodValidation = {
     }),
   password: z
     .string()
-    .min(1, { message: 'Required' })
     .min(8, { message: 'Minimum 8 characters' })
     .max(40, { message: 'Maximum 40 characters' })
     .regex(/^(?=.*\p{Lu}).*$/gu, { message: 'Needs one capital letter' })
-    .regex(/^(?=.*[0-9]).*$/g, { message: 'At least one digit' }),
-
+    .regex(/^(?=.*[0-9]).*$/g, { message: 'At least one digit' })
+    .or(z.literal(''))
+    .default(''),
   phone: z
     .string()
-    .min(1, { message: 'Required' })
     .min(10, { message: 'Minimum 10 characters' })
     .max(12, { message: 'Maximum 12 characters' })
     .regex(/^\+?\d*$/g, { message: `Only digits and "+"` }),

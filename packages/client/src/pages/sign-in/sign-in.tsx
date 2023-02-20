@@ -10,6 +10,7 @@ import { z } from 'zod'
 import { zodValidation } from '@/utils/validation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useInputVariant } from '@/hooks/useInputVariant'
+import Separator from '@/components/UI/separator'
 
 const signInSchema = z.object({
   login: zodValidation.login,
@@ -59,7 +60,7 @@ const SignIn: React.FC = () => {
             Use Yandex ID
           </NesButton>
         </div>
-        <span className={styles['sign-in__separator']}>OR</span>
+        <Separator>OR</Separator>
         <form
           className={styles['sign-in__form']}
           onSubmit={handleSubmit(onSubmit)}

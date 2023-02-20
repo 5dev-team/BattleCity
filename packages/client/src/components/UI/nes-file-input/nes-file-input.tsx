@@ -35,19 +35,19 @@ const NesFileInput: React.FC<INesFileInputProps> = forwardRef<HTMLInputElement, 
     const id = useId()
 
     return (
-      <>
-        <div className={styles['upload-file__caption']}>
-          <p className={styles['caption-title']}>Avatar</p>
-          <span className={`nes-text ${styles['caption-subtitle']}`}>
-            {!plain && (isDragOver ? 'Drop file to load' : 'Drag&Drop')}
-          </span>
-        </div>
-
-        <div className={`${styles['wrapper']} ${styles['upload-file']}`}>
+      <div className={styles['upload-file']}>
+        <div className={`${styles['upload-file__content-wrapper']} ${styles['upload-file__content']}`}>
           {src === '' ? (
-            <div className={`nes-text ${!plain ? 'is-primary' : ''}`}>
-              {plain && (plainText ?? 'Load avatar')}
-              {!plain && 'Choose File'}
+            <div className={`nes-text ${!plain ? 'is-primary' : ''} ${styles['upload-file__control']}`}>
+              <div className={`nes-text ${!plain ? 'is-primary' : ''}`}>
+                {!plain && (isDragOver ? 'Drop file' : 'Drag&Drop')}
+              </div>
+              <div className={`nes-text ${!plain ? 'is-primary' : ''}`}>
+                {plain && (plainText ?? 'Load avatar')}
+              </div>
+              <div className={`nes-text ${!plain ? 'is-primary' : ''}`}>
+                {!plain && 'Choose File'}
+              </div>
             </div>
           ) : (
             <img
@@ -81,7 +81,7 @@ const NesFileInput: React.FC<INesFileInputProps> = forwardRef<HTMLInputElement, 
             {...props}
           />
         </div>
-      </>
+      </div>
     )
   }
 )
