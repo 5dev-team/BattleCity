@@ -1,9 +1,10 @@
 import { IUser } from '@/store/slices/auth/auth.models'
 
-interface IScores {
-  [x: number]: number
+export interface IScores {
+  [key: number]: { count: number, points: number },
 }
 export interface IPlayer {
   user: IUser | null
   scores: IScores
+  total: number
 }

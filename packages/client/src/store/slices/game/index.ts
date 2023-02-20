@@ -18,10 +18,12 @@ const initialState: IInitialState = {
   bestScore: 0,
   player1: {
     user: null,
+    total: 0,
     scores: {},
   },
   player2: {
     user: null,
+    total: 0,
     scores: {},
   },
 }
@@ -29,18 +31,23 @@ const initialState: IInitialState = {
 export const saveGameScores = (data: IGameOverData): ThunkAction<void, RootState, unknown, AnyAction> => (dispatch, getState) => {
   const { scores } = data.gameOverData[0]
   const newTotalScore = getTotalScore(scores)
-  if ((newTotalScore - getState().game.bestScore) > 0) {
-    dispatch(
-      addScoreToLeaderboard({
-        data: {
-          user_id: getState().auth.user!.id,
-          score_date: Date.now(),
-          BattleCityDevelopers: newTotalScore,
-        },
-        ratingFieldName: LEADERBOARD_RATING_FIELD_NAME,
-        teamName: LEADERBOARD_RATING_TEAM_NAME,
-      })
-    )
+  const {auth, game} = getState()
+  if ((newTotalScore - game.bestScore) > 0) {
+    
+    if (auth && auth.user) {
+      dispatch(
+        addScoreToLeaderboard({
+          data: {
+            user_id: auth.user.id,
+            score_date: Date.now(),
+            BattleCityDevelopers: newTotalScore,
+          },
+          ratingFieldName: LEADERBOARD_RATING_FIELD_NAME,
+          teamName: LEADERBOARD_RATING_TEAM_NAME,
+        })
+      )
+    }
+
 
   }
   dispatch(gameSlice.actions.setScores(data))

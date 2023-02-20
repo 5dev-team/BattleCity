@@ -5,7 +5,6 @@ import { IGameConstructor, IGameOverData } from '@/game/core/game-engine/types'
 import { Level } from '@/game/helpers/levels'
 import PlayerTank from '@/game/core/player-tank/player-tank'
 import { ControllerType } from '@/game/core/types'
-import generateStageIndex from '@/utils/calculateStageIndex'
 import calculateStageIndex from '@/utils/calculateStageIndex'
 
 export default class GameEngine {
