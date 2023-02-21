@@ -142,7 +142,7 @@ export default class View {
   renderStageNumber(stage: Stage) {
     this.context.drawImage(
       this.imageLoader.image,
-      ...STAGE_NUMBER_SPRITES[stage.stageIndex],
+      ...STAGE_NUMBER_SPRITES[0],
       PANEL_X + TILE_SIZE,
       PLAYFIELD_Y + PANEL_HEIGHT * 0.75,
       UNIT_SIZE,
@@ -151,7 +151,7 @@ export default class View {
     
     this.context.drawImage(
       this.imageLoader.image,
-      ...STAGE_NUMBER_SPRITES[1],
+      ...STAGE_NUMBER_SPRITES[stage.stageIndex + 1],
       PANEL_X + TILE_SIZE * 2,
       PLAYFIELD_Y + PANEL_HEIGHT * 0.75 + UNIT_SIZE,
       TILE_SIZE,

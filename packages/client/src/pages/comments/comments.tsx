@@ -1,118 +1,149 @@
-import React, {useState} from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import styles from './comments.module.scss'
-import {RoutePaths} from '@/router'
-import {useParams} from 'react-router-dom'
+import { RoutePaths } from '@/router'
+import { useParams, useNavigate } from 'react-router-dom'
 import NesLink from '@/components/UI/nes-link'
 import NesButton from '@/components/UI/nes-button'
 import NesTextarea from '@/components/UI/nes-textarea'
 import SmilesBlock from '@/components/UI/smiles-block'
+import api from '@/api'
+import { IForumPost } from '@/api/forum/forum.models'
 
-export interface ICommentsProps {
-  author: string,
-  content: string,
-  date: string,
+interface IMessage {
+  root: number | null
+  content: string
 }
 
 const Comments: React.FC = () => {
-  const {title} = useParams()
-  const [templateComment, setTemplateComment] = useState({
-    author: 'Admin',
-    content: '',
-    date: new Date().toISOString().split('T')[0],
-  })
-  const [comments, setComment] = useState([
-    {
-        author: 'Admin',
-        content: 'Lorem Ipsum - это текст-рыба, часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной рыбой для текстов на латинице с начала XVI века.',
-        date: '2021-09-02',
-    },
-    {
-        author: 'Domin',
-        content: 'Lorem Ipsum - это текст-рыба, часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной рыбой для текстов на латинице с начала XVI века.',
-        date: '2022-08-07',
-    },
-  ])
+  const { forumId } = useParams<{ forumId: string }>()
+  const messagesBox = useRef<HTMLDivElement>(null)
 
-  const templateRow = (props: ICommentsProps, id: number) => {
-    return (
-      <li key={id} className={`${styles['comments-item']}`}>
-        <div className={styles['comments-info']}>{props.author}</div>
-        <div className={styles['comments-content']}>
-          <span className={`${styles['comments-content-date']} nes-text is-disabled`}>{props.date}</span>
-          <span
-            className={styles['comments-content-re']}
-            onClick={() => {
-              const re = `<div class=comments-content-inner contentEditable="false">Re:${props.author}<br>
-                  ${props.content}
-                </div><br>`
-              setTemplateComment({...templateComment, content: templateComment.content + re})
-            }}
-          >Re:</span>
-          <div dangerouslySetInnerHTML={{__html: props.content}} />
-        </div>
-      </li>
-    )
+  const nav = useNavigate()
+
+  useEffect(() => {
+    if (!Number(forumId)) {
+      nav('/forum')
+    } else {
+      api.forum
+        .getForumPosts(Number(forumId))
+        .then(res => setForumPosts(res.data))
+    }
+  }, [])
+
+  const [forumPosts, setForumPosts] = useState<IForumPost[]>([])
+
+  useEffect(() => {
+    if (messagesBox.current) {
+      messagesBox.current.scrollTo(0, messagesBox.current.scrollHeight)
+    }
+  }, [forumPosts])
+
+  const [message, setMessage] = useState<IMessage>({ root: null, content: '' })
+
+  const onInputMessage = (el: HTMLElement) => {
+    // async hack
+    Promise.resolve()
+      .then(() => setMessage({ ...message, content: el.innerHTML }))
+      .then(() => placeCaret(el))
   }
 
-  const addComment = (comments: Array<ICommentsProps>, templateThem: ICommentsProps): void => {
-    templateThem.content && setComment([...comments, templateComment])
-  }
+  const placeCaret = (el: HTMLElement) => {
+    const range = document.createRange()
+    const select = window.getSelection()
 
-  const placeCursor = (target: HTMLElement) => {
-    const [range, select] = [document.createRange(), window.getSelection()]
-              
-    if (!range || !select) {return}
+    if (!range || !select) {
+      return
+    }
 
-    range.selectNodeContents(target)
+    range.selectNodeContents(el)
     range.collapse(false)
     select.removeAllRanges()
     select.addRange(range)
   }
 
-  const addTemplateRow = (comments: Array<ICommentsProps>) => comments.map((comment, id) => templateRow(comment, id))
-    return (
-      <div className={styles['comments']}>
-        <NesLink to={RoutePaths.FORUM}>Back</NesLink>
-        <h2 className={styles['comments-title']}>{title}</h2>
-        <div className={styles['comments-header']}>
-          <div className={styles['comments-header-info']}>info</div>
-          <div className={styles['comments-header-content']}>Content</div>
-        </div>
-        <ul className={styles['comments-list']}>
-          {addTemplateRow(comments)}
-        </ul>
-        <NesTextarea
-          value={templateComment.content}
-          //@ts-ignore
-          onInput={(evt: Event) => {
-            Promise.resolve(evt)
-              .then(() => setTemplateComment({...templateComment, content: (evt.target as Element).innerHTML}))
-              .then(() => placeCursor(evt.target as HTMLElement))
-          }}
-        ></NesTextarea>
-        <SmilesBlock
-          //@ts-ignore
-          onClick = {(evt: Event) => {
-            if ((evt.target as HTMLImageElement).src) {
-              const img = (evt.target as Element).outerHTML
-              const content = templateComment.content + img
+  const onReClick = (re: IForumPost) => {
+    setMessage({ ...message, root: re.id })
+  }
 
-              setTemplateComment({...templateComment, content: content})
-            }
-          }}
-        ></SmilesBlock>
-        <NesButton
-          type='submit'
-          variant='warning'
-          onClick={(evt) => {
-            return new Promise(resolve => resolve(evt))
-              .then(() => addComment(comments, templateComment))
-              .then(() => setTemplateComment({...templateComment, content: ''}))
-              .then(() => (evt.target as Element).scrollIntoView(false))
-          }}
-        >Send</NesButton>
+  const onSendClick = () => {
+    if (message.content) {
+      api.forum
+        .createForumPost({
+          forumId: Number(forumId),
+          content: message.content,
+          rootPost: message.root,
+        })
+        .then(res => {
+          setForumPosts([...forumPosts, res.data])
+          setMessage({ root: null, content: '' })
+        })
+    }
+  }
+
+  return (
+    <div className={styles['comments-wrapper']}>
+      <NesLink to={RoutePaths.FORUM}>Back</NesLink>
+      <div className={styles['chat']}>
+        <div className={styles['chat__header']}>
+          <div
+            className={`${styles['chat__header__author']} ${styles['table-text']}`}>
+            Author
+          </div>
+          <div
+            className={`${styles['chat__header__content']} ${styles['table-text']}`}>
+            Content
+          </div>
+        </div>
+        <div className={styles['chat__messages']} ref={messagesBox}>
+          {forumPosts.map(forumPost => (
+            <div key={forumPost.id} className={styles['message']}>
+              <div
+                className={`${styles['message__author']} ${styles['table-text']}`}>
+                {forumPost.authorName}
+              </div>
+              <div
+                className={`${styles['message__content']} ${styles['table-text']}`}
+                dangerouslySetInnerHTML={{
+                  __html: `${
+                    forumPost.rootPost
+                      ? `<div class='${styles['re__content']}'>Re: ${
+                          forumPosts.find(el => el.id === forumPost.rootPost)
+                            ?.content
+                        }</div>`
+                      : ''
+                  } ${forumPost.content}`,
+                }}
+              />
+              <div className={styles['message__date']}>
+                {new Date(forumPost.createdAt).toLocaleString()}
+              </div>
+              <NesButton
+                className={styles['message__re']}
+                onClick={() => onReClick(forumPost)}
+                variant={message.root === forumPost.id ? 'primary' : undefined}>
+                Re:
+              </NesButton>
+            </div>
+          ))}
+        </div>
       </div>
-    )
+      <SmilesBlock
+        onImg={node =>
+          setMessage({ ...message, content: message.content + node.outerHTML })
+        }
+      />
+      <div className={styles['send-message']}>
+        <NesTextarea
+          value={message.content}
+          className={styles['send-message__textarea']}
+          onInput={e => onInputMessage(e.target as HTMLElement)}
+        />
+        <NesButton variant='primary' onClick={() => onSendClick()}>
+          Send
+        </NesButton>
+      </div>
+    </div>
+  )
 }
 
 export default Comments

@@ -1,28 +1,24 @@
-import React, {useId} from 'react'
+import React, { HTMLAttributes, useId } from 'react'
 import styles from './nes-textarea.module.scss'
 
-interface INesTextareaProps {
-  variant?: 'basic' | 'primary' | 'success' | 'warning' | 'error' | 'dark'
-  value?: string
+interface INesTextareaProps extends HTMLAttributes<HTMLDivElement> {
+  value: string
 }
 
 const NesTextarea: React.FC<INesTextareaProps> = ({
-  variant,
   value,
-  ...props
+  onInput,
+  className: outerClassName,
 }) => {
   const id = useId()
-
   return (
-    <div className={styles['textarea-wrapper']}>
-      <div
-        dangerouslySetInnerHTML={{__html: `${value}`}}
-        id={id}
-        className={`is-${variant} nes-textarea ${styles['textarea-input']}`}
-        contentEditable='true'
-        {...props}
-      ></div>
-    </div>
+    <div
+      id={id}
+      className={`${styles['textarea-input']} ${outerClassName ?? ''}`}
+      dangerouslySetInnerHTML={{ __html: value }}
+      contentEditable
+      onInput={onInput}
+    />
   )
 }
 

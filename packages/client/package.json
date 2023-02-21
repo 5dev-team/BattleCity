@@ -4,14 +4,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite --open",
-    "build": "rimraf dist && rimraf ssr-dist && tsc && vite build --config ssr.config.ts && vite build --config vite.config.ts",
+    "build": "rimraf dist && rimraf ssr-dist && rimraf dev-dist && tsc && vite build --config ssr.config.ts && vite build --config vite.config.ts",
     "build:develop": "tsc && vite serve --mode development --open",
     "build:ssr": "tsc && vite build --config ssr.config.ts",
     "start": "yarn run build && yarn run preview",
     "preview": "vite preview",
     "lint": "eslint ./src/**/*.{tsx,ts} --fix && stylelint ./src/**/*.scss --fix",
     "format": "prettier --write .",
-    "test": "jest ./"
+    "test": "cross-env NODE_ENV=development jest ./"
   },
   "dependencies": {
     "@hookform/resolvers": "2.9.8",
@@ -57,7 +57,8 @@
     "terser": "5.16.0",
     "ts-jest": "29.0.3",
     "typescript": "4.8.2",
-    "vite": "3.0.7"
+    "vite": "3.1.0",
+    "vite-plugin-pwa": "0.14.3"
   },
   "license": "MIT"
 }
