@@ -42,7 +42,8 @@
   "exclude": [
     "src/utils/gamepadEmulator.оs",
     "dev-dist",
-    "ssr-dist"
+    "ssr-dist",
+    "dist"
   ],
   "references": [
     {
