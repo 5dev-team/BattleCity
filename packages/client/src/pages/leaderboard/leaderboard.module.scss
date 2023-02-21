@@ -53,3 +53,9 @@
   pointer-events: none;
   content: "";
 }
+
+.sort-arrow-reverse::after {
+  top: calc(50% - -8px);
+  right: 14px;
+  transform: rotate(180deg);
+}

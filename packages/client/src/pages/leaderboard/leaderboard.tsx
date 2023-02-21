@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from './leaderboard.module.scss'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -12,7 +12,8 @@ import ErrorFallback from '@/components/UI/error-fallback'
 const Leaderboard: React.FC = () => {
   
   const dispatch = useAppDispatch()
-
+  const [isSorted, setIsSorted] = useState(false)
+  
   const tableHeadersProps = [
     {
       name: 'id',
@@ -52,6 +53,7 @@ const Leaderboard: React.FC = () => {
   const sortColumn = (columnName: string) => {
     dispatch(toggleCurrentSort(columnName))
     dispatch(sortTableByColumn())
+    setIsSorted(!isSorted)
   }
   
   const userRows = React.useMemo(
@@ -94,11 +96,14 @@ const Leaderboard: React.FC = () => {
   )
   
   const tableHeaders = tableHeadersProps.map((header, index) => {
-    //TODO: add change arrow when sorting
     return (
       <div key={`${index}-${header.name}`}
            className={`${styles['table__col']} ${header.sortable ? styles['sort-arrows'] : ''}`}
-           onClick={header.sortable ? () => sortColumn(header.name) : undefined }
+           onClick={header.sortable ? (e) => {
+             sortColumn(header.name)
+             const currentTitle = e.target as HTMLElement
+             currentTitle.classList.toggle(styles['sort-arrow-reverse'])
+           } : undefined }
       >
         {header.label}
       </div>
