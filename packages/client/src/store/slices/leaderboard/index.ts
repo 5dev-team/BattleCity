@@ -2,13 +2,14 @@ import { IUser, IUserDTO } from '@/store/slices/auth/auth.models'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import api from '@/api'
 import { ILeaderboardNewLeaderRequest, ILeaderboardRequest, IUserScore } from '@/api/leaderboard/leaderboard.models'
-import { ILeaderboardScoreTransferred } from '@/store/slices/leaderboard/leaderboard.models'
+import { ILeaderboardScoreTransferred, IsortLeaderboardConfig } from '@/store/slices/leaderboard/leaderboard.models'
 import { transformScore, transformUser } from '@/utils/transformers'
 import { leaderboardDataRequest } from '@/constants/configs/leaderboard'
 import { RootState } from '@/store'
 import { findBestScore } from '@/utils/totalScore'
 import { gameSlice } from '@/store/slices/game'
 import { AxiosResponse } from 'axios'
+import sortByColumnName from '@/utils/sortByColumnName'
 
 interface IInitialState {
   scores: Array<ILeaderboardScoreTransferred>
@@ -16,6 +17,7 @@ interface IInitialState {
   isLeaderboardLoading: boolean
   leaderboardError: string | null
   tableData: Array<IUserScore>
+  currentSort: IsortLeaderboardConfig
 }
 
 export const addScoreToLeaderboard = createAsyncThunk('leaderboard/addScore', async (data: ILeaderboardNewLeaderRequest) => {
@@ -74,7 +76,11 @@ const initialState: IInitialState = {
   users: [],
   isLeaderboardLoading: false,
   leaderboardError: null,
-  tableData: []
+  tableData: [],
+  currentSort: {
+    column: 'score',
+    direction: 'asc'
+  }
 }
 
 export const leaderboardSlice = createSlice({
@@ -112,6 +118,16 @@ export const leaderboardSlice = createSlice({
       })
       .filter(item => typeof item !== 'undefined')
       
+    },
+    toggleCurrentSort: (state, action) => {
+      const nextDirection = state.currentSort.direction === 'asc' ? 'desc' : 'asc'
+      state.currentSort = {
+        column: action.payload,
+        direction: nextDirection
+      }
+    },
+    sortTableByColumn: (state) => {
+      state.tableData = sortByColumnName(state.tableData, state.currentSort.column, state.currentSort.direction)
     }
   },
   extraReducers: builder => {
@@ -123,3 +139,5 @@ export const leaderboardSlice = createSlice({
     })
   }
 })
+
+export const { toggleCurrentSort, sortTableByColumn } = leaderboardSlice.actions

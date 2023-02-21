@@ -4,14 +4,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite --open",
-    "build": "rimraf dist && rimraf ssr-dist && tsc && vite build --config ssr.config.ts && vite build --config vite.config.ts",
+    "build": "rimraf dist && rimraf ssr-dist && rimraf dev-dist && tsc && vite build --config ssr.config.ts && vite build --config vite.config.ts",
     "build:develop": "tsc && vite serve --mode development --open",
     "build:ssr": "tsc && vite build --config ssr.config.ts",
     "start": "yarn run build && yarn run preview",
     "preview": "vite preview",
     "lint": "eslint ./src/**/*.{tsx,ts} --fix && stylelint ./src/**/*.scss --fix",
     "format": "prettier --write .",
-    "test": "jest ./"
+    "test": "cross-env NODE_ENV=development jest ./"
   },
   "dependencies": {
     "@reduxjs/toolkit": "1.9.0",

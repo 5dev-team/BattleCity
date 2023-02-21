@@ -19,7 +19,6 @@ import { IGameOverData } from '@/game/core/game-engine/types'
 import { fetchUserHighScore } from '@/store/slices/leaderboard'
 import { leaderboardDataRequest } from '@/constants/configs/leaderboard'
 import { ControllerType } from '@/game/core/types'
-// import gamepadSimulator from '@/utils/gamepadEmulator'
 import { useAppSelector } from '@/hooks/redux'
 import { selectProfile } from '@/store/slices/game/select-game'
 
@@ -46,7 +45,6 @@ const Game: React.FC = () => {
   const [online, setOnline] = useState(true)
   
   const gameOverData = useAppSelector(selectProfile)
-  
   useEffect(() => {
     window.addEventListener('offline', () => {
       setOnline(false)
@@ -89,19 +87,14 @@ const Game: React.FC = () => {
     setControllerMode(ControllerType.Keyboard)
   }
   
+  const afterGameOver = (value: IGameOverData): void => {
+    dispatch(saveGameScores(value))
+    setView(GameView.GameOver)
+  }
+  
   
   const startGame = (game: GameEngine) => {
-    let resolve: (value: IGameOverData | PromiseLike<IGameOverData>) => void
-    
-    new Promise<IGameOverData>((res, _) => {
-      resolve = res
-    })
-    .then(response => {
-      dispatch(saveGameScores(response))
-      setView(GameView.GameOver)
-    })
-    .catch(error => console.log(error))
-    game.init(false).then(() => game.start(resolve, controllerMode))
+    game.init(false).then(() => game.start(afterGameOver, controllerMode))
   }
   
   const createGameEngine = (stageIndex: number): GameEngine | undefined => {
@@ -164,6 +157,12 @@ const Game: React.FC = () => {
                 </GameButton>
                 <GameButton onClick={() => navigate('/profile')}>
                   PROFILE
+                </GameButton>
+                <GameButton onClick={() => navigate('/forum')}>
+                  FORUM
+                </GameButton>
+                <GameButton onClick={() => navigate('/settings')}>
+                  SETTINGS
                 </GameButton>
               </GameMenu>
             </ErrorBoundary>

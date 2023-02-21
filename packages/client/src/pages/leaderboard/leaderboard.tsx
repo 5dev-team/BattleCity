@@ -1,14 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styles from './leaderboard.module.scss'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { fetchLeaderboardAll } from '@/store/slices/leaderboard'
+import { fetchLeaderboardAll, sortTableByColumn, toggleCurrentSort } from '@/store/slices/leaderboard'
 import { leaderboardDataRequest } from '@/constants/configs/leaderboard'
 import NesAvatar from '@/components/UI/nes-avatar'
 import NesButton from '@/components/UI/nes-button'
 import ErrorBoundary from '@/components/error-boundary'
 import ErrorFallback from '@/components/UI/error-fallback'
-import useEffectOnce from '@/utils/useEffectOnce'
 
 const Leaderboard: React.FC = () => {
   
@@ -25,27 +24,35 @@ const Leaderboard: React.FC = () => {
     },
     {
       name: 'name',
-      label: 'NAME'
+      label: 'NAME',
+      sortable: true
     },
     {
       name: 'score',
-      label: 'SCORE'
+      label: 'SCORE',
+      sortable: true
     },
     {
       name: 'date',
-      label: 'DATE'
+      label: 'DATE',
+      sortable: true
     }
   ]
   
-  useEffectOnce(() => {
+  useEffect(() => {
     dispatch(fetchLeaderboardAll(leaderboardDataRequest))
-  })
+  },[])
   
   const navigate = useNavigate()
   
   const tableData = useAppSelector(state => state.leaderboard.tableData)
   const loading = useAppSelector(state => state.leaderboard.isLeaderboardLoading)
   const leaderboardError = useAppSelector(state => state.leaderboard.leaderboardError)
+  
+  const sortColumn = (columnName: string) => {
+    dispatch(toggleCurrentSort(columnName))
+    dispatch(sortTableByColumn())
+  }
   
   const userRows = React.useMemo(
     () => {
@@ -87,8 +94,12 @@ const Leaderboard: React.FC = () => {
   )
   
   const tableHeaders = tableHeadersProps.map((header, index) => {
+    //TODO: add change arrow when sorting
     return (
-      <div key={index} className={styles['table__col']}>
+      <div key={`${index}-${header.name}`}
+           className={`${styles['table__col']} ${header.sortable ? styles['sort-arrows'] : ''}`}
+           onClick={header.sortable ? () => sortColumn(header.name) : undefined }
+      >
         {header.label}
       </div>
     )

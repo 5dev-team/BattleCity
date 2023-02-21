@@ -1,7 +1,7 @@
 import View from '@/game/core/view/view'
 import Input from '@/game/core/input/input'
 import { Level } from '@/game/helpers/levels'
-import { IScoreResult } from '@/game/core/player-tank/types'
+import { IScores } from '@/store/slices/game/game.models'
 
 export interface IGameConstructor {
   input: Input
@@ -11,5 +11,5 @@ export interface IGameConstructor {
 }
 
 export interface IGameOverData {
-  gameOverData: { scores: IScoreResult }[]
+  gameOverData: { scores: IScores }[]
 }
