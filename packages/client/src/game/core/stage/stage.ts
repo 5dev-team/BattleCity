@@ -175,7 +175,7 @@ export default class Stage extends EventBus implements IRect {
       })
 
       enemyTank.on('destroyed', () => {
-        this.playerTank.getScore()[enemyTank.type] += 1
+        this.playerTank.setScore(enemyTank.type)
         this.removeTank(enemyTank)
 
         if (this.enemyTankCount < 1) {

@@ -29,7 +29,6 @@ export const fetchUserHighScore = createAsyncThunk('leaderboard/fetchHighScore',
   })
   
   const bestScore = findBestScore(responseScoreTransformed, (getState() as RootState).auth.user?.id)
-  console.log(bestScore)
   dispatch(gameSlice.actions.setBestScore(bestScore))
 })
 
@@ -40,7 +39,6 @@ export const fetchLeaderboardAll = createAsyncThunk(
     dispatch(leaderboardSlice.actions.setLoading(true))
     
     const responseScore = await api.leaderboard.getAll(data)
-    console.log(responseScore)
     const responseUsers: Array<IUser> = []
     const promises: Array<Promise<AxiosResponse<IUserDTO>>> = []
     

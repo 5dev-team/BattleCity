@@ -11,7 +11,7 @@
     "preview": "vite preview",
     "lint": "eslint ./src/**/*.{tsx,ts} --fix && stylelint ./src/**/*.scss --fix",
     "format": "prettier --write .",
-    "test": "jest ./"
+    "test": "cross-env NODE_ENV=development jest ./"
   },
   "dependencies": {
     "@reduxjs/toolkit": "1.9.0",
