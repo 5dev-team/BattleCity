@@ -7,7 +7,6 @@ interface IProps {
 
 const ProtectRouteForSignIn = ({redirectTo = '/'}: IProps) => {
   const isAuth: boolean | null = useAuth()
-  console.log(isAuth)
   if (isAuth !== null && isAuth) {
     return <Navigate to={redirectTo} replace />
   }
