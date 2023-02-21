@@ -3,6 +3,7 @@ import yandexOauth from '@/api/yandex-oauth'
 import leaderboard from '@/api/leaderboard'
 import users from '@/api/users'
 import forum from '@/api/forum'
+import settings from '@/api/settings'
 
 export default {
   auth,
@@ -10,4 +11,5 @@ export default {
   users,
   leaderboard,
   forum,
+  settings
 }

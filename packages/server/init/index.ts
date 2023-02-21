@@ -1,6 +1,7 @@
 import { Sequelize, SequelizeOptions } from 'sequelize-typescript'
 import { forumModel, forumPostsModel } from '../models'
 import { dataBaseUrl, POSTGRES_DB, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_USER } from '../utils/constants'
+import { settingsModel } from '../models/settings'
 
 const sequelizeOptions: SequelizeOptions = {
   host: dataBaseUrl,
@@ -20,6 +21,8 @@ export const sequelize = new Sequelize(sequelizeOptions)
 export const Forum = sequelize.define('forum', forumModel, { timestamps: true })
 
 export const ForumPosts = sequelize.define('forumPosts', forumPostsModel, {})
+
+export const Settings = sequelize.define('userSettings', settingsModel, {})
 
 // Связки
 Forum.hasMany(ForumPosts, { onDelete: 'cascade', hooks: true })
