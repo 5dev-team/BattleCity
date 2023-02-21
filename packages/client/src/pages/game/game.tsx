@@ -19,7 +19,6 @@ import { IGameOverData } from '@/game/core/game-engine/types'
 import { fetchUserHighScore } from '@/store/slices/leaderboard'
 import { leaderboardDataRequest } from '@/constants/configs/leaderboard'
 import { ControllerType } from '@/game/core/types'
-// import gamepadSimulator from '@/utils/gamepadEmulator'
 import { useAppSelector } from '@/hooks/redux'
 import { selectProfile } from '@/store/slices/game/select-game'
 
@@ -39,27 +38,27 @@ const Game: React.FC = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const [gameView, setView] = useState(GameView.Menu)
+  const [stageIndex, setStageIndex] = useState(0)
   const [controllerMode, setControllerMode] =
     useState<ControllerType>(ControllerType.Keyboard)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [online, setOnline] = useState(true)
   
   const gameOverData = useAppSelector(selectProfile)
-  
   useEffect(() => {
     window.addEventListener('offline', () => {
       setOnline(false)
     })
-
+    
     window.addEventListener('online', () => {
       setOnline(true)
     })
-
+    
     return () => {
       window.removeEventListener('offline', () => {
         setOnline(false)
       })
-
+      
       window.removeEventListener('online', () => {
         setOnline(true)
       })
@@ -88,31 +87,38 @@ const Game: React.FC = () => {
     setControllerMode(ControllerType.Keyboard)
   }
   
+  const afterGameOver = (value: IGameOverData): void => {
+    dispatch(saveGameScores(value))
+    setView(GameView.GameOver)
+  }
+  
+  
+  const startGame = (game: GameEngine) => {
+    game.init(false).then(() => game.start(afterGameOver, controllerMode))
+  }
+  
+  const createGameEngine = (stageIndex: number): GameEngine | undefined => {
+    const canvas = canvasRef.current
+    
+    const spriteAtlasLoader = new ImageLoader(SpriteAtlas)
+    
+    if (!canvas) {
+      return
+    }
+    return new GameEngine({
+      input: new InputHandler(controllerMode),
+      view: new View(canvas, spriteAtlasLoader),
+      levels: Levels,
+      stageIndex: stageIndex
+    })
+  }
+  
   useEffect(() => {
     if (gameView === GameView.Game) {
       dispatch(fetchUserHighScore(leaderboardDataRequest))
-      const canvas = canvasRef.current
-
-      if (canvas) {
-        const spriteAtlasLoader = new ImageLoader(SpriteAtlas)
-        const game = new GameEngine({
-          input: new InputHandler(controllerMode),
-          view: new View(canvas, spriteAtlasLoader),
-          levels: Levels,
-        })
-        
-        let resolve: (value: IGameOverData | PromiseLike<IGameOverData>) => void
-        
-        new Promise<IGameOverData>((res, _) => {
-          resolve = res
-        })
-        .then(response => {
-          dispatch(saveGameScores(response))
-          setView(GameView.GameOver)
-        })
-        .catch(error => console.log(error))
-        
-        game.init(false).then(() => game.start(resolve, controllerMode))
+      const gameEngine = createGameEngine(stageIndex)
+      if (gameEngine) {
+        startGame(gameEngine)
       }
     }
   }, [gameView])
@@ -180,11 +186,17 @@ const Game: React.FC = () => {
               className={styles['game-over-page-buttons']}
             >
               {gameOverData.nextGame ? (
-                <GameButton onClick={() => console.log('load next level')}>
+                <GameButton onClick={() => {
+                  setStageIndex(stageIndex + 1)
+                  setView(GameView.Game)
+                }}>
                   NEXT LEVEL
                 </GameButton>
               ) : (
-                <GameButton onClick={() => console.log('restart level')}>
+                <GameButton onClick={() => {
+                  setStageIndex(stageIndex)
+                  setView(GameView.Game)
+                }}>
                   RESTART
                 </GameButton>
               )}
