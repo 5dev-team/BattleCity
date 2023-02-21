@@ -22,7 +22,7 @@ export const Settings: React.FC = () => {
   return (
     <div className={styles['settings-wrapper']}>
       <NesCheckbox
-        label="Music"
+        label='Music'
         checked={isMusic}
         onChange={() => toggleMusic()}
       />
