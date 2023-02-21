@@ -6,7 +6,8 @@
       "DOM",
       "DOM.Iterable",
       "ESNext",
-      "webworker"
+      "webworker",
+      "dom"
     ],
     "allowJs": false,
     "skipLibCheck": true,
@@ -27,7 +28,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "typeRoots": ["src/global.d.ts", "node_modules/@types"],
+    "typeRoots": ["src/global.d.ts", "node_modules/@types"]
   },
   "include": ["./src","./src/client.d.ts"],
   "exclude": ["src/utils/gamepadEmulator.оs"],

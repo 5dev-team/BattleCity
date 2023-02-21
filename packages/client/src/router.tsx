@@ -12,6 +12,7 @@ import Profile from '@/pages/profile'
 import ProtectRoute from '@/components/protect-route'
 import ProtectRouteForSignIn from '@/components/protect-route-for-sign-in'
 import Comments from '@/pages/comments'
+import Settings from '@/pages/settings'
 
 export enum RoutePaths {
   SIGNIN = '/sign-in',
@@ -22,7 +23,8 @@ export enum RoutePaths {
   ERROR500 = '/500',
   FORUM = '/forum',
   PROFILE = '/profile',
-  COMMENTS = '/forum/:title',
+  COMMENTS = '/forum/:forumId',
+  SETTINGS = '/settings',
 }
 
 export const Router = () => {
@@ -44,6 +46,7 @@ export const Router = () => {
         <Route path={RoutePaths.COMMENTS} element={<Comments />} />
         <Route element={<Profile />} path={RoutePaths.PROFILE} />
         <Route path={RoutePaths.PROFILE} element={<Profile />} />
+        <Route path={RoutePaths.SETTINGS} element={<Settings />} />
       </Route>
       <Route path='/offline' element={<Offline />} />
       <Route path={RoutePaths.ERROR404} element={<Error404 />} />
