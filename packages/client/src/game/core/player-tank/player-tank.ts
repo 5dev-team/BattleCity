@@ -17,9 +17,10 @@ import {
   Vec2,
 } from '@/game/core/types'
 import { IScoreResult } from '@/game/core/player-tank/types'
+import { IScores } from '@/store/slices/game/game.models'
 
 export default class PlayerTank extends Tank implements IUpdatable {
-  private score: IScoreResult
+  private score: IScores
   public lives: number
   private pause: boolean
   private IDDQD: boolean
@@ -37,19 +38,20 @@ export default class PlayerTank extends Tank implements IUpdatable {
     this.IDDQD = false
     this.pause = false
     this.score = {
-      1: 0,
-      2: 0,
-      3: 0,
-      4: 0,
+      0: {count: 0, points: 0},
+      1: {count: 0, points: 0},
+      2: {count: 0, points: 0},
+      3: {count: 0, points: 0},
     }
   }
 
   public getScore() {
     return this.score
   }
-
-  public setScore(newScore: IScoreResult) {
-    this.score = newScore
+  
+  public setScore(tankType: number) {
+    this.score[tankType].count += 1
+    this.score[tankType].points = (tankType + 1) * 100 * this.score[tankType].count
   }
 
   public getLives() {
