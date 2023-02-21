@@ -152,6 +152,12 @@ const Game: React.FC = () => {
                 <GameButton onClick={() => navigate('/profile')}>
                   PROFILE
                 </GameButton>
+                <GameButton onClick={() => navigate('/forum')}>
+                  FORUM
+                </GameButton>
+                <GameButton onClick={() => navigate('/settings')}>
+                  SETTINGS
+                </GameButton>
               </GameMenu>
             </ErrorBoundary>
             <footer className={`${styles['footer']}`}>
