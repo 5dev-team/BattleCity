@@ -26,12 +26,24 @@
       "vite-plugin-pwa/client"
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     },
-    "typeRoots": ["src/global.d.ts", "node_modules/@types"]
+    "typeRoots": [
+      "src/global.d.ts",
+      "node_modules/@types"
+    ]
   },
-  "include": ["./src","./src/client.d.ts"],
-  "exclude": ["src/utils/gamepadEmulator.оs"],
+  "include": [
+    "./src",
+    "./src/client.d.ts"
+  ],
+  "exclude": [
+    "src/utils/gamepadEmulator.оs",
+    "dev-dist",
+    "ssr-dist"
+  ],
   "references": [
     {
       "path": "./tsconfig.node.json"
