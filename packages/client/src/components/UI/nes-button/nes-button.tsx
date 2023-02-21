@@ -9,13 +9,16 @@ const NesButton: React.FC<INesButtonProps> = ({
   variant,
   children,
   fullWidth,
+  className: outerClassName,
   ...props
 }) => {
   return (
     <button
-      className={`nes-btn ${variant ? `is-${variant}` : ''}`}
-      style={fullWidth ? { width: '100%' } : {}}
-      {...props}>
+      {...props}
+      className={`nes-btn ${variant ? `is-${variant}` : ''} ${
+        outerClassName ?? ''
+      }`}
+      style={fullWidth ? { width: '100%' } : {}}>
       {children}
     </button>
   )
