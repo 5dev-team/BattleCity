@@ -5,6 +5,8 @@ interface ISmilesBlockProps extends HTMLAttributes<HTMLUListElement> {
   onImg: (node: HTMLElement) => void
 }
 
+const getImgUrl = (name: string) => new URL(`/src/assets/smiles/${name}`, import.meta.url).href
+
 const smiles = [
   'smile-1.png',
   'smile-2.png',
@@ -12,7 +14,7 @@ const smiles = [
   'smile-4.png',
   'smile-5.png',
   'smile-6.png',
-  'smile-7.png',
+  'smile-7.png'
 ]
 
 const SmilesBlock: React.FC<ISmilesBlockProps> = ({ onImg }) => {
@@ -28,7 +30,7 @@ const SmilesBlock: React.FC<ISmilesBlockProps> = ({ onImg }) => {
       onClick={e => onSmileCLick(e)}>
       {smiles.map(smile => (
         <li key={smile}>
-          <img src={'/src/assets/smiles/' + smile} width='30' height='30' />
+          <img src={getImgUrl(smile)} alt='best smile ever' width='30' height='30' />
         </li>
       ))}
     </ul>
