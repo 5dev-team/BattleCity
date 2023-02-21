@@ -144,9 +144,8 @@ export const authSlice = createSlice({
     builder.addCase(fetchUser.rejected, (state, { error }) => {
       state.user = null
       state.userSettings = { isBackgroundMusic: false }
-
       let result: 401 | null = null
-      if (error.message === 'Cookie is not valid') {
+      if (error.message === 'Cookie is not valid' || error.message === 'Server error' || error.message === 'Cannot read properties of undefined (reading \'data\')') {
         result = 401
       }
 

@@ -15,6 +15,6 @@ export async function isAuthorized(req: Request, _res: Response, next: NextFunct
       next(new Forbidden('Доступ к ресурсу ограничен'))
     })
   } else {
-    next()
+    next(new Forbidden('Доступ к ресурсу ограничен'))
   }
 }
