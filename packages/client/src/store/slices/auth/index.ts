@@ -30,18 +30,14 @@ export const fetchRegister = createAsyncThunk(
   (data: IRegisterRequest) => api.auth.register(data)
 )
 
-export const fetchYandexOauth = createAsyncThunk('oauth/fetchYandexOauth', () =>
-  api.yandexOauth
-    .redirect(__YANDEX_REDIRECT_URI__)
-    .then(response => {
-      const data: IYandexAuthQueryParams = {
-        response_type: 'code',
-        client_id: response.data.service_id,
-        redirect_uri: __YANDEX_REDIRECT_URI__,
-      }
-      window.open(__YANDEX_OAUTH_URL__ + queryStringify(data), '_self')
-    })
-    .catch(reason => console.log('ERROR: Yandex oauth failed', reason))
+export const fetchYandexOauth = createAsyncThunk('oauth/fetchYandexOauth', () => {
+    const data: IYandexAuthQueryParams = {
+      response_type: 'code',
+      client_id: 'bd50b23c616a4ec2bb122f159970e46e',
+      redirect_uri: __YANDEX_REDIRECT_URI__
+    }
+    window.open(__YANDEX_OAUTH_URL__ + queryStringify(data), '_self')
+  }
 )
 
 export const fetchYandexSignIn = createAsyncThunk(
