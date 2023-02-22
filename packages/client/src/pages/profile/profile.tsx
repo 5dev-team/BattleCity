@@ -1,4 +1,9 @@
-import React, { ChangeEvent, DragEvent, useEffect, useState } from 'react'
+import React, {
+  ChangeEvent,
+  DragEvent,
+  useEffect,
+  useState,
+} from 'react'
 import styles from './profile.module.scss'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -8,7 +13,7 @@ import NesButton from '@/components/UI/nes-button'
 import NesInput from '@/components/UI/nes-input'
 import NesFileInput from '@/components/UI/nes-file-input'
 import ErrorBoundary from '@/components/error-boundary'
-import { fetchLogout } from '@/store/slices/auth'
+import { fetchLogout, fetchUser } from '@/store/slices/auth'
 import { IUser } from '@/store/slices/auth/auth.models'
 import { fetchProfileUpdate, profileSlice } from '@/store/slices/profile'
 import { selectProfile } from '@/store/slices/profile/select-profile'
@@ -23,15 +28,31 @@ const profileSchema = z.object({
       oldPassword: zodValidation.password,
       newPassword: zodValidation.password,
     })
-    .refine(
-      data =>
-        (data.newPassword === '' && data.oldPassword === '') ||
-        data.newPassword !== data.oldPassword,
-      {
-        message: 'Passwords should not match',
-        path: ['newPassword'],
+    .superRefine((data, ctx) => {
+      if (
+        data.newPassword !== '' &&
+        data.oldPassword !== '' &&
+        data.newPassword === data.oldPassword
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Passwords should not match',
+          path: ['newPassword'],
+        })
       }
-    ),
+
+      if (
+        (data.newPassword === '' && data.oldPassword !== '') ||
+        (data.oldPassword === '' && data.newPassword !== '')
+      ) {
+        const path = data.newPassword === '' ? 'newPassword' : 'oldPassword'
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Required',
+          path: [path],
+        })
+      }
+    }),
   profile: z.object({
     first_name: zodValidation.name,
     second_name: zodValidation.name,
@@ -74,6 +95,7 @@ const Profile: React.FC = () => {
     register,
     handleSubmit,
     setValue,
+    trigger,
     control,
     formState: { errors, isValid, dirtyFields },
   } = useForm<ProfileSchema>({
@@ -85,6 +107,12 @@ const Profile: React.FC = () => {
   const getInputVariant = useInputVariant<ProfileSchema>(dirtyFields, errors)
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    if (mode === ProfileMode.Edit && user) {
+      reset(defaultValues)
+    }
+  }, [user])
 
   useEffect(() => {
     return () => {
@@ -108,8 +136,7 @@ const Profile: React.FC = () => {
         avatarData,
       })
     ).then(() => {
-      setMode(v => (responseError ? ProfileMode.View : v))
-      reset(defaultValues)
+      dispatch(fetchUser())
     })
   }
 
@@ -167,6 +194,7 @@ const Profile: React.FC = () => {
       onClick={e => {
         e.preventDefault()
         setMode(ProfileMode.Edit)
+        reset(defaultValues)
       }}>
       edit profile
     </NesButton>
@@ -208,7 +236,6 @@ const Profile: React.FC = () => {
             Profile
           </p>
           <NesFileInput
-            //TODO: fix types
             control={control as unknown as Control}
             src={avatarSrc ?? user.avatar ?? ''}
             label='Avatar:'
@@ -324,6 +351,10 @@ const Profile: React.FC = () => {
                 )}
                 {...commonProps}
                 {...register('passwords.oldPassword')}
+                onBeforeInput={e => {
+                  const input = e.nativeEvent.target as HTMLInputElement
+                  if (input.value !== '') trigger('passwords.newPassword')
+                }}
               />
               <NesInput
                 label='New Password'
@@ -335,6 +366,10 @@ const Profile: React.FC = () => {
                 )}
                 {...commonProps}
                 {...register('passwords.newPassword')}
+                onBeforeInput={e => {
+                  const input = e.nativeEvent.target as HTMLInputElement
+                  if (input.value !== '') trigger('passwords.oldPassword')
+                }}
               />
               <Separator variant={responseError ? 'error' : 'basic'}>
                 {responseError}
