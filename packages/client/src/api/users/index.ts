@@ -32,7 +32,7 @@ export default {
       data,
     })
   },
-  //TODO add AxiosResponse in all requests
+
   getUser(id: number) {
     return request<AxiosResponse<IUserDTO>>({
       url: __YANDEX_API__ + `/user/${id}`,

@@ -109,7 +109,6 @@ export default class View {
     }
   }
   
-  //TODO: player should be new Class with lives, bonuses and scores
   renderPlayer1Lives(player1: PlayerTank) {
     this.context.drawImage(
       this.imageLoader.image,

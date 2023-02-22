@@ -219,7 +219,6 @@ const Profile: React.FC = () => {
                     <tr>
                       <th colSpan={2} rowSpan={6}>
                         <NesFileInput
-                          //TODO: fix types
                           control={control as unknown as Control}
                           src={avatarSrc ?? user.avatar ?? ''}
                           label='Avatar'

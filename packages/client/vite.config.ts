@@ -48,7 +48,6 @@ export default defineConfig(({ command, mode }) => {
       minify: mode === 'development' ? false : 'terser',
       sourcemap: command === 'serve' ? 'inline' : false,
       rollupOptions: {
-        //TODO: add hash to filename after service worker fix dynamic names
         output: {
           assetFileNames: 'assets/[name][hash][extname]',
           chunkFileNames: '[name][hash].js',
