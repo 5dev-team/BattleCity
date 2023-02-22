@@ -1,4 +1,9 @@
-import React, { ChangeEvent, DragEvent, useEffect, useState } from 'react'
+import React, {
+  ChangeEvent,
+  DragEvent,
+  useEffect,
+  useState,
+} from 'react'
 import styles from './profile.module.scss'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -8,7 +13,7 @@ import NesButton from '@/components/UI/nes-button'
 import NesInput from '@/components/UI/nes-input'
 import NesFileInput from '@/components/UI/nes-file-input'
 import ErrorBoundary from '@/components/error-boundary'
-import { fetchLogout } from '@/store/slices/auth'
+import { fetchLogout, fetchUser } from '@/store/slices/auth'
 import { IUser } from '@/store/slices/auth/auth.models'
 import { fetchProfileUpdate, profileSlice } from '@/store/slices/profile'
 import { selectProfile } from '@/store/slices/profile/select-profile'
@@ -23,15 +28,31 @@ const profileSchema = z.object({
       oldPassword: zodValidation.password,
       newPassword: zodValidation.password,
     })
-    .refine(
-      data =>
-        (data.newPassword === '' && data.oldPassword === '') ||
-        data.newPassword !== data.oldPassword,
-      {
-        message: 'Passwords should not match',
-        path: ['newPassword'],
+    .superRefine((data, ctx) => {
+      if (
+        data.newPassword !== '' &&
+        data.oldPassword !== '' &&
+        data.newPassword === data.oldPassword
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Passwords should not match',
+          path: ['newPassword'],
+        })
       }
-    ),
+
+      if (
+        (data.newPassword === '' && data.oldPassword !== '') ||
+        (data.oldPassword === '' && data.newPassword !== '')
+      ) {
+        const path = data.newPassword === '' ? 'newPassword' : 'oldPassword'
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Required',
+          path: [path],
+        })
+      }
+    }),
   profile: z.object({
     first_name: zodValidation.name,
     second_name: zodValidation.name,
@@ -74,6 +95,7 @@ const Profile: React.FC = () => {
     register,
     handleSubmit,
     setValue,
+    trigger,
     control,
     formState: { errors, isValid, dirtyFields },
   } = useForm<ProfileSchema>({
@@ -85,6 +107,12 @@ const Profile: React.FC = () => {
   const getInputVariant = useInputVariant<ProfileSchema>(dirtyFields, errors)
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    if (mode === ProfileMode.Edit && user) {
+      reset(defaultValues)
+    }
+  }, [user])
 
   useEffect(() => {
     return () => {
@@ -108,8 +136,7 @@ const Profile: React.FC = () => {
         avatarData,
       })
     ).then(() => {
-      setMode(v => (responseError ? ProfileMode.View : v))
-      reset(defaultValues)
+      dispatch(fetchUser())
     })
   }
 
@@ -167,6 +194,7 @@ const Profile: React.FC = () => {
       onClick={e => {
         e.preventDefault()
         setMode(ProfileMode.Edit)
+        reset(defaultValues)
       }}>
       edit profile
     </NesButton>
@@ -176,7 +204,7 @@ const Profile: React.FC = () => {
 
   const saveBtn = (
     <NesButton
-      type='submit'
+      type="submit"
       variant={isValid && isFormDirty ? 'success' : 'disabled'}
       disabled={!isValid || !isFormDirty}>
       save
@@ -185,7 +213,7 @@ const Profile: React.FC = () => {
 
   const cancelBtn = (
     <NesButton
-      variant='error'
+      variant="error"
       onClick={e => {
         e.preventDefault()
         reset(defaultValues)
@@ -204,15 +232,14 @@ const Profile: React.FC = () => {
           onSubmit={handleSubmit(onSubmit)}
           className={`${styles['profile__body']} nes-container with-title is-rounded is-centered is-dark`}
           style={{ backgroundColor: 'transparent' }}>
-          <p className='title' style={{ backgroundColor: 'black' }}>
+          <p className="title" style={{ backgroundColor: 'black' }}>
             Profile
           </p>
           <NesFileInput
-            //TODO: fix types
             control={control as unknown as Control}
             src={avatarSrc ?? user.avatar ?? ''}
-            label='Avatar:'
-            accept='image/*'
+            label="Avatar:"
+            accept="image/*"
             alt={`your avatar ${user.login}`}
             plain={mode === ProfileMode.View}
             plainText={'No Avatar'}
@@ -271,43 +298,43 @@ const Profile: React.FC = () => {
           {mode === ProfileMode.Edit && (
             <>
               <NesInput
-                label='First name:'
+                label="First name:"
                 errorText={errors.profile?.first_name?.message}
                 variant={getInputVariant<'profile'>('first_name', 'profile')}
                 {...commonProps}
                 {...register('profile.first_name')}
               />
               <NesInput
-                label='Second name:'
+                label="Second name:"
                 errorText={errors.profile?.second_name?.message}
                 variant={getInputVariant<'profile'>('second_name', 'profile')}
                 {...commonProps}
                 {...register('profile.second_name')}
               />
               <NesInput
-                label='Display name:'
+                label="Display name:"
                 errorText={errors.profile?.display_name?.message}
                 variant={getInputVariant<'profile'>('display_name', 'profile')}
                 {...commonProps}
                 {...register('profile.display_name')}
               />
               <NesInput
-                label='Login:'
+                label="Login:"
                 errorText={errors.profile?.login?.message}
                 variant={getInputVariant<'profile'>('login', 'profile')}
                 {...commonProps}
                 {...register('profile.login')}
               />
               <NesInput
-                label='Email:'
-                type='email'
+                label="Email:"
+                type="email"
                 errorText={errors.profile?.email?.message}
                 variant={getInputVariant<'profile'>('email', 'profile')}
                 {...commonProps}
                 {...register('profile.email')}
               />
               <NesInput
-                label='Phone:'
+                label="Phone:"
                 errorText={errors.profile?.phone?.message}
                 variant={getInputVariant<'profile'>('phone', 'profile')}
                 {...commonProps}
@@ -315,8 +342,8 @@ const Profile: React.FC = () => {
               />
               <Separator></Separator>
               <NesInput
-                label='Old Password'
-                type='password'
+                label="Old Password"
+                type="password"
                 errorText={errors.passwords?.oldPassword?.message}
                 variant={getInputVariant<'passwords'>(
                   'oldPassword',
@@ -324,10 +351,14 @@ const Profile: React.FC = () => {
                 )}
                 {...commonProps}
                 {...register('passwords.oldPassword')}
+                onBeforeInput={e => {
+                  const input = e.nativeEvent.target as HTMLInputElement
+                  if (input.value !== '') trigger('passwords.newPassword')
+                }}
               />
               <NesInput
-                label='New Password'
-                type='password'
+                label="New Password"
+                type="password"
                 errorText={errors.passwords?.newPassword?.message}
                 variant={getInputVariant<'passwords'>(
                   'newPassword',
@@ -335,6 +366,10 @@ const Profile: React.FC = () => {
                 )}
                 {...commonProps}
                 {...register('passwords.newPassword')}
+                onBeforeInput={e => {
+                  const input = e.nativeEvent.target as HTMLInputElement
+                  if (input.value !== '') trigger('passwords.oldPassword')
+                }}
               />
               <Separator variant={responseError ? 'error' : 'basic'}>
                 {responseError}
@@ -356,16 +391,16 @@ const Profile: React.FC = () => {
       <div className={styles['profile__footer']}>
         <NesButton
           fullWidth
-          variant='primary'
+          variant="primary"
           onClick={() => navigate('/')}
-          type='button'>
+          type="button">
           menu
         </NesButton>
         <NesButton
           fullWidth
-          variant='warning'
+          variant="warning"
           onClick={() => dispatch(fetchLogout())}
-          type='button'>
+          type="button">
           logout
         </NesButton>
       </div>
