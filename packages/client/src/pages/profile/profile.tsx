@@ -1,33 +1,70 @@
-import React, { ChangeEvent, DragEvent, useEffect, useState } from 'react'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import React, {
+  ChangeEvent,
+  DragEvent,
+  useEffect,
+  useState,
+} from 'react'
+import styles from './profile.module.scss'
 import { useNavigate } from 'react-router-dom'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useInputVariant } from '@/hooks/useInputVariant'
 import { Control, useForm } from 'react-hook-form'
-import { getPattern } from '@/utils/validation'
 import NesButton from '@/components/UI/nes-button'
 import NesInput from '@/components/UI/nes-input'
 import NesFileInput from '@/components/UI/nes-file-input'
-import { fetchLogout, fetchUser } from '@/store/slices/auth'
-import { IUserDTO, IUser } from '@/store/slices/auth/auth.models'
-import { fetchProfileUpdate, profileSlice } from '@/store/slices/profile'
-import styles from './profile.module.scss'
 import ErrorBoundary from '@/components/error-boundary'
+import { fetchLogout, fetchUser } from '@/store/slices/auth'
+import { IUser } from '@/store/slices/auth/auth.models'
+import { fetchProfileUpdate, profileSlice } from '@/store/slices/profile'
 import { selectProfile } from '@/store/slices/profile/select-profile'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { zodValidation } from '@/utils/validation'
+import Separator from '@/components/UI/separator'
 
+const profileSchema = z.object({
+  passwords: z
+    .object({
+      oldPassword: zodValidation.password,
+      newPassword: zodValidation.password,
+    })
+    .superRefine((data, ctx) => {
+      if (
+        data.newPassword !== '' &&
+        data.oldPassword !== '' &&
+        data.newPassword === data.oldPassword
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Passwords should not match',
+          path: ['newPassword'],
+        })
+      }
 
-export type ProfileInputs = {
-  passwords: {
-    newPassword: string
-    oldPassword: string
-  }
-  profile: Omit<IUserDTO, 'id' | 'avatar'>
-  avatar: FileList
-}
+      if (
+        (data.newPassword === '' && data.oldPassword !== '') ||
+        (data.oldPassword === '' && data.newPassword !== '')
+      ) {
+        const path = data.newPassword === '' ? 'newPassword' : 'oldPassword'
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Required',
+          path: [path],
+        })
+      }
+    }),
+  profile: z.object({
+    first_name: zodValidation.name,
+    second_name: zodValidation.name,
+    display_name: zodValidation.name,
+    login: zodValidation.login,
+    email: zodValidation.email,
+    phone: zodValidation.phone,
+  }),
+  avatar: z.custom<File>(),
+})
 
-type InputName<T> = {
-  [K in keyof ProfileInputs]: T extends K ? keyof ProfileInputs[K] : never
-}[keyof ProfileInputs]
-
-type InputVariant = 'basic' | 'error' | 'success'
+type ProfileSchema = z.infer<typeof profileSchema>
 
 enum ProfileMode {
   View,
@@ -37,7 +74,7 @@ enum ProfileMode {
 const Profile: React.FC = () => {
   const user = useAppSelector(selectProfile) ?? ({} as Partial<IUser>)
   const responseError = useAppSelector(state => state.profile.fetchError)
-  
+
   const defaultValues = {
     profile: {
       first_name: user.firstName,
@@ -45,33 +82,34 @@ const Profile: React.FC = () => {
       display_name: user.displayName,
       login: user.login,
       email: user.email,
-      phone: user.phone
+      phone: user.phone,
     },
     passwords: {
       newPassword: '',
-      oldPassword: ''
-    }
-  } as ProfileInputs
-  
+      oldPassword: '',
+    },
+  } as ProfileSchema
+
   const {
     reset,
     register,
     handleSubmit,
     setValue,
+    trigger,
     control,
-    formState: { errors, isValid, dirtyFields }
-  } = useForm<ProfileInputs>({
+    formState: { errors, isValid, dirtyFields },
+  } = useForm<ProfileSchema>({
     defaultValues,
-    mode: 'onChange'
+    mode: 'onChange',
+    resolver: zodResolver(profileSchema),
   })
-  
+
+  const getInputVariant = useInputVariant<ProfileSchema>(dirtyFields, errors)
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
-  
+
   useEffect(() => {
-    if (!user) {
-      dispatch(fetchUser())
-    } else {
+    if (mode === ProfileMode.Edit && user) {
       reset(defaultValues)
     }
   }, [user])
@@ -85,24 +123,23 @@ const Profile: React.FC = () => {
   const [avatarSrc, setAvatarSrc] = useState<string>()
   const [isDragOver, setIsDragOver] = useState(false)
   const [mode, setMode] = useState<ProfileMode>(ProfileMode.View)
-  
-  const onSubmit = (data: ProfileInputs): void => {
+
+  const onSubmit = (data: ProfileSchema): void => {
     const profileData = dirtyFields.profile ? data.profile : undefined
     const passwordData = dirtyFields.passwords ? data.passwords : undefined
     const avatarData = dirtyFields.avatar ? { avatar: data.avatar } : undefined
-    
+
     dispatch(
       fetchProfileUpdate({
         profileData,
         passwordData,
-        avatarData
+        avatarData,
       })
-    )
-    
-    setMode(ProfileMode.View)
-    reset(defaultValues)
+    ).then(() => {
+      dispatch(fetchUser())
+    })
   }
-  
+
   const handleChangeAvatar = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length) {
       setAvatarSrc(URL.createObjectURL(e.target.files[0]))
@@ -110,75 +147,61 @@ const Profile: React.FC = () => {
       setAvatarSrc(user.avatar)
     }
   }
-  
+
   const isEditingDragEvent = (e: DragEvent) => {
     if (mode === ProfileMode.Edit) {
       e.preventDefault()
       e.stopPropagation()
-      
+
       return true
     }
-    
+
     return false
   }
-  
+
   const handleDragStart = (e: DragEvent<HTMLInputElement>) => {
     if (isEditingDragEvent(e)) setIsDragOver(true)
   }
-  
+
   const handleDragLeave = (e: DragEvent<HTMLInputElement>) => {
     if (isEditingDragEvent(e)) setIsDragOver(false)
   }
-  
+
   const handleDrop = (e: DragEvent<HTMLInputElement>) => {
     if (isEditingDragEvent(e)) {
       const files = e.dataTransfer.files
 
-      setValue('avatar', files, { shouldDirty: true, shouldValidate: true })
+      setValue('avatar', files[0], { shouldDirty: true, shouldValidate: true })
       setAvatarSrc(URL.createObjectURL(files[0]))
       setIsDragOver(false)
     }
   }
-  
+
   const dragHandlers = {
     onDrop: (e: React.DragEvent<HTMLInputElement>) => handleDrop(e),
     onDragOver: (e: React.DragEvent<HTMLInputElement>) => handleDragStart(e),
     onDragStart: (e: React.DragEvent<HTMLInputElement>) => handleDragStart(e),
-    onDragLeave: (e: React.DragEvent<HTMLInputElement>) => handleDragLeave(e)
+    onDragLeave: (e: React.DragEvent<HTMLInputElement>) => handleDragLeave(e),
   }
-  
+
   const commonProps = {
-    labelHidden: true,
-    plain: mode === ProfileMode.View
+    plain: mode === ProfileMode.View,
+    fullWidth: true,
   }
-  
-  function inputVariant<T = keyof ProfileInputs>(
-    name: InputName<T>
-  ): InputVariant {
-    const isDirtyOrError = (fields: Record<string, unknown>) =>
-      Object.values(fields).find(
-        val =>
-          Object.keys(val as object).find(key => key === name) !== undefined
-      )
-    
-    const isDirtyField = isDirtyOrError(dirtyFields)
-    const isErrorField = isDirtyOrError(errors)
-    
-    return isDirtyField ? (isErrorField ? 'error' : 'success') : 'basic'
-  }
-  
+
   const editBtn = (
     <NesButton
       onClick={e => {
         e.preventDefault()
         setMode(ProfileMode.Edit)
+        reset(defaultValues)
       }}>
       edit profile
     </NesButton>
   )
-  
+
   const isFormDirty = Object.keys(dirtyFields).length > 0
-  
+
   const saveBtn = (
     <NesButton
       type='submit'
@@ -187,7 +210,7 @@ const Profile: React.FC = () => {
       save
     </NesButton>
   )
-  
+
   const cancelBtn = (
     <NesButton
       variant='error'
@@ -200,177 +223,171 @@ const Profile: React.FC = () => {
       cancel
     </NesButton>
   )
-  
+
   return (
     <div className={styles['profile']}>
-      <div className={styles['profile__body']}>
-        <div className={`nes-container with-title ${styles['container']}`}>
-          <h3 className='title is-dark' style={{ backgroundColor: '#000' }}>
-            Profile <span className='error-text'>{responseError}</span>
-          </h3>
-          <ErrorBoundary
-            FallbackComponent={() => <div>Something went wrong :(</div>}>
-            <div className='nes-table-responsive'>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <table
-                  className={`nes-table is-bordered is-centered is-dark`}
-                  style={{ backgroundColor: '#000' }}>
-                  <thead>
-                    <tr>
-                      <th colSpan={2} rowSpan={6}>
-                        <NesFileInput
-                          //TODO: fix types
-                          control={control as unknown as Control}
-                          src={avatarSrc ?? user.avatar ?? ''}
-                          label='Avatar'
-                          accept='image/*'
-                          alt={`your avatar ${user.login}`}
-                          plain={mode === ProfileMode.View}
-                          plainText={'No Avatar'}
-                          isDragOver={isDragOver}
-                          {...dragHandlers}
-                          {...register('avatar')}
-                          onChange={e => {
-                            handleChangeAvatar(e)
-                          }}
-                        />
-                      </th>
-                      <td>First name:</td>
-                      <th>
-                        <NesInput
-                          label='First name'
-                          variant={inputVariant<'profile'>('first_name')}
-                          {...commonProps}
-                          {...register('profile.first_name', {
-                            pattern: getPattern('firstName'),
-                            required: true,
-                          })}
-                        />
-                      </th>
-                    </tr>
-                    <tr>
-                      <td>Second name:</td>
-                      <th>
-                        <NesInput
-                          label='Second name'
-                          variant={inputVariant<'profile'>('second_name')}
-                          {...commonProps}
-                          {...register('profile.second_name', {
-                            pattern: getPattern('secondName'),
-                            required: true,
-                          })}
-                        />
-                      </th>
-                    </tr>
-                    <tr>
-                      <td>Display name:</td>
-                      <th>
-                        <NesInput
-                          label='Display name'
-                          variant={inputVariant<'profile'>('display_name')}
-                          {...commonProps}
-                          {...register('profile.display_name', {
-                            pattern: getPattern('displayName'),
-                            required: true,
-                          })}
-                        />
-                      </th>
-                    </tr>
-                    <tr>
-                      <td>Login:</td>
-                      <th>
-                        <NesInput
-                          label='Login'
-                          variant={inputVariant<'profile'>('login')}
-                          {...commonProps}
-                          {...register('profile.login', {
-                            pattern: getPattern('login'),
-                            required: true,
-                          })}
-                        />
-                      </th>
-                    </tr>
-                    <tr>
-                      <td>Email:</td>
-                      <th>
-                        <NesInput
-                          label='Email'
-                          type='email'
-                          variant={inputVariant<'profile'>('email')}
-                          {...commonProps}
-                          {...register('profile.email', {
-                            pattern: getPattern('email'),
-                            required: true,
-                          })}
-                        />
-                      </th>
-                    </tr>
-                    <tr>
-                      <td>Phone:</td>
-                      <th>
-                        <NesInput
-                          label='Phone'
-                          variant={inputVariant<'profile'>('phone')}
-                          {...commonProps}
-                          {...register('profile.phone', {
-                            pattern: getPattern('phone'),
-                            required: true,
-                          })}
-                        />
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Old Password:</td>
-                      <td colSpan={3}>
-                        <NesInput
-                          label='Old Password'
-                          type='password'
-                          fullWidth
-                          variant={inputVariant<'passwords'>('oldPassword')}
-                          {...commonProps}
-                          {...register('passwords.oldPassword', {
-                            pattern: getPattern('password'),
-                          })}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>New Password:</td>
-                      <td colSpan={3}>
-                        <NesInput
-                          label='New Password'
-                          type='password'
-                          fullWidth
-                          variant={inputVariant<'passwords'>('newPassword')}
-                          {...commonProps}
-                          {...register('passwords.newPassword', {
-                            pattern: getPattern('password'),
-                            validate: () =>
-                              dirtyFields.passwords !== undefined ||
-                              dirtyFields.profile !== undefined ||
-                              dirtyFields.avatar !== undefined,
-                          })}
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-                <div className={styles['control-page-buttons']}>
-                  {mode === ProfileMode.View && editBtn}
-                  {mode === ProfileMode.Edit && (
-                    <>
-                      {saveBtn}
-                      {cancelBtn}
-                    </>
-                  )}
+      <ErrorBoundary
+        FallbackComponent={() => <div>Something went wrong :(</div>}>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={`${styles['profile__body']} nes-container with-title is-rounded is-centered is-dark`}
+          style={{ backgroundColor: 'transparent' }}>
+          <p className='title' style={{ backgroundColor: 'black' }}>
+            Profile
+          </p>
+          <NesFileInput
+            control={control as unknown as Control}
+            src={avatarSrc ?? user.avatar ?? ''}
+            label='Avatar:'
+            accept='image/*'
+            alt={`your avatar ${user.login}`}
+            plain={mode === ProfileMode.View}
+            plainText={'No Avatar'}
+            isDragOver={isDragOver}
+            {...dragHandlers}
+            {...register('avatar')}
+            onChange={e => {
+              handleChangeAvatar(e)
+            }}
+          />
+          <Separator></Separator>
+          {mode === ProfileMode.View && (
+            <>
+              <div className={styles['profile-field']}>
+                <div className={styles['profile-field__name']}>First name:</div>
+                <div className={styles['profile-field__value']}>
+                  {defaultValues.profile?.first_name}
                 </div>
-              </form>
-            </div>
-          </ErrorBoundary>
-        </div>
-      </div>
+              </div>
+              <div className={styles['profile-field']}>
+                <div className={styles['profile-field__name']}>
+                  Second name:
+                </div>
+                <div className={styles['profile-field__value']}>
+                  {defaultValues.profile?.second_name}
+                </div>
+              </div>
+              <div className={styles['profile-field']}>
+                <div className={styles['profile-field__name']}>
+                  Display name:
+                </div>
+                <div className={styles['profile-field__value']}>
+                  {defaultValues.profile?.display_name}
+                </div>
+              </div>
+              <div className={styles['profile-field']}>
+                <div className={styles['profile-field__name']}>Login:</div>
+                <div className={styles['profile-field__value']}>
+                  {defaultValues.profile?.login}
+                </div>
+              </div>
+              <div className={styles['profile-field']}>
+                <div className={styles['profile-field__name']}>Email:</div>
+                <div className={styles['profile-field__value']}>
+                  {defaultValues.profile?.email}
+                </div>
+              </div>
+              <div className={styles['profile-field']}>
+                <div className={styles['profile-field__name']}>Phone:</div>
+                <div className={styles['profile-field__value']}>
+                  {defaultValues.profile?.phone}
+                </div>
+              </div>
+            </>
+          )}
+          {mode === ProfileMode.Edit && (
+            <>
+              <NesInput
+                label='First name:'
+                errorText={errors.profile?.first_name?.message}
+                variant={getInputVariant<'profile'>('first_name', 'profile')}
+                {...commonProps}
+                {...register('profile.first_name')}
+              />
+              <NesInput
+                label='Second name:'
+                errorText={errors.profile?.second_name?.message}
+                variant={getInputVariant<'profile'>('second_name', 'profile')}
+                {...commonProps}
+                {...register('profile.second_name')}
+              />
+              <NesInput
+                label='Display name:'
+                errorText={errors.profile?.display_name?.message}
+                variant={getInputVariant<'profile'>('display_name', 'profile')}
+                {...commonProps}
+                {...register('profile.display_name')}
+              />
+              <NesInput
+                label='Login:'
+                errorText={errors.profile?.login?.message}
+                variant={getInputVariant<'profile'>('login', 'profile')}
+                {...commonProps}
+                {...register('profile.login')}
+              />
+              <NesInput
+                label='Email:'
+                type='email'
+                errorText={errors.profile?.email?.message}
+                variant={getInputVariant<'profile'>('email', 'profile')}
+                {...commonProps}
+                {...register('profile.email')}
+              />
+              <NesInput
+                label='Phone:'
+                errorText={errors.profile?.phone?.message}
+                variant={getInputVariant<'profile'>('phone', 'profile')}
+                {...commonProps}
+                {...register('profile.phone')}
+              />
+              <Separator></Separator>
+              <NesInput
+                label='Old Password'
+                type='password'
+                errorText={errors.passwords?.oldPassword?.message}
+                variant={getInputVariant<'passwords'>(
+                  'oldPassword',
+                  'passwords'
+                )}
+                {...commonProps}
+                {...register('passwords.oldPassword')}
+                onBeforeInput={e => {
+                  const input = e.nativeEvent.target as HTMLInputElement
+                  if (input.value !== '') trigger('passwords.newPassword')
+                }}
+              />
+              <NesInput
+                label='New Password'
+                type='password'
+                errorText={errors.passwords?.newPassword?.message}
+                variant={getInputVariant<'passwords'>(
+                  'newPassword',
+                  'passwords'
+                )}
+                {...commonProps}
+                {...register('passwords.newPassword')}
+                onBeforeInput={e => {
+                  const input = e.nativeEvent.target as HTMLInputElement
+                  if (input.value !== '') trigger('passwords.oldPassword')
+                }}
+              />
+              <Separator variant={responseError ? 'error' : 'basic'}>
+                {responseError}
+              </Separator>
+            </>
+          )}
+          <div className={styles['control-page-buttons']}>
+            {mode === ProfileMode.View && editBtn}
+            {mode === ProfileMode.Edit && (
+              <>
+                {saveBtn}
+                {cancelBtn}
+              </>
+            )}
+          </div>
+        </form>
+      </ErrorBoundary>
+
       <div className={styles['profile__footer']}>
         <NesButton
           fullWidth

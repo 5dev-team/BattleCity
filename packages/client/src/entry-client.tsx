@@ -7,6 +7,9 @@ import { setupStore } from '@/store'
 import App from '@/App'
 import { fetchUser, fetchYandexSignIn } from '@/store/slices/auth'
 
+if (typeof window !== 'undefined')
+  import('./pwa')
+
 const store = __NODE_ENV__ === 'development' ? setupStore() : setupStore(JSON.parse(window.__PRELOADED_STATE__ || ''))
 
 delete window.__PRELOADED_STATE__
@@ -30,19 +33,3 @@ ReactDOM.hydrateRoot(
     </Provider>
   </React.StrictMode>
 )
-
-// if ('serviceWorker' in navigator) {
-//   navigator.serviceWorker
-//     .register('./sw.js')
-//     .then(function (registration) {
-//       // Successful registration
-//       console.log(
-//         'Hooray. Registration successful, scope is:',
-//         registration.scope
-//       )
-//     })
-//     .catch(function (err) {
-//       // Failed registration, service worker won’t be installed
-//       console.log('Whoops. Service worker registration failed, error:', err)
-//     })
-// }

@@ -8,9 +8,9 @@ declare global {
 
 declare namespace Express {
   export interface Request {
-      userId: any;
+      userId: number
   }
   export interface Response {
-    userId: any;
+    userId: number
   }
 }

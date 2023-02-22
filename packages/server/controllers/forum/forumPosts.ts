@@ -36,7 +36,7 @@ export async function createPost(
     )
   }
   try {
-    const { updatedAt, ...created }: IForumPostsModel = (
+    const { ...created }: IForumPostsModel = (
       await ForumPosts.create({
         authorId,
         content,
@@ -115,8 +115,7 @@ export function getPost(req: Request, res: Response, next: NextFunction) {
   })
     .then((data: Model<IForumPosts> | null) => {
       if (data && data.dataValues.createdAt) {
-        const date: number = getUnixTime(data.dataValues.createdAt)
-        data.dataValues.createdAt = date
+        data.dataValues.createdAt = getUnixTime(data.dataValues.createdAt)
       } else {
         next(new ValidationError('Невалидный id'))
       }

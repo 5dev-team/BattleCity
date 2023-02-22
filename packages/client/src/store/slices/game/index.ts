@@ -50,7 +50,7 @@ export const saveGameScores = (data: IGameOverData): ThunkAction<void, RootState
 
 
   }
-  dispatch(gameSlice.actions.setScores(data))
+  dispatch(gameSlice.actions.setScores({scores, total: newTotalScore}))
 
 }
 
@@ -60,7 +60,7 @@ export const gameSlice = createSlice({
   reducers: {
     setScores: (state, action) => {
       if (state.playersCount === 1) {
-        state.player1.scores = action.payload.gameOverData[0].scores
+        state.player1 = {...state.player1, ...action.payload}
       }
     },
     setBestScore: (state, action) => {

@@ -17,7 +17,7 @@ export default {
   },
   changeAvatar(data: IChangeAvatarRequest) {
     const formData = new FormData()
-    formData.append('avatar', data.avatar[0])
+    formData.append('avatar', data.avatar)
 
     return request<IUserDTO>({
       url: __YANDEX_API__ + '/user/profile/avatar',
@@ -32,7 +32,7 @@ export default {
       data,
     })
   },
-  //TODO add AxiosResponse in all requests
+
   getUser(id: number) {
     return request<AxiosResponse<IUserDTO>>({
       url: __YANDEX_API__ + `/user/${id}`,

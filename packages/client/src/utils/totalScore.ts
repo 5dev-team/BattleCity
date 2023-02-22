@@ -1,8 +1,8 @@
-import { IScoreResult } from '@/game/core/player-tank/types'
 import { ILeaderboardScoreTransferred } from '@/store/slices/leaderboard/leaderboard.models'
-export const getTotalScore = (score: IScoreResult): number => {
-  return Object.entries(score).reduce((acc, curr) => {
-  return acc + parseFloat(curr[0])*parseFloat(curr[1])*100
+import { IScores } from '@/store/slices/game/game.models'
+export const getTotalScore = (score: IScores): number => {
+  return Object.values(score).reduce((acc, value) => {
+  return acc + value.points
   },0)
 
 }

@@ -1,5 +1,6 @@
 import { DefaultPosition, Maps, Sprite } from './types'
 
+export const HALF_CANVAS_HEIGHT = 200
 export const NUMBER_OF_UNITS = 13
 export const TILE_SIZE = 16
 export const UNIT_SIZE = 32
@@ -209,7 +210,16 @@ export const STEEL_WALL_SPRITES: Sprite[] = [
 
 export const STAGE_NUMBER_SPRITES: Sprite[] = [
   [23.5 * UNIT_SIZE, 11.5 * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE], // flag
-  [19 * UNIT_SIZE, 5.25 * UNIT_SIZE, TILE_SIZE, TILE_SIZE] // stage number
+  [18.5 * UNIT_SIZE, 5.25 * UNIT_SIZE, TILE_SIZE, TILE_SIZE], // 0
+  [19 * UNIT_SIZE, 5.25 * UNIT_SIZE, TILE_SIZE, TILE_SIZE], // 1
+  [19.5 * UNIT_SIZE, 5.25 * UNIT_SIZE, TILE_SIZE, TILE_SIZE], // 2
+  [20 * UNIT_SIZE, 5.25 * UNIT_SIZE, TILE_SIZE, TILE_SIZE], // 3
+  [20.5 * UNIT_SIZE, 5.25 * UNIT_SIZE, TILE_SIZE, TILE_SIZE], // 4
+  [18.5 * UNIT_SIZE, 5.5 * UNIT_SIZE, TILE_SIZE, TILE_SIZE], // 5
+  [19 * UNIT_SIZE, 5.5 * UNIT_SIZE, TILE_SIZE, TILE_SIZE], // 6
+  [19.5 * UNIT_SIZE, 5.5 * UNIT_SIZE, TILE_SIZE, TILE_SIZE], // 7
+  [20 * UNIT_SIZE, 5.5 * UNIT_SIZE, TILE_SIZE, TILE_SIZE], // 8
+  [20.5 * UNIT_SIZE, 5.5 * UNIT_SIZE, TILE_SIZE, TILE_SIZE], // 9
 ]
 
 export const PLAYER1_PANEL_SPRITES: Sprite[] = [

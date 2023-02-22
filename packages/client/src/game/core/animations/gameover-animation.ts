@@ -1,8 +1,8 @@
 import { GameObjectArgs, UpdateState } from '@/game/core/types'
 import GameAnimation from '@/game/core/animations/game-animation'
 import {
-  GAME_OVER_ANIMATION_HEIGHT,  GAME_OVER_ANIMATION_SPRITES,
-  GAME_OVER_ANIMATION_WIDTH,
+  GAME_OVER_ANIMATION_HEIGHT, GAME_OVER_ANIMATION_SPRITES,
+  GAME_OVER_ANIMATION_WIDTH, HALF_CANVAS_HEIGHT
 } from '@/game/helpers/constants'
 
 export default class GameOverAnimation extends GameAnimation {
@@ -18,8 +18,7 @@ export default class GameOverAnimation extends GameAnimation {
   
   public update(state: Partial<UpdateState>) {
     const { frameDelta } = state
-    //TODO: remove hardcode HALF OF CANVAS HEIGHT
-    if (frameDelta && this.pos.y >= 200) {
+    if (frameDelta && this.pos.y >= HALF_CANVAS_HEIGHT) {
       this.animate(frameDelta)
     } else {
       this.destroy()

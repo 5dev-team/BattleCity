@@ -1,4 +1,4 @@
-import { IUserDTO, IUser } from "@/store/slices/auth/auth.models"
+import { IUserDTO, IUser } from '@/store/slices/auth/auth.models'
 import { IUserScoreRequest } from '@/api/leaderboard/leaderboard.models'
 import { LEADERBOARD_RATING_FIELD_NAME } from '@/constants/configs/leaderboard'
 import { ILeaderboardScoreTransferred } from '@/store/slices/leaderboard/leaderboard.models'
@@ -20,8 +20,11 @@ export const transformUser = (user: IUserDTO): IUser => {
 export const transformScore = (data: IUserScoreRequest): ILeaderboardScoreTransferred => {
   
   const formatDate = (seconds: number) => {
-    const date = new Date(seconds*1000)
-    return `${date.getDay()}.${date.getMonth()}.${String(date.getUTCFullYear()).slice(2)}`
+    const date = new Date(seconds)
+    const day = date.getDate()
+    const month = date.getMonth() + 1
+    const year = date.getFullYear()
+    return `${day}-${month}-${year}`
   }
   
   return {
