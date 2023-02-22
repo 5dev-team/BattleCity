@@ -1,0 +1,37 @@
+.separator {
+  width: 100%;
+  overflow: hidden;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.separator-error {
+  color: #e76e55;
+}
+
+.separator:empty {
+  background-color: #fff;
+  display: inline-block;
+  height: 1px;
+}
+
+.separator::before,
+.separator::after {
+  background-color: #fff;
+  content: "";
+  display: inline-block;
+  height: 1px;
+  position: relative;
+  vertical-align: middle;
+  width: 50%;
+}
+
+.separator::before {
+  right: 0.5em;
+  margin-left: -50%;
+}
+
+.separator::after {
+  left: 0.5em;
+  margin-right: -50%;
+}

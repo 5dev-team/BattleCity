@@ -8,7 +8,7 @@ export interface IChangeProfileRequest {
 }
 
 export interface IChangeAvatarRequest {
-  avatar: FileList
+  avatar: File
 }
 
 export interface IChangePasswordRequest {

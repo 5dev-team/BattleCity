@@ -3,6 +3,8 @@ node_modules/
 .idea
 .vscode
 dist
+dev-dist
+ssr-dist
 tmp
 lerna-debug.log
 .DS_Store

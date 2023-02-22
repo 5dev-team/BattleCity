@@ -19,4 +19,5 @@ module.exports = {
     'jsx-quotes': ['error', 'prefer-single'],
     'semi': ['error', 'never'],
   },
+  ignorePatterns: [ "dev-dist", "dist", "ssr-dist" ]
 }

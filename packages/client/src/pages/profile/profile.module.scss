@@ -4,21 +4,42 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  padding: 40px 0;
+  overflow-y: auto;
 
+  &__body, &__footer {
+    width: 800px;
+  }
+ 
   &__body {
     display: flex;
     justify-content: center;
-    align-items: center;
-    margin: auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
   }
 
   &__footer {
-    width: 800px;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    padding-bottom: 100px;
+    padding-top: 20px;
+  }
+}
+
+.profile-field {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 10px 0;
+
+  &__name, &__value {
+    text-align: left;
+  }
+
+  &__name {
+    width: 30%;
   }
 }
 
@@ -40,9 +61,6 @@
 .control-page-buttons {
   display: flex;
   flex-direction: column;
-  padding: 0 8px;
-}
-
-.control-page-buttons button {
-  margin-top: 16px;
+  gap: 16px;
+  padding-bottom: 16px;
 }

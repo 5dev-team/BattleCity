@@ -22,7 +22,7 @@ export async function createForum(req: Request, res: Response, next: NextFunctio
   const authorId = req.userId
   const { title } = req.body
   try {
-    const { updatedAt, ...created }: IForumModel = (
+    const {  ...created }: IForumModel = (
       await Forum.create({
         authorId,
         title,
@@ -124,8 +124,7 @@ export function pathForum(req: Request, res: Response, next: NextFunction) {
             attributes: { exclude: ['updatedAt'] }
           }).then((data: Model<IForum> | null) => {
             if (data && data.dataValues.createdAt) {
-              const date: number = getUnixTime(data.dataValues.createdAt)
-              data.dataValues.createdAt = date
+              data.dataValues.createdAt = getUnixTime(data.dataValues.createdAt)
               res.send(data)
             } else {
               next(new ServerError('Произошла ошибка'))

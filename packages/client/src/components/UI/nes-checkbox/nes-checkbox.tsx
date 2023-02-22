@@ -9,7 +9,7 @@ const NesCheckbox = React.forwardRef<HTMLInputElement, INesCheckboxProps>(
     return (
       <label>
         <input
-          type="checkbox"
+          type='checkbox'
           ref={ref}
           className={'nes-checkbox is-dark'}
           {...props}

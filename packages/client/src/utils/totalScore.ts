@@ -1,7 +1,7 @@
 import { ILeaderboardScoreTransferred } from '@/store/slices/leaderboard/leaderboard.models'
 import { IScores } from '@/store/slices/game/game.models'
 export const getTotalScore = (score: IScores): number => {
-  return Object.entries(score).reduce((acc, [key, value]) => {
+  return Object.values(score).reduce((acc, value) => {
   return acc + value.points
   },0)
 
