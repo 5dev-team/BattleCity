@@ -1,5 +1,6 @@
 import { DefaultPosition, Maps, Sprite } from './types'
 
+export const HALF_CANVAS_HEIGHT = 200
 export const NUMBER_OF_UNITS = 13
 export const TILE_SIZE = 16
 export const UNIT_SIZE = 32

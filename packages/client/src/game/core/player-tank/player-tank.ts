@@ -16,7 +16,6 @@ import {
   UpdateState,
   Vec2,
 } from '@/game/core/types'
-import { IScoreResult } from '@/game/core/player-tank/types'
 import { IScores } from '@/store/slices/game/game.models'
 
 export default class PlayerTank extends Tank implements IUpdatable {

@@ -27,13 +27,6 @@ enum GameView {
   Game,
   GameOver,
 }
-
-enum GameMode {
-  Singleplayer,
-  Multiplayer,
-  GameOver,
-}
-
 const Game: React.FC = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -66,9 +59,7 @@ const Game: React.FC = () => {
     }
   },[])
 
-  const initGame = (gameMode: GameMode) => {
-    console.log(`init gameMode: ${GameMode[gameMode]}`)
-
+  const initGame = () => {
     setView(GameView.Game)
   }
   useEffect(() => {
@@ -146,11 +137,8 @@ const Game: React.FC = () => {
               <GameMenu
                 selectItemId={0}
                 className={`${styles['control-wrapper']} ${styles['control-page-buttons']}`}>
-                <GameButton onClick={() => initGame(GameMode.Singleplayer)}>
-                  1 PLAYER
-                </GameButton>
-                <GameButton onClick={() => initGame(GameMode.Multiplayer)}>
-                  2 PLAYERS
+                <GameButton onClick={() => initGame()}>
+                  PLAY
                 </GameButton>
                 <GameButton onClick={() => navigate('/leaderboard')}>
                   LEADERBOARD

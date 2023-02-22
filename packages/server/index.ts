@@ -107,4 +107,3 @@ async function startServer() {
 }
 
 startServer()
-// createClientAndConnect()

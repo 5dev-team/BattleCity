@@ -21,9 +21,7 @@ export default class Input {
   }
 
   init() {
-    //TODO: remove any type
     document.addEventListener('keydown', e => this.controllerInput(e, false))
-
     document.addEventListener('keyup', e => this.controllerInput(e, true))
   }
 
