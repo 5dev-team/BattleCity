@@ -5,6 +5,8 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
@@ -18,12 +20,25 @@
     "noUnusedLocals": true,
     "forceConsistentCasingInFileNames": true,
     "importsNotUsedAsValues": "error",
-    "lib": ["es2019", "esnext.asynciterable"],
-    "types": ["node", "jest"],
+    "lib": ["es2021", "dom"],
     "baseUrl": ".",
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
     "paths": {
       "*": ["types/*"]
     },
+    "typeRoots": [
+      "@types",
+      "./node_modules/@types"
+    ],
     "outDir": "dist"
-  }
+  },
+
+  "exclude": [
+    "**/dist/**/*.d.ts",
+    "dist",
+    "node_modules",
+    "**/tests/*.test.ts",
+    "**/*.test.ts"
+  ]
 }

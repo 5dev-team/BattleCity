@@ -1,0 +1,13 @@
+.smiles-block-smiles {
+  display: flex;
+  justify-content: space-around;
+  margin: 10px 0;
+  padding: 0;
+
+  li {
+    width: 30px;
+    height: 30px;
+    list-style: none;
+  }
+}
+

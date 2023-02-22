@@ -1,18 +1,20 @@
-import { useEffect } from 'react'
-import './App.css'
+import React, { useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { Router } from '@/router'
 
-function App() {
+const App: React.FC = () => {
+  const [search, setSearch] = useSearchParams()
+
   useEffect(() => {
-    const fetchServerData = async () => {
-      const url = `http://localhost:${__SERVER_PORT__}`
-      const response = await fetch(url)
-      const data = await response.json()
-      console.log(data)
-    }
+    const yandexOauthCode = search.get('code')
 
-    fetchServerData()
+    if (yandexOauthCode !== null) {
+      search.delete('code')
+      setSearch(search)
+    }
   }, [])
-  return <div className="App">Вот тут будет жить ваше приложение :)</div>
+
+  return <Router />
 }
 
 export default App

@@ -1,0 +1,14 @@
+.textarea-input {
+  width: 100%;
+  border: 5px solid #212529;
+  background-color: #fff;
+  height: 90px;
+  color: #212529;
+  outline: none;
+  overflow: auto;
+  padding: 10px;
+
+  & > * {
+    color: inherit;
+  }
+}
