@@ -67,8 +67,6 @@ const Game: React.FC = () => {
   },[])
 
   const initGame = (gameMode: GameMode) => {
-    console.log(`init gameMode: ${GameMode[gameMode]}`)
-
     setView(GameView.Game)
   }
   useEffect(() => {

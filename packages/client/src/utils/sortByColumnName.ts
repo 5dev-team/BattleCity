@@ -1,8 +1,6 @@
 import { IUserScore } from '@/api/leaderboard/leaderboard.models'
 
 const sortByColumnName = (array: Array<IUserScore>, columnName: string, direction: 'asc' | 'desc'): Array<IUserScore> => {
-  console.log(columnName)
-  console.log(direction)
   switch (columnName) {
     case 'name':
       return array.sort((a, b) => {
