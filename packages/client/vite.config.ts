@@ -31,7 +31,6 @@ export default defineConfig(({ command, mode }) => {
       react(),
       VitePWA({
         registerType: 'autoUpdate',
-        injectRegister: 'auto',
         workbox: {
           clientsClaim: true,
           skipWaiting: true,

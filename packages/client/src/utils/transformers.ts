@@ -20,7 +20,7 @@ export const transformUser = (user: IUserDTO): IUser => {
 export const transformScore = (data: IUserScoreRequest): ILeaderboardScoreTransferred => {
   
   const formatDate = (seconds: number) => {
-    const date = new Date(seconds * 1000)
+    const date = new Date(seconds)
     const day = date.getDate()
     const month = date.getMonth() + 1
     const year = date.getFullYear()
