@@ -41,7 +41,7 @@ const GameOver: React.FC<IGameOverProps> = ({
           <p
             className={styles['players-stats__text']}>{props.player1.scores[item] ? props.player1.scores[item].count : 0}</p>
           <img src={arrow} alt='arrow' className={styles['players-stats__arrow']} />
-          <img src={tanks[item - 1]} alt='tank' className={styles['players-stats__image-tank']} />
+          <img src={tanks[item]} alt='tank' className={styles['players-stats__image-tank']} />
           {props.playersCount === 2 &&
             <>
               <img src={arrow} alt='arrow'

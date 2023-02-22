@@ -4,16 +4,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite --open",
-    "build": "rimraf dist && rimraf ssr-dist && tsc && vite build --config ssr.config.ts && vite build --config vite.config.ts",
+    "build": "rimraf dist && rimraf ssr-dist && rimraf dev-dist && tsc && vite build --config ssr.config.ts && vite build --config vite.config.ts",
     "build:develop": "tsc && vite serve --mode development --open",
     "build:ssr": "tsc && vite build --config ssr.config.ts",
     "start": "yarn run build && yarn run preview",
     "preview": "vite preview",
     "lint": "eslint ./src/**/*.{tsx,ts} --fix && stylelint ./src/**/*.scss --fix",
     "format": "prettier --write .",
-    "test": "jest ./"
+    "test": "cross-env NODE_ENV=development jest ./"
   },
   "dependencies": {
+    "@hookform/resolvers": "2.9.8",
     "@reduxjs/toolkit": "1.9.0",
     "@types/service_worker_api": "0.0.9",
     "axios": "1.2.1",
@@ -26,7 +27,8 @@
     "react-hook-form": "7.39.7",
     "react-redux": "8.0.5",
     "react-router-dom": "6.4.2",
-    "rimraf": "4.0.4"
+    "rimraf": "4.0.4",
+    "zod": "3.19.1"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "10.0.1",

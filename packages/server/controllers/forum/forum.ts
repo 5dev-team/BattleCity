@@ -3,50 +3,89 @@ import { Forum, ForumPosts } from '../../init'
 import { Forbidden, ServerError, ValidationError } from '../../errors'
 import { getUnixTime } from '../../utils/helpers/getUnixTime'
 import type { Model } from 'sequelize-typescript'
-import type { IForum } from '../../models/forum'
+import type { IForum, IForumModel } from '../../models/forum'
+import axios from 'axios'
+import { YANDEX_API } from '../../utils/constants'
 
-export function createForum(req: Request, res: Response, next: NextFunction) {
-  const authorId = req.userId
-  const { title } = req.body
-  Forum.create({
-    authorId,
-    title
-  }).then((data: Model<IForum>) => {
-    delete data.dataValues.updatedAt
-    const date = data.dataValues.createdAt
-    if (date) {
-      data.dataValues.createdAt = getUnixTime(date)
-    }
-    res.send(data)
-  }).catch(() => {
-    next(new ServerError('Произошла ошибка'))
-  })
+interface IUser {
+  id: number
+  first_name: string
+  second_name: string
+  display_name: string | null
+  login: string
+  email: string
+  phone: string
+  avatar: string | null
 }
 
-export async function getForums(_req: Request, res: Response, next: NextFunction) {
+export async function createForum(req: Request, res: Response, next: NextFunction) {
+  const authorId = req.userId
+  const { title } = req.body
   try {
-    const forums: Model<IForum>[] = await Forum.findAll({
-      order: [['id', 'ASC']],
-      attributes: { exclude: ['updatedAt', 'createdAt'] }
-    })
-    const forumMessage = forums.map(async (val: Model<IForum>) => {
-      if (val) {
-        const forumId = val.dataValues.id
-        const count: number = await ForumPosts.count({ where: { forumId } })
-        val.dataValues.countMessage = count
-        const lastItem = await ForumPosts.findOne({ where: { forumId }, order: [['createdAt', 'DESC']] })
-        if (lastItem) {
-          val.dataValues.lastMessageDate = getUnixTime(lastItem.dataValues.createdAt)
-          val.dataValues.lastMessageId = lastItem.dataValues.id
-        } else {
-          val.dataValues.lastMessageDate = null
-          val.dataValues.lastMessageId = null
-        }
+    const { updatedAt, ...created }: IForumModel = (
+      await Forum.create({
+        authorId,
+        title,
+      })
+    ).get({ plain: true })
+
+    const author: IUser = await axios.get(`${YANDEX_API}/user/${req.userId}`, {
+      headers: {
+        Cookie: req.headers.cookie
       }
-      return val
+    }).then(res => res.data)
+    const out: IForum = {
+      ...created,
+      authorName: author.login,
+      countMessage: 0,
+      lastMessageId: null,
+      lastMessageDate: null
+    }
+
+    res.send(out)
+  } catch (e) {
+      next(new ServerError('Произошла ошибка'))
+  }
+}
+
+export async function getForums(req: Request, res: Response, next: NextFunction) {
+  try {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore lib doesn't recognise 'raw' property
+    const forums: Omit<IForum, 'updatedAt'>[] = await Forum.findAll({
+      order: [['id', 'ASC']],
+      raw: true,
+      attributes: {
+        exclude: ['updatedAt']
+      }
     })
-    const result = await Promise.all(forumMessage)
-    res.send(result)
+
+    const authorsHashmap: Record<number, string> = {}
+    for (const forum of forums) {
+      if (forum.authorId in authorsHashmap) {
+        continue
+      }
+      const author: IUser = await axios.get(`${YANDEX_API}/user/${req.userId}`, {
+        headers: {
+          Cookie: req.headers.cookie
+        }
+      }).then(res => res.data)
+      authorsHashmap[forum.authorId] = author.login
+    }
+
+    const preparedForums: IForum[] = await Promise.all(forums.map(async (forum) => {
+      const countMessage = await ForumPosts.count({ where: { forumId: forum.id }})
+      const lastItem = await ForumPosts.findOne({ where: { forumId: forum.id }, order: [['createdAt', 'DESC']] })
+      const out: IForum = {
+        ...forum,
+        countMessage,
+        authorName: authorsHashmap[forum.authorId],
+        lastMessageId: lastItem?.id || null,
+        lastMessageDate: lastItem?.createdAt || null
+      }
+      return out
+  }))
+    res.send(preparedForums)
   } catch (e) {
     next(new ServerError('Произошла ошибка'))
   }
