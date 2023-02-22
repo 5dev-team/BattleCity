@@ -3,17 +3,17 @@
 
 <br>
 <div align="center">
-    <img src="https://img.shields.io/badge/Year-2022-red">
-    <img src="https://img.shields.io/badge/Open Source-lightgray">
-    <img src="https://img.shields.io/badge/PRs-welcom-red">
+    <img src="https://img.shields.io/badge/Year-2022-red" alt="badge year">
+    <img src="https://img.shields.io/badge/Open Source-lightgray" alt="badge Open source">
+    <img src="https://img.shields.io/badge/PRs-welcom-red" alt="badge prs welcome">
 </div>
 <div align="center">
-    <img src="https://img.shields.io/badge/Type Script-success">
-    <img src="https://img.shields.io/badge/Java Script-success">
-    <img src="https://img.shields.io/badge/HTML-success">
-    <img src="https://img.shields.io/badge/SCSS-success">
-    <img src="https://img.shields.io/badge/React-success">
-    <img src="https://img.shields.io/badge/Redux-success">
+    <img src="https://img.shields.io/badge/Type Script-success" alt="badge typescript">
+    <img src="https://img.shields.io/badge/Java Script-success" alt="badge js">
+    <img src="https://img.shields.io/badge/HTML-success" alt="badge html">
+    <img src="https://img.shields.io/badge/SCSS-success" alt="badge scss">
+    <img src="https://img.shields.io/badge/React-success" alt="badge react">
+    <img src="https://img.shields.io/badge/Redux-success" alt="badge redux">
 </div>
 <br>
 
@@ -31,8 +31,8 @@
 1. Убедитесь что у вас установлен `node` и `docker`
 2. Выполните команду `yarn bootstrap` - это обязательный шаг, без него ничего работать не будет :)
 3. Выполните команду `yarn dev`
-3. Выполните команду `yarn dev --scope=client` чтобы запустить только клиент
-4. Выполните команду `yarn dev --scope=server` чтобы запустить только server
+4. Выполните команду `yarn dev --scope=client` чтобы запустить только клиент
+5. Выполните команду `yarn dev --scope=server` чтобы запустить только server
 
 ### Как правильно писать коммиты?
 Можно почитать в соответствующей разделе [документации](docs/README.md)
@@ -114,4 +114,5 @@
 <image src="./packages/client/src/assets/memoryLeaksScreen/2.png" alt="image short test"/>
 
 Фрагмент теста (длинный) через несколько дней/обновлений - утечек не обнаружено
+
 <image src="./packages/client/src/assets/memoryLeaksScreen/1.png" alt="image long test"/>
