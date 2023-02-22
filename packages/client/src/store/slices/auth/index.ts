@@ -22,8 +22,8 @@ const initialState: IInitialState = {
   user: null,
   isLoggedIn: null,
   userSettings: {
-    isBackgroundMusic: false
-  }
+    isBackgroundMusic: false,
+  },
 }
 
 export const fetchLogin = createAsyncThunk(
@@ -36,11 +36,13 @@ export const fetchRegister = createAsyncThunk(
   (data: IRegisterRequest) => api.auth.register(data)
 )
 
-export const fetchYandexOauth = createAsyncThunk('oauth/fetchYandexOauth', () => {
+export const fetchYandexOauth = createAsyncThunk(
+  'oauth/fetchYandexOauth',
+  () => {
     const data: IYandexAuthQueryParams = {
       response_type: 'code',
       client_id: __YANDEX_ID__,
-      redirect_uri: __YANDEX_REDIRECT_URI__
+      redirect_uri: __YANDEX_REDIRECT_URI__,
     }
     window.open(__YANDEX_OAUTH_URL__ + queryStringify(data), '_self')
   }
@@ -53,10 +55,13 @@ export const fetchYandexSignIn = createAsyncThunk(
 )
 
 export const fetchUser = createAsyncThunk('auth/fetchUser', () =>
-  Promise.all([api.auth.user(), api.settings.getSettings()]).then(values => ({
-    user: transformUser(values[0].data),
-    settings: values[1].data
-  }))
+  api.auth.user().then(async userResponse => {
+    const settingsResponse = await api.settings.getSettings()
+    return {
+      user: transformUser(userResponse.data),
+      settings: settingsResponse.data,
+    }
+  })
 )
 
 export const fetchLogout = createAsyncThunk('auth/fetchLogout', () =>
@@ -74,7 +79,7 @@ export const authSlice = createSlice({
   reducers: {
     clearError: state => {
       state.authError = ''
-    }
+    },
   },
   extraReducers: builder => {
     // login
@@ -145,7 +150,11 @@ export const authSlice = createSlice({
       state.user = null
       state.userSettings = { isBackgroundMusic: false }
       let result: 401 | null = null
-      if (error.message === 'Cookie is not valid' || error.message === 'Server error' || error.message === 'Cannot read properties of undefined (reading \'data\')') {
+      if (
+        error.message === 'Cookie is not valid' ||
+        error.message === 'Server error' ||
+        error.message === "Cannot read properties of undefined (reading 'data')"
+      ) {
         result = 401
       }
 
@@ -166,5 +175,5 @@ export const authSlice = createSlice({
         music.pause()
       }
     })
-  }
+  },
 })
